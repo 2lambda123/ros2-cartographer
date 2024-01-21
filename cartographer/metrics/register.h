@@ -24,7 +24,7 @@ namespace metrics {
 
 void RegisterAllMetrics(FamilyFactory *registry);
 
-}  // namespace metrics
-}  // namespace cartographer
+} // namespace metrics
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_METRICS_REGISTER_H_
+#endif // CARTOGRAPHER_METRICS_REGISTER_H_

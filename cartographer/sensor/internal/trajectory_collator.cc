@@ -21,41 +21,41 @@ namespace sensor {
 
 void TrajectoryCollator::AddTrajectory(
     const int trajectory_id,
-    const std::unordered_set<std::string>& expected_sensor_ids,
-    const Callback& callback) {
-    CHECK_EQ(trajectory_to_queue_.count(trajectory_id), 0);
-    for (const auto& sensor_id : expected_sensor_ids) {
-        const auto queue_key = QueueKey{trajectory_id, sensor_id};
-        trajectory_to_queue_[trajectory_id].AddQueue(
+    const std::unordered_set<std::string> &expected_sensor_ids,
+    const Callback &callback) {
+  CHECK_EQ(trajectory_to_queue_.count(trajectory_id), 0);
+  for (const auto &sensor_id : expected_sensor_ids) {
+    const auto queue_key = QueueKey{trajectory_id, sensor_id};
+    trajectory_to_queue_[trajectory_id].AddQueue(
         queue_key, [callback, sensor_id](std::unique_ptr<Data> data) {
-            callback(sensor_id, std::move(data));
+          callback(sensor_id, std::move(data));
         });
-        trajectory_to_queue_keys_[trajectory_id].push_back(queue_key);
-    }
+    trajectory_to_queue_keys_[trajectory_id].push_back(queue_key);
+  }
 }
 
 void TrajectoryCollator::FinishTrajectory(const int trajectory_id) {
-    for (const auto& queue_key : trajectory_to_queue_keys_[trajectory_id]) {
-        trajectory_to_queue_.at(trajectory_id).MarkQueueAsFinished(queue_key);
-    }
+  for (const auto &queue_key : trajectory_to_queue_keys_[trajectory_id]) {
+    trajectory_to_queue_.at(trajectory_id).MarkQueueAsFinished(queue_key);
+  }
 }
 
 void TrajectoryCollator::AddSensorData(const int trajectory_id,
                                        std::unique_ptr<Data> data) {
-    QueueKey queue_key{trajectory_id, data->GetSensorId()};
-    trajectory_to_queue_.at(trajectory_id)
-    .Add(std::move(queue_key), std::move(data));
+  QueueKey queue_key{trajectory_id, data->GetSensorId()};
+  trajectory_to_queue_.at(trajectory_id)
+      .Add(std::move(queue_key), std::move(data));
 }
 
 void TrajectoryCollator::Flush() {
-    for (auto& it : trajectory_to_queue_) {
-        it.second.Flush();
-    }
+  for (auto &it : trajectory_to_queue_) {
+    it.second.Flush();
+  }
 }
 
 common::optional<int> TrajectoryCollator::GetBlockingTrajectoryId() const {
-    return common::optional<int>();
+  return common::optional<int>();
 }
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer

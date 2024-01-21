@@ -33,11 +33,11 @@ DEFINE_HANDLER_SIGNATURE(
 class RunFinalOptimizationHandler
     : public async_grpc::RpcHandler<RunFinalOptimizationSignature> {
 public:
-    void OnRequest(const google::protobuf::Empty& request) override;
+  void OnRequest(const google::protobuf::Empty &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_RUN_FINAL_OPTIMIZATION_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_RUN_FINAL_OPTIMIZATION_HANDLER_H

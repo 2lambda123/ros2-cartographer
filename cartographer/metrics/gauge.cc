@@ -24,19 +24,19 @@ namespace {
 // Implementation of gauge that does nothing.
 class NullGauge : public Gauge {
 public:
-    void Increment() override {};
-    void Increment(double) override {};
-    void Decrement() override {};
-    void Decrement(double) override {};
-    void Set(double) override {};
+  void Increment() override{};
+  void Increment(double) override{};
+  void Decrement() override{};
+  void Decrement(double) override{};
+  void Set(double) override{};
 };
 
-}  // namespace
+} // namespace
 
-Gauge* Gauge::Null() {
-    static NullGauge null_gauge;
-    return &null_gauge;
+Gauge *Gauge::Null() {
+  static NullGauge null_gauge;
+  return &null_gauge;
 }
 
-}  // namespace metrics
-}  // namespace cartographer
+} // namespace metrics
+} // namespace cartographer

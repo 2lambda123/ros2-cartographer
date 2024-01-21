@@ -49,44 +49,44 @@ const std::string kMessage = R"(
 
 using AddFixedFramePoseDataHandlerTest =
     testing::HandlerTest<AddFixedFramePoseDataSignature,
-    AddFixedFramePoseDataHandler>;
+                         AddFixedFramePoseDataHandler>;
 
 TEST_F(AddFixedFramePoseDataHandlerTest, NoLocalSlamUploader) {
-    proto::AddFixedFramePoseDataRequest request;
-    EXPECT_TRUE(
-        google::protobuf::TextFormat::ParseFromString(kMessage, &request));
-    SetNoLocalTrajectoryUploader();
-    EXPECT_CALL(*mock_map_builder_context_,
-                DoEnqueueSensorData(
-                    Eq(request.sensor_metadata().trajectory_id()),
-                    Pointee(Truly(testing::BuildDataPredicateEquals(request)))));
-    test_server_->SendWrite(request);
-    test_server_->SendWritesDone();
-    test_server_->SendFinish();
+  proto::AddFixedFramePoseDataRequest request;
+  EXPECT_TRUE(
+      google::protobuf::TextFormat::ParseFromString(kMessage, &request));
+  SetNoLocalTrajectoryUploader();
+  EXPECT_CALL(*mock_map_builder_context_,
+              DoEnqueueSensorData(
+                  Eq(request.sensor_metadata().trajectory_id()),
+                  Pointee(Truly(testing::BuildDataPredicateEquals(request)))));
+  test_server_->SendWrite(request);
+  test_server_->SendWritesDone();
+  test_server_->SendFinish();
 }
 
 TEST_F(AddFixedFramePoseDataHandlerTest, WithMockLocalSlamUploader) {
-    proto::AddFixedFramePoseDataRequest request;
-    EXPECT_TRUE(
-        google::protobuf::TextFormat::ParseFromString(kMessage, &request));
-    SetMockLocalTrajectoryUploader();
-    EXPECT_CALL(*mock_map_builder_context_,
-                DoEnqueueSensorData(
-                    Eq(request.sensor_metadata().trajectory_id()),
-                    Pointee(Truly(testing::BuildDataPredicateEquals(request)))));
-    proto::SensorData sensor_data;
-    *sensor_data.mutable_sensor_metadata() = request.sensor_metadata();
-    *sensor_data.mutable_fixed_frame_pose_data() =
-        request.fixed_frame_pose_data();
-    EXPECT_CALL(*mock_local_trajectory_uploader_,
-                DoEnqueueSensorData(Pointee(
-                                        Truly(testing::BuildProtoPredicateEquals(&sensor_data)))));
-    test_server_->SendWrite(request);
-    test_server_->SendWritesDone();
-    test_server_->SendFinish();
+  proto::AddFixedFramePoseDataRequest request;
+  EXPECT_TRUE(
+      google::protobuf::TextFormat::ParseFromString(kMessage, &request));
+  SetMockLocalTrajectoryUploader();
+  EXPECT_CALL(*mock_map_builder_context_,
+              DoEnqueueSensorData(
+                  Eq(request.sensor_metadata().trajectory_id()),
+                  Pointee(Truly(testing::BuildDataPredicateEquals(request)))));
+  proto::SensorData sensor_data;
+  *sensor_data.mutable_sensor_metadata() = request.sensor_metadata();
+  *sensor_data.mutable_fixed_frame_pose_data() =
+      request.fixed_frame_pose_data();
+  EXPECT_CALL(*mock_local_trajectory_uploader_,
+              DoEnqueueSensorData(Pointee(
+                  Truly(testing::BuildProtoPredicateEquals(&sensor_data)))));
+  test_server_->SendWrite(request);
+  test_server_->SendWritesDone();
+  test_server_->SendFinish();
 }
 
-}  // namespace
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

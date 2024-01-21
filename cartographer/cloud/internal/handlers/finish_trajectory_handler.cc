@@ -27,20 +27,20 @@ namespace cloud {
 namespace handlers {
 
 void FinishTrajectoryHandler::OnRequest(
-    const proto::FinishTrajectoryRequest& request) {
-    GetContext<MapBuilderContextInterface>()->map_builder().FinishTrajectory(
-        request.trajectory_id());
-    GetUnsynchronizedContext<MapBuilderContextInterface>()
-    ->NotifyFinishTrajectory(request.trajectory_id());
-    if (GetUnsynchronizedContext<MapBuilderContextInterface>()
-            ->local_trajectory_uploader()) {
-        GetContext<MapBuilderContextInterface>()
+    const proto::FinishTrajectoryRequest &request) {
+  GetContext<MapBuilderContextInterface>()->map_builder().FinishTrajectory(
+      request.trajectory_id());
+  GetUnsynchronizedContext<MapBuilderContextInterface>()
+      ->NotifyFinishTrajectory(request.trajectory_id());
+  if (GetUnsynchronizedContext<MapBuilderContextInterface>()
+          ->local_trajectory_uploader()) {
+    GetContext<MapBuilderContextInterface>()
         ->local_trajectory_uploader()
         ->FinishTrajectory(request.trajectory_id());
-    }
-    Send(common::make_unique<google::protobuf::Empty>());
+  }
+  Send(common::make_unique<google::protobuf::Empty>());
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

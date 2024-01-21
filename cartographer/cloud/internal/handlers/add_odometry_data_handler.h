@@ -33,12 +33,12 @@ DEFINE_HANDLER_SIGNATURE(
 class AddOdometryDataHandler
     : public async_grpc::RpcHandler<AddOdometryDataSignature> {
 public:
-    void OnRequest(const proto::AddOdometryDataRequest &request) override;
-    void OnReadsDone() override;
+  void OnRequest(const proto::AddOdometryDataRequest &request) override;
+  void OnReadsDone() override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_ODOMETRY_DATA_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_ODOMETRY_DATA_HANDLER_H

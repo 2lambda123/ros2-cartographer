@@ -32,26 +32,26 @@ namespace mapping {
 // subdivisions.
 class RangeDataCollator {
 public:
-    explicit RangeDataCollator(
-        const std::vector<std::string>& expected_range_sensor_ids)
-        : expected_sensor_ids_(expected_range_sensor_ids.begin(),
-                               expected_range_sensor_ids.end()) {}
+  explicit RangeDataCollator(
+      const std::vector<std::string> &expected_range_sensor_ids)
+      : expected_sensor_ids_(expected_range_sensor_ids.begin(),
+                             expected_range_sensor_ids.end()) {}
 
-    sensor::TimedPointCloudOriginData AddRangeData(
-        const std::string& sensor_id,
-        const sensor::TimedPointCloudData& timed_point_cloud_data);
+  sensor::TimedPointCloudOriginData
+  AddRangeData(const std::string &sensor_id,
+               const sensor::TimedPointCloudData &timed_point_cloud_data);
 
 private:
-    sensor::TimedPointCloudOriginData CropAndMerge();
+  sensor::TimedPointCloudOriginData CropAndMerge();
 
-    const std::set<std::string> expected_sensor_ids_;
-    // Store at most one message for each sensor.
-    std::map<std::string, sensor::TimedPointCloudData> id_to_pending_data_;
-    common::Time current_start_ = common::Time::min();
-    common::Time current_end_ = common::Time::min();
+  const std::set<std::string> expected_sensor_ids_;
+  // Store at most one message for each sensor.
+  std::map<std::string, sensor::TimedPointCloudData> id_to_pending_data_;
+  common::Time current_start_ = common::Time::min();
+  common::Time current_end_ = common::Time::min();
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_RANGE_DATA_COLLATOR_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_RANGE_DATA_COLLATOR_H_

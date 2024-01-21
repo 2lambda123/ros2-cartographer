@@ -310,7 +310,7 @@
 /* #undef NO_MINUS_C_MINUS_O */
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT \
+#define PACKAGE_BUGREPORT                                                      \
   "http://bugs.freedesktop.org/enter_bug.cgi?product=cairo"
 
 /* Define to the full name of this package. */

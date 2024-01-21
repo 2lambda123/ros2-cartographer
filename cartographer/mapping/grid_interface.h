@@ -24,10 +24,10 @@ namespace cartographer {
 namespace mapping {
 
 class GridInterface {
-    // todo(kdaun) move mutual functions of Grid2D/3D here
+  // todo(kdaun) move mutual functions of Grid2D/3D here
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_GRID_H_
+#endif // CARTOGRAPHER_MAPPING_GRID_H_

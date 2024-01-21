@@ -32,32 +32,32 @@ namespace sensor {
 
 class Collator : public CollatorInterface {
 public:
-    Collator() {}
+  Collator() {}
 
-    Collator(const Collator&) = delete;
-    Collator& operator=(const Collator&) = delete;
+  Collator(const Collator &) = delete;
+  Collator &operator=(const Collator &) = delete;
 
-    void AddTrajectory(int trajectory_id,
-                       const std::unordered_set<std::string>& expected_sensor_ids,
-                       const Callback& callback) override;
+  void AddTrajectory(int trajectory_id,
+                     const std::unordered_set<std::string> &expected_sensor_ids,
+                     const Callback &callback) override;
 
-    void FinishTrajectory(int trajectory_id) override;
+  void FinishTrajectory(int trajectory_id) override;
 
-    void AddSensorData(int trajectory_id, std::unique_ptr<Data> data) override;
+  void AddSensorData(int trajectory_id, std::unique_ptr<Data> data) override;
 
-    void Flush() override;
+  void Flush() override;
 
-    common::optional<int> GetBlockingTrajectoryId() const override;
+  common::optional<int> GetBlockingTrajectoryId() const override;
 
 private:
-    // Queue keys are a pair of trajectory ID and sensor identifier.
-    OrderedMultiQueue queue_;
+  // Queue keys are a pair of trajectory ID and sensor identifier.
+  OrderedMultiQueue queue_;
 
-    // Map of trajectory ID to all associated QueueKeys.
-    std::unordered_map<int, std::vector<QueueKey>> queue_keys_;
+  // Map of trajectory ID to all associated QueueKeys.
+  std::unordered_map<int, std::vector<QueueKey>> queue_keys_;
 };
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_INTERNAL_COLLATOR_H_
+#endif // CARTOGRAPHER_SENSOR_INTERNAL_COLLATOR_H_

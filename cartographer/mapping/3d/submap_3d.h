@@ -37,39 +37,39 @@
 namespace cartographer {
 namespace mapping {
 
-proto::SubmapsOptions3D CreateSubmapsOptions3D(
-    common::LuaParameterDictionary* parameter_dictionary);
+proto::SubmapsOptions3D
+CreateSubmapsOptions3D(common::LuaParameterDictionary *parameter_dictionary);
 
 class Submap3D : public Submap {
 public:
-    Submap3D(float high_resolution, float low_resolution,
-             const transform::Rigid3d& local_submap_pose);
-    explicit Submap3D(const proto::Submap3D& proto);
+  Submap3D(float high_resolution, float low_resolution,
+           const transform::Rigid3d &local_submap_pose);
+  explicit Submap3D(const proto::Submap3D &proto);
 
-    void ToProto(proto::Submap* proto,
-                 bool include_probability_grid_data) const override;
-    void UpdateFromProto(const proto::Submap& proto) override;
+  void ToProto(proto::Submap *proto,
+               bool include_probability_grid_data) const override;
+  void UpdateFromProto(const proto::Submap &proto) override;
 
-    void ToResponseProto(const transform::Rigid3d& global_submap_pose,
-                         proto::SubmapQuery::Response* response) const override;
+  void ToResponseProto(const transform::Rigid3d &global_submap_pose,
+                       proto::SubmapQuery::Response *response) const override;
 
-    const HybridGrid& high_resolution_hybrid_grid() const {
-        return *high_resolution_hybrid_grid_;
-    }
-    const HybridGrid& low_resolution_hybrid_grid() const {
-        return *low_resolution_hybrid_grid_;
-    }
+  const HybridGrid &high_resolution_hybrid_grid() const {
+    return *high_resolution_hybrid_grid_;
+  }
+  const HybridGrid &low_resolution_hybrid_grid() const {
+    return *low_resolution_hybrid_grid_;
+  }
 
-    // Insert 'range_data' into this submap using 'range_data_inserter'. The
-    // submap must not be finished yet.
-    void InsertRangeData(const sensor::RangeData& range_data,
-                         const RangeDataInserter3D& range_data_inserter,
-                         int high_resolution_max_range);
-    void Finish();
+  // Insert 'range_data' into this submap using 'range_data_inserter'. The
+  // submap must not be finished yet.
+  void InsertRangeData(const sensor::RangeData &range_data,
+                       const RangeDataInserter3D &range_data_inserter,
+                       int high_resolution_max_range);
+  void Finish();
 
 private:
-    std::unique_ptr<HybridGrid> high_resolution_hybrid_grid_;
-    std::unique_ptr<HybridGrid> low_resolution_hybrid_grid_;
+  std::unique_ptr<HybridGrid> high_resolution_hybrid_grid_;
+  std::unique_ptr<HybridGrid> low_resolution_hybrid_grid_;
 };
 
 // Except during initialization when only a single submap exists, there are
@@ -83,33 +83,33 @@ private:
 // "new" submap gets created. The "old" submap is forgotten by this object.
 class ActiveSubmaps3D {
 public:
-    explicit ActiveSubmaps3D(const proto::SubmapsOptions3D& options);
+  explicit ActiveSubmaps3D(const proto::SubmapsOptions3D &options);
 
-    ActiveSubmaps3D(const ActiveSubmaps3D&) = delete;
-    ActiveSubmaps3D& operator=(const ActiveSubmaps3D&) = delete;
+  ActiveSubmaps3D(const ActiveSubmaps3D &) = delete;
+  ActiveSubmaps3D &operator=(const ActiveSubmaps3D &) = delete;
 
-    // Returns the index of the newest initialized Submap which can be
-    // used for scan-to-map matching.
-    int matching_index() const;
+  // Returns the index of the newest initialized Submap which can be
+  // used for scan-to-map matching.
+  int matching_index() const;
 
-    // Inserts 'range_data' into the Submap collection. 'gravity_alignment' is
-    // used for the orientation of new submaps so that the z axis approximately
-    // aligns with gravity.
-    void InsertRangeData(const sensor::RangeData& range_data,
-                         const Eigen::Quaterniond& gravity_alignment);
+  // Inserts 'range_data' into the Submap collection. 'gravity_alignment' is
+  // used for the orientation of new submaps so that the z axis approximately
+  // aligns with gravity.
+  void InsertRangeData(const sensor::RangeData &range_data,
+                       const Eigen::Quaterniond &gravity_alignment);
 
-    std::vector<std::shared_ptr<Submap3D>> submaps() const;
+  std::vector<std::shared_ptr<Submap3D>> submaps() const;
 
 private:
-    void AddSubmap(const transform::Rigid3d& local_submap_pose);
+  void AddSubmap(const transform::Rigid3d &local_submap_pose);
 
-    const proto::SubmapsOptions3D options_;
-    int matching_submap_index_ = 0;
-    std::vector<std::shared_ptr<Submap3D>> submaps_;
-    RangeDataInserter3D range_data_inserter_;
+  const proto::SubmapsOptions3D options_;
+  int matching_submap_index_ = 0;
+  std::vector<std::shared_ptr<Submap3D>> submaps_;
+  RangeDataInserter3D range_data_inserter_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_3D_SUBMAP_3D_H_
+#endif // CARTOGRAPHER_MAPPING_3D_SUBMAP_3D_H_

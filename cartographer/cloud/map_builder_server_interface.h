@@ -28,33 +28,33 @@ namespace cloud {
 
 class MapBuilderServerInterface {
 public:
-    virtual ~MapBuilderServerInterface() {}
+  virtual ~MapBuilderServerInterface() {}
 
-    // Starts the gRPC server, the 'LocalTrajectoryUploader' and the SLAM thread.
-    virtual void Start() = 0;
+  // Starts the gRPC server, the 'LocalTrajectoryUploader' and the SLAM thread.
+  virtual void Start() = 0;
 
-    // Waits for the 'MapBuilderServer' to shut down. Note: The server must be
-    // either shutting down or some other thread must call 'Shutdown()' for
-    // this function to ever return.
-    virtual void WaitForShutdown() = 0;
+  // Waits for the 'MapBuilderServer' to shut down. Note: The server must be
+  // either shutting down or some other thread must call 'Shutdown()' for
+  // this function to ever return.
+  virtual void WaitForShutdown() = 0;
 
-    // Waits until all computation is finished (for testing).
-    virtual void WaitUntilIdle() = 0;
+  // Waits until all computation is finished (for testing).
+  virtual void WaitUntilIdle() = 0;
 
-    // Shuts down the gRPC server, the 'LocalTrajectoryUploader' and the SLAM
-    // thread.
-    virtual void Shutdown() = 0;
+  // Shuts down the gRPC server, the 'LocalTrajectoryUploader' and the SLAM
+  // thread.
+  virtual void Shutdown() = 0;
 };
 
 // Registers all metrics for the MapBuilderServer.
-void RegisterMapBuilderServerMetrics(metrics::FamilyFactory* factory);
+void RegisterMapBuilderServerMetrics(metrics::FamilyFactory *factory);
 
 // Returns MapBuilderServer with the actual implementation.
 std::unique_ptr<MapBuilderServerInterface> CreateMapBuilderServer(
-    const proto::MapBuilderServerOptions& map_builder_server_options,
+    const proto::MapBuilderServerOptions &map_builder_server_options,
     std::unique_ptr<mapping::MapBuilderInterface> map_builder);
 
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_MAP_BUILDER_SERVER_INTERFACE_H
+#endif // CARTOGRAPHER_CLOUD_MAP_BUILDER_SERVER_INTERFACE_H

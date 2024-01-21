@@ -37,51 +37,53 @@ namespace io {
 // tracing through the probability grid.
 class ProbabilityGridPointsProcessor : public PointsProcessor {
 public:
-    constexpr static const char* kConfigurationFileActionName =
-        "write_probability_grid";
-    enum class DrawTrajectories { kNo, kYes };
-    ProbabilityGridPointsProcessor(
-        double resolution,
-        const mapping::proto::ProbabilityGridRangeDataInserterOptions2D&
-        probability_grid_range_data_inserter_options,
-        const DrawTrajectories& draw_trajectories,
-        std::unique_ptr<FileWriter> file_writer,
-        const std::vector<mapping::proto::Trajectory>& trajectorios,
-        PointsProcessor* next);
-    ProbabilityGridPointsProcessor(const ProbabilityGridPointsProcessor&) =
-        delete;
-    ProbabilityGridPointsProcessor& operator=(
-        const ProbabilityGridPointsProcessor&) = delete;
+  constexpr static const char *kConfigurationFileActionName =
+      "write_probability_grid";
+  enum class DrawTrajectories { kNo, kYes };
+  ProbabilityGridPointsProcessor(
+      double resolution,
+      const mapping::proto::ProbabilityGridRangeDataInserterOptions2D
+          &probability_grid_range_data_inserter_options,
+      const DrawTrajectories &draw_trajectories,
+      std::unique_ptr<FileWriter> file_writer,
+      const std::vector<mapping::proto::Trajectory> &trajectorios,
+      PointsProcessor *next);
+  ProbabilityGridPointsProcessor(const ProbabilityGridPointsProcessor &) =
+      delete;
+  ProbabilityGridPointsProcessor &
+  operator=(const ProbabilityGridPointsProcessor &) = delete;
 
-    static std::unique_ptr<ProbabilityGridPointsProcessor> FromDictionary(
-        const std::vector<mapping::proto::Trajectory>& trajectories,
-        const FileWriterFactory& file_writer_factory,
-        common::LuaParameterDictionary* dictionary, PointsProcessor* next);
+  static std::unique_ptr<ProbabilityGridPointsProcessor>
+  FromDictionary(const std::vector<mapping::proto::Trajectory> &trajectories,
+                 const FileWriterFactory &file_writer_factory,
+                 common::LuaParameterDictionary *dictionary,
+                 PointsProcessor *next);
 
-    ~ProbabilityGridPointsProcessor() override {}
+  ~ProbabilityGridPointsProcessor() override {}
 
-    void Process(std::unique_ptr<PointsBatch> batch) override;
-    FlushResult Flush() override;
+  void Process(std::unique_ptr<PointsBatch> batch) override;
+  FlushResult Flush() override;
 
 private:
-    const DrawTrajectories draw_trajectories_;
-    const std::vector<mapping::proto::Trajectory> trajectories_;
-    std::unique_ptr<FileWriter> file_writer_;
-    PointsProcessor* const next_;
-    mapping::ProbabilityGridRangeDataInserter2D range_data_inserter_;
-    mapping::ProbabilityGrid probability_grid_;
+  const DrawTrajectories draw_trajectories_;
+  const std::vector<mapping::proto::Trajectory> trajectories_;
+  std::unique_ptr<FileWriter> file_writer_;
+  PointsProcessor *const next_;
+  mapping::ProbabilityGridRangeDataInserter2D range_data_inserter_;
+  mapping::ProbabilityGrid probability_grid_;
 };
 
 // Draws 'probability_grid' into an image and fills in 'offset' with the cropped
 // map limits. Returns 'nullptr' if probability_grid was empty.
-std::unique_ptr<Image> DrawProbabilityGrid(
-    const mapping::ProbabilityGrid& probability_grid, Eigen::Array2i* offset);
+std::unique_ptr<Image>
+DrawProbabilityGrid(const mapping::ProbabilityGrid &probability_grid,
+                    Eigen::Array2i *offset);
 
 // Create an initially empty probability grid with 'resolution' and a small
 // size, suitable for a PointsBatchProcessor.
 mapping::ProbabilityGrid CreateProbabilityGrid(const double resolution);
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_IO_PROBABILITY_GRID_POINTS_PROCESSOR_H_
+#endif // CARTOGRAPHER_IO_PROBABILITY_GRID_POINTS_PROCESSOR_H_

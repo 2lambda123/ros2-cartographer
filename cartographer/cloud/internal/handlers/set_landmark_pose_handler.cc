@@ -27,16 +27,16 @@ namespace cloud {
 namespace handlers {
 
 void SetLandmarkPoseHandler::OnRequest(
-    const proto::SetLandmarkPoseRequest& request) {
-    GetContext<MapBuilderContextInterface>()
-    ->map_builder()
-    .pose_graph()
-    ->SetLandmarkPose(
-        request.landmark_pose().landmark_id(),
-        transform::ToRigid3(request.landmark_pose().global_pose()));
-    Send(common::make_unique<google::protobuf::Empty>());
+    const proto::SetLandmarkPoseRequest &request) {
+  GetContext<MapBuilderContextInterface>()
+      ->map_builder()
+      .pose_graph()
+      ->SetLandmarkPose(
+          request.landmark_pose().landmark_id(),
+          transform::ToRigid3(request.landmark_pose().global_pose()));
+  Send(common::make_unique<google::protobuf::Empty>());
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

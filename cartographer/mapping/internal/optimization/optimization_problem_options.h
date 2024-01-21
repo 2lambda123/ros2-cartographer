@@ -25,10 +25,10 @@ namespace mapping {
 namespace optimization {
 
 proto::OptimizationProblemOptions CreateOptimizationProblemOptions(
-    common::LuaParameterDictionary* parameter_dictionary);
+    common::LuaParameterDictionary *parameter_dictionary);
 
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_OPTIMIZATION_PROBLEM_OPTIONS_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_OPTIMIZATION_PROBLEM_OPTIONS_H_

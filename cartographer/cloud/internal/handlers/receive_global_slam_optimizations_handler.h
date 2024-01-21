@@ -35,15 +35,15 @@ DEFINE_HANDLER_SIGNATURE(
 class ReceiveGlobalSlamOptimizationsHandler
     : public async_grpc::RpcHandler<ReceiveGlobalSlamOptimizationsSignature> {
 public:
-    void OnRequest(const google::protobuf::Empty &request) override;
-    void OnFinish() override;
+  void OnRequest(const google::protobuf::Empty &request) override;
+  void OnFinish() override;
 
 private:
-    common::optional<int> subscription_index_;
+  common::optional<int> subscription_index_;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_RECEIVE_GLOBAL_SLAM_OPTIMIZATIONS_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_RECEIVE_GLOBAL_SLAM_OPTIMIZATIONS_HANDLER_H

@@ -32,12 +32,12 @@ DEFINE_HANDLER_SIGNATURE(
 
 class AddImuDataHandler : public async_grpc::RpcHandler<AddImuDataSignature> {
 public:
-    void OnRequest(const proto::AddImuDataRequest &request) override;
-    void OnReadsDone() override;
+  void OnRequest(const proto::AddImuDataRequest &request) override;
+  void OnReadsDone() override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_IMU_DATA_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_IMU_DATA_HANDLER_H

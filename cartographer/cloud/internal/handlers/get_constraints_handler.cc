@@ -27,19 +27,19 @@ namespace cartographer {
 namespace cloud {
 namespace handlers {
 
-void GetConstraintsHandler::OnRequest(const google::protobuf::Empty& request) {
-    auto constraints = GetContext<MapBuilderContextInterface>()
-                       ->map_builder()
-                       .pose_graph()
-                       ->constraints();
-    auto response = common::make_unique<proto::GetConstraintsResponse>();
-    response->mutable_constraints()->Reserve(constraints.size());
-    for (const auto& constraint : constraints) {
-        *response->add_constraints() = mapping::ToProto(constraint);
-    }
-    Send(std::move(response));
+void GetConstraintsHandler::OnRequest(const google::protobuf::Empty &request) {
+  auto constraints = GetContext<MapBuilderContextInterface>()
+                         ->map_builder()
+                         .pose_graph()
+                         ->constraints();
+  auto response = common::make_unique<proto::GetConstraintsResponse>();
+  response->mutable_constraints()->Reserve(constraints.size());
+  for (const auto &constraint : constraints) {
+    *response->add_constraints() = mapping::ToProto(constraint);
+  }
+  Send(std::move(response));
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

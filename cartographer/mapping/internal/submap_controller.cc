@@ -22,16 +22,16 @@ namespace mapping {
 template <>
 std::shared_ptr<mapping::Submap2D>
 SubmapController<mapping::Submap2D>::CreateSubmap(
-    const mapping::proto::Submap& proto) {
-    return std::make_shared<mapping::Submap2D>(proto.submap_2d());
+    const mapping::proto::Submap &proto) {
+  return std::make_shared<mapping::Submap2D>(proto.submap_2d());
 }
 
 template <>
 std::shared_ptr<mapping::Submap3D>
 SubmapController<mapping::Submap3D>::CreateSubmap(
-    const mapping::proto::Submap& proto) {
-    return std::make_shared<mapping::Submap3D>(proto.submap_3d());
+    const mapping::proto::Submap &proto) {
+  return std::make_shared<mapping::Submap3D>(proto.submap_3d());
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

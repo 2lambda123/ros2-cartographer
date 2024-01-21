@@ -20,20 +20,21 @@ namespace cartographer {
 namespace mapping {
 namespace scan_matching {
 
-std::function<float(const transform::Rigid3f&)> CreateLowResolutionMatcher(
-    const HybridGrid* low_resolution_grid, const sensor::PointCloud* points) {
-    return [=](const transform::Rigid3f& pose) {
-        float score = 0.f;
-        for (const Eigen::Vector3f& point :
-                sensor::TransformPointCloud(*points, pose)) {
-            // TODO(zhengj, whess): Interpolate the Grid to get better score.
-            score += low_resolution_grid->GetProbability(
-                         low_resolution_grid->GetCellIndex(point));
-        }
-        return score / points->size();
-    };
+std::function<float(const transform::Rigid3f &)>
+CreateLowResolutionMatcher(const HybridGrid *low_resolution_grid,
+                           const sensor::PointCloud *points) {
+  return [=](const transform::Rigid3f &pose) {
+    float score = 0.f;
+    for (const Eigen::Vector3f &point :
+         sensor::TransformPointCloud(*points, pose)) {
+      // TODO(zhengj, whess): Interpolate the Grid to get better score.
+      score += low_resolution_grid->GetProbability(
+          low_resolution_grid->GetCellIndex(point));
+    }
+    return score / points->size();
+  };
 }
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

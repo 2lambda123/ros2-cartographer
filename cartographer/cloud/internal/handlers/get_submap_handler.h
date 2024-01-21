@@ -31,11 +31,11 @@ DEFINE_HANDLER_SIGNATURE(
 
 class GetSubmapHandler : public async_grpc::RpcHandler<GetSubmapSignature> {
 public:
-    void OnRequest(const proto::GetSubmapRequest &request) override;
+  void OnRequest(const proto::GetSubmapRequest &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_SUBMAP_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_SUBMAP_HANDLER_H

@@ -26,27 +26,26 @@ namespace mapping {
 
 class LocalSlamResult3D : public LocalSlamResultData {
 public:
-    LocalSlamResult3D(
-        const std::string& sensor_id,
-        const mapping::proto::LocalSlamResultData local_slam_result_data,
-        SubmapController<mapping::Submap3D>* submap_controller)
-        : LocalSlamResultData(sensor_id, common::FromUniversal(
-                                  local_slam_result_data.timestamp())),
-          sensor_id_(sensor_id),
-          local_slam_result_data_(local_slam_result_data),
-          submap_controller_(submap_controller) {}
+  LocalSlamResult3D(
+      const std::string &sensor_id,
+      const mapping::proto::LocalSlamResultData local_slam_result_data,
+      SubmapController<mapping::Submap3D> *submap_controller)
+      : LocalSlamResultData(sensor_id, common::FromUniversal(
+                                           local_slam_result_data.timestamp())),
+        sensor_id_(sensor_id), local_slam_result_data_(local_slam_result_data),
+        submap_controller_(submap_controller) {}
 
-    void AddToTrajectoryBuilder(
-        TrajectoryBuilderInterface* const trajectory_builder) override;
-    void AddToPoseGraph(int trajectory_id, PoseGraph* pose_graph) const override;
+  void AddToTrajectoryBuilder(
+      TrajectoryBuilderInterface *const trajectory_builder) override;
+  void AddToPoseGraph(int trajectory_id, PoseGraph *pose_graph) const override;
 
 private:
-    const std::string sensor_id_;
-    const mapping::proto::LocalSlamResultData local_slam_result_data_;
-    SubmapController<mapping::Submap3D>* submap_controller_;
+  const std::string sensor_id_;
+  const mapping::proto::LocalSlamResultData local_slam_result_data_;
+  SubmapController<mapping::Submap3D> *submap_controller_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_3D_LOCAL_SLAM_RESULT_3D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_3D_LOCAL_SLAM_RESULT_3D_H_

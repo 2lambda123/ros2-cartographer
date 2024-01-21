@@ -39,18 +39,16 @@ constexpr char kSensorId[] = "sensor_id";
 
 class LocalTrajectoryBuilderTest : public ::testing::Test {
 protected:
-    struct TrajectoryNode {
-        common::Time time;
-        transform::Rigid3d pose;
-    };
+  struct TrajectoryNode {
+    common::Time time;
+    transform::Rigid3d pose;
+  };
 
-    void SetUp() override {
-        GenerateBubbles();
-    }
+  void SetUp() override { GenerateBubbles(); }
 
-    mapping::proto::LocalTrajectoryBuilderOptions3D
-    CreateTrajectoryBuilderOptions3D() {
-        auto parameter_dictionary = common::MakeDictionary(R"text(
+  mapping::proto::LocalTrajectoryBuilderOptions3D
+  CreateTrajectoryBuilderOptions3D() {
+    auto parameter_dictionary = common::MakeDictionary(R"text(
         return {
           min_range = 0.5,
           max_range = 50.,
@@ -112,174 +110,174 @@ protected:
           },
         }
         )text");
-        return mapping::CreateLocalTrajectoryBuilderOptions3D(
-                   parameter_dictionary.get());
+    return mapping::CreateLocalTrajectoryBuilderOptions3D(
+        parameter_dictionary.get());
+  }
+
+  void GenerateBubbles() {
+    std::mt19937 prng(42);
+    std::uniform_real_distribution<float> distribution(-1.f, 1.f);
+
+    for (int i = 0; i != 100; ++i) {
+      const float x = distribution(prng);
+      const float y = distribution(prng);
+      const float z = distribution(prng);
+      bubbles_.push_back(10. * Eigen::Vector3f(x, y, z).normalized());
     }
+  }
 
-    void GenerateBubbles() {
-        std::mt19937 prng(42);
-        std::uniform_real_distribution<float> distribution(-1.f, 1.f);
-
-        for (int i = 0; i != 100; ++i) {
-            const float x = distribution(prng);
-            const float y = distribution(prng);
-            const float z = distribution(prng);
-            bubbles_.push_back(10. * Eigen::Vector3f(x, y, z).normalized());
-        }
+  // Computes the earliest intersection of the ray 'from' to 'to' with the
+  // axis-aligned cube with edge length 30 and center at the origin. Assumes
+  // that 'from' is inside the cube.
+  Eigen::Vector3f CollideWithBox(const Eigen::Vector3f &from,
+                                 const Eigen::Vector3f &to) {
+    float first = 100.f;
+    if (to.x() > from.x()) {
+      first = std::min(first, (15.f - from.x()) / (to.x() - from.x()));
+    } else if (to.x() < from.x()) {
+      first = std::min(first, (-15.f - from.x()) / (to.x() - from.x()));
     }
-
-    // Computes the earliest intersection of the ray 'from' to 'to' with the
-    // axis-aligned cube with edge length 30 and center at the origin. Assumes
-    // that 'from' is inside the cube.
-    Eigen::Vector3f CollideWithBox(const Eigen::Vector3f& from,
-                                   const Eigen::Vector3f& to) {
-        float first = 100.f;
-        if (to.x() > from.x()) {
-            first = std::min(first, (15.f - from.x()) / (to.x() - from.x()));
-        } else if (to.x() < from.x()) {
-            first = std::min(first, (-15.f - from.x()) / (to.x() - from.x()));
-        }
-        if (to.y() > from.y()) {
-            first = std::min(first, (15.f - from.y()) / (to.y() - from.y()));
-        } else if (to.y() < from.y()) {
-            first = std::min(first, (-15.f - from.y()) / (to.y() - from.y()));
-        }
-        if (to.z() > from.z()) {
-            first = std::min(first, (15.f - from.z()) / (to.z() - from.z()));
-        } else if (to.z() < from.z()) {
-            first = std::min(first, (-15.f - from.z()) / (to.z() - from.z()));
-        }
-        return first * (to - from) + from;
+    if (to.y() > from.y()) {
+      first = std::min(first, (15.f - from.y()) / (to.y() - from.y()));
+    } else if (to.y() < from.y()) {
+      first = std::min(first, (-15.f - from.y()) / (to.y() - from.y()));
     }
-
-    // Computes the earliest intersection of the ray 'from' to 'to' with all
-    // bubbles. Returns 'to' if no intersection exists.
-    Eigen::Vector3f CollideWithBubbles(const Eigen::Vector3f& from,
-                                       const Eigen::Vector3f& to) {
-        float first = 1.f;
-        constexpr float kBubbleRadius = 0.5f;
-        for (const Eigen::Vector3f& center : bubbles_) {
-            const float a = (to - from).squaredNorm();
-            const float beta = (to - from).dot(from - center);
-            const float c =
-                (from - center).squaredNorm() - kBubbleRadius * kBubbleRadius;
-            const float discriminant = beta * beta - a * c;
-            if (discriminant < 0.f) {
-                continue;
-            }
-            const float solution = (-beta - std::sqrt(discriminant)) / a;
-            if (solution < 0.f) {
-                continue;
-            }
-            first = std::min(first, solution);
-        }
-        return first * (to - from) + from;
+    if (to.z() > from.z()) {
+      first = std::min(first, (15.f - from.z()) / (to.z() - from.z()));
+    } else if (to.z() < from.z()) {
+      first = std::min(first, (-15.f - from.z()) / (to.z() - from.z()));
     }
+    return first * (to - from) + from;
+  }
 
-    sensor::TimedRangeData GenerateRangeData(const transform::Rigid3d& pose) {
-        // 360 degree rays at 16 angles.
-        sensor::TimedPointCloud directions_in_rangefinder_frame;
-        for (int r = -8; r != 8; ++r) {
-            for (int s = -250; s != 250; ++s) {
-                Eigen::Vector4f first_point;
-                first_point << Eigen::AngleAxisf(M_PI * s / 250.,
-                                                 Eigen::Vector3f::UnitZ()) *
+  // Computes the earliest intersection of the ray 'from' to 'to' with all
+  // bubbles. Returns 'to' if no intersection exists.
+  Eigen::Vector3f CollideWithBubbles(const Eigen::Vector3f &from,
+                                     const Eigen::Vector3f &to) {
+    float first = 1.f;
+    constexpr float kBubbleRadius = 0.5f;
+    for (const Eigen::Vector3f &center : bubbles_) {
+      const float a = (to - from).squaredNorm();
+      const float beta = (to - from).dot(from - center);
+      const float c =
+          (from - center).squaredNorm() - kBubbleRadius * kBubbleRadius;
+      const float discriminant = beta * beta - a * c;
+      if (discriminant < 0.f) {
+        continue;
+      }
+      const float solution = (-beta - std::sqrt(discriminant)) / a;
+      if (solution < 0.f) {
+        continue;
+      }
+      first = std::min(first, solution);
+    }
+    return first * (to - from) + from;
+  }
+
+  sensor::TimedRangeData GenerateRangeData(const transform::Rigid3d &pose) {
+    // 360 degree rays at 16 angles.
+    sensor::TimedPointCloud directions_in_rangefinder_frame;
+    for (int r = -8; r != 8; ++r) {
+      for (int s = -250; s != 250; ++s) {
+        Eigen::Vector4f first_point;
+        first_point << Eigen::AngleAxisf(M_PI * s / 250.,
+                                         Eigen::Vector3f::UnitZ()) *
+                           Eigen::AngleAxisf(M_PI / 12. * r / 8.,
+                                             Eigen::Vector3f::UnitY()) *
+                           Eigen::Vector3f::UnitX(),
+            0.;
+        directions_in_rangefinder_frame.push_back(first_point);
+        // Second orthogonal rangefinder.
+        Eigen::Vector4f second_point;
+        second_point << Eigen::AngleAxisf(M_PI / 2., Eigen::Vector3f::UnitX()) *
+                            Eigen::AngleAxisf(M_PI * s / 250.,
+                                              Eigen::Vector3f::UnitZ()) *
                             Eigen::AngleAxisf(M_PI / 12. * r / 8.,
                                               Eigen::Vector3f::UnitY()) *
                             Eigen::Vector3f::UnitX(),
-                                  0.;
-                directions_in_rangefinder_frame.push_back(first_point);
-                // Second orthogonal rangefinder.
-                Eigen::Vector4f second_point;
-                second_point << Eigen::AngleAxisf(M_PI / 2., Eigen::Vector3f::UnitX()) *
-                             Eigen::AngleAxisf(M_PI * s / 250.,
-                                               Eigen::Vector3f::UnitZ()) *
-                             Eigen::AngleAxisf(M_PI / 12. * r / 8.,
-                                               Eigen::Vector3f::UnitY()) *
-                             Eigen::Vector3f::UnitX(),
-                                   0.;
-                directions_in_rangefinder_frame.push_back(second_point);
-            }
-        }
-        // We simulate a 30 m edge length box around the origin, also containing
-        // 50 cm radius spheres.
-        sensor::TimedPointCloud returns_in_world_frame;
-        for (const Eigen::Vector4f& direction_in_world_frame :
-                sensor::TransformTimedPointCloud(directions_in_rangefinder_frame,
-                        pose.cast<float>())) {
-            const Eigen::Vector3f origin =
-                pose.cast<float>() * Eigen::Vector3f::Zero();
-            Eigen::Vector4f return_point;
-            return_point << CollideWithBubbles(
-                             origin, CollideWithBox(origin, direction_in_world_frame.head<3>())),
-                                     0.;
-            returns_in_world_frame.push_back(return_point);
-        }
-        return {Eigen::Vector3f::Zero(),
-                sensor::TransformTimedPointCloud(returns_in_world_frame,
-                        pose.inverse().cast<float>()),
-                {}};
+            0.;
+        directions_in_rangefinder_frame.push_back(second_point);
+      }
     }
-
-    void AddLinearOnlyImuObservation(const common::Time time,
-                                     const transform::Rigid3d& expected_pose) {
-        const Eigen::Vector3d gravity =
-            expected_pose.rotation().inverse() * Eigen::Vector3d(0., 0., 9.81);
-        local_trajectory_builder_->AddImuData(
-            sensor::ImuData{time, gravity, Eigen::Vector3d::Zero()});
+    // We simulate a 30 m edge length box around the origin, also containing
+    // 50 cm radius spheres.
+    sensor::TimedPointCloud returns_in_world_frame;
+    for (const Eigen::Vector4f &direction_in_world_frame :
+         sensor::TransformTimedPointCloud(directions_in_rangefinder_frame,
+                                          pose.cast<float>())) {
+      const Eigen::Vector3f origin =
+          pose.cast<float>() * Eigen::Vector3f::Zero();
+      Eigen::Vector4f return_point;
+      return_point << CollideWithBubbles(
+          origin, CollideWithBox(origin, direction_in_world_frame.head<3>())),
+          0.;
+      returns_in_world_frame.push_back(return_point);
     }
+    return {Eigen::Vector3f::Zero(),
+            sensor::TransformTimedPointCloud(returns_in_world_frame,
+                                             pose.inverse().cast<float>()),
+            {}};
+  }
 
-    std::vector<TrajectoryNode> GenerateCorkscrewTrajectory() {
-        std::vector<TrajectoryNode> trajectory;
-        common::Time current_time = common::FromUniversal(12345678);
-        // One second at zero velocity.
-        for (int i = 0; i != 5; ++i) {
-            current_time += common::FromSeconds(0.3);
-            trajectory.push_back(
-                TrajectoryNode{current_time, transform::Rigid3d::Identity()});
-        }
-        // Corkscrew translation and constant velocity rotation.
-        for (double t = 0.; t <= 0.6; t += 0.05) {
-            current_time += common::FromSeconds(0.3);
-            trajectory.push_back(TrajectoryNode{
-                current_time,
-                transform::Rigid3d::Translation(Eigen::Vector3d(
-                                                    std::sin(4. * t), 1. - std::cos(4. * t), 1. * t)) *
-                transform::Rigid3d::Rotation(Eigen::AngleAxisd(
-                                                 0.3 * t, Eigen::Vector3d(1., -1., 2.).normalized()))});
-        }
-        return trajectory;
+  void AddLinearOnlyImuObservation(const common::Time time,
+                                   const transform::Rigid3d &expected_pose) {
+    const Eigen::Vector3d gravity =
+        expected_pose.rotation().inverse() * Eigen::Vector3d(0., 0., 9.81);
+    local_trajectory_builder_->AddImuData(
+        sensor::ImuData{time, gravity, Eigen::Vector3d::Zero()});
+  }
+
+  std::vector<TrajectoryNode> GenerateCorkscrewTrajectory() {
+    std::vector<TrajectoryNode> trajectory;
+    common::Time current_time = common::FromUniversal(12345678);
+    // One second at zero velocity.
+    for (int i = 0; i != 5; ++i) {
+      current_time += common::FromSeconds(0.3);
+      trajectory.push_back(
+          TrajectoryNode{current_time, transform::Rigid3d::Identity()});
     }
-
-    void VerifyAccuracy(const std::vector<TrajectoryNode>& expected_trajectory,
-                        double expected_accuracy) {
-        int num_poses = 0;
-        for (const TrajectoryNode& node : expected_trajectory) {
-            AddLinearOnlyImuObservation(node.time, node.pose);
-            const auto range_data = GenerateRangeData(node.pose);
-            const std::unique_ptr<LocalTrajectoryBuilder3D::MatchingResult>
-            matching_result = local_trajectory_builder_->AddRangeData(
-            kSensorId, sensor::TimedPointCloudData{
-                node.time, range_data.origin, range_data.returns});
-            if (matching_result != nullptr) {
-                EXPECT_THAT(matching_result->local_pose,
-                            transform::IsNearly(node.pose, 1e-1));
-                ++num_poses;
-                LOG(INFO) << "num_poses: " << num_poses;
-            }
-        }
+    // Corkscrew translation and constant velocity rotation.
+    for (double t = 0.; t <= 0.6; t += 0.05) {
+      current_time += common::FromSeconds(0.3);
+      trajectory.push_back(TrajectoryNode{
+          current_time,
+          transform::Rigid3d::Translation(Eigen::Vector3d(
+              std::sin(4. * t), 1. - std::cos(4. * t), 1. * t)) *
+              transform::Rigid3d::Rotation(Eigen::AngleAxisd(
+                  0.3 * t, Eigen::Vector3d(1., -1., 2.).normalized()))});
     }
+    return trajectory;
+  }
 
-    std::unique_ptr<LocalTrajectoryBuilder3D> local_trajectory_builder_;
-    std::vector<Eigen::Vector3f> bubbles_;
+  void VerifyAccuracy(const std::vector<TrajectoryNode> &expected_trajectory,
+                      double expected_accuracy) {
+    int num_poses = 0;
+    for (const TrajectoryNode &node : expected_trajectory) {
+      AddLinearOnlyImuObservation(node.time, node.pose);
+      const auto range_data = GenerateRangeData(node.pose);
+      const std::unique_ptr<LocalTrajectoryBuilder3D::MatchingResult>
+          matching_result = local_trajectory_builder_->AddRangeData(
+              kSensorId, sensor::TimedPointCloudData{
+                             node.time, range_data.origin, range_data.returns});
+      if (matching_result != nullptr) {
+        EXPECT_THAT(matching_result->local_pose,
+                    transform::IsNearly(node.pose, 1e-1));
+        ++num_poses;
+        LOG(INFO) << "num_poses: " << num_poses;
+      }
+    }
+  }
+
+  std::unique_ptr<LocalTrajectoryBuilder3D> local_trajectory_builder_;
+  std::vector<Eigen::Vector3f> bubbles_;
 };
 
 TEST_F(LocalTrajectoryBuilderTest, MoveInsideCubeUsingOnlyCeresScanMatcher) {
-    local_trajectory_builder_.reset(new LocalTrajectoryBuilder3D(
-                                        CreateTrajectoryBuilderOptions3D(), {kSensorId}));
-    VerifyAccuracy(GenerateCorkscrewTrajectory(), 1e-1);
+  local_trajectory_builder_.reset(new LocalTrajectoryBuilder3D(
+      CreateTrajectoryBuilderOptions3D(), {kSensorId}));
+  VerifyAccuracy(GenerateCorkscrewTrajectory(), 1e-1);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

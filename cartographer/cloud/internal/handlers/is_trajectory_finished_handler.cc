@@ -26,16 +26,16 @@ namespace cloud {
 namespace handlers {
 
 void IsTrajectoryFinishedHandler::OnRequest(
-    const proto::IsTrajectoryFinishedRequest& request) {
-    auto response = common::make_unique<proto::IsTrajectoryFinishedResponse>();
-    response->set_is_finished(
-        GetContext<MapBuilderContextInterface>()
-        ->map_builder()
-        .pose_graph()
-        ->IsTrajectoryFinished(request.trajectory_id()));
-    Send(std::move(response));
+    const proto::IsTrajectoryFinishedRequest &request) {
+  auto response = common::make_unique<proto::IsTrajectoryFinishedResponse>();
+  response->set_is_finished(
+      GetContext<MapBuilderContextInterface>()
+          ->map_builder()
+          .pose_graph()
+          ->IsTrajectoryFinished(request.trajectory_id()));
+  Send(std::move(response));
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

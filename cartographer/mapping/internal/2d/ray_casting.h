@@ -30,12 +30,12 @@ namespace mapping {
 
 // For each ray in 'range_data', inserts hits and misses into
 // 'probability_grid'. Hits are handled before misses.
-void CastRays(const sensor::RangeData& range_data,
-              const std::vector<uint16>& hit_table,
-              const std::vector<uint16>& miss_table, bool insert_free_space,
-              ProbabilityGrid* probability_grid);
+void CastRays(const sensor::RangeData &range_data,
+              const std::vector<uint16> &hit_table,
+              const std::vector<uint16> &miss_table, bool insert_free_space,
+              ProbabilityGrid *probability_grid);
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_2D_RAY_CASTING_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_2D_RAY_CASTING_H_

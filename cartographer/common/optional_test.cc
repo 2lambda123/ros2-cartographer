@@ -23,41 +23,41 @@ namespace common {
 namespace {
 
 TEST(OptionalTest, CreateDisengagedObject) {
-    const optional<int> o;
-    EXPECT_FALSE(o.has_value());
-    const optional<float> x;
-    EXPECT_FALSE(x.has_value());
+  const optional<int> o;
+  EXPECT_FALSE(o.has_value());
+  const optional<float> x;
+  EXPECT_FALSE(x.has_value());
 }
 
 TEST(OptionalTest, CreateWithValue) {
-    const optional<int> a(5);
-    EXPECT_TRUE(a.has_value());
-    EXPECT_EQ(5, a.value());
+  const optional<int> a(5);
+  EXPECT_TRUE(a.has_value());
+  EXPECT_EQ(5, a.value());
 }
 
 TEST(OptionalTest, CreateFromOtherOptional) {
-    const optional<int> a(5);
-    const optional<int> b = a;
-    EXPECT_TRUE(a.has_value());
-    EXPECT_TRUE(b.has_value());
-    EXPECT_EQ(5, a.value());
-    EXPECT_EQ(5, b.value());
+  const optional<int> a(5);
+  const optional<int> b = a;
+  EXPECT_TRUE(a.has_value());
+  EXPECT_TRUE(b.has_value());
+  EXPECT_EQ(5, a.value());
+  EXPECT_EQ(5, b.value());
 }
 
 TEST(OptionalTest, AssignmentOperator) {
-    optional<int> a(5);
-    optional<int> b(4);
-    optional<int> c;
-    a = b;
-    EXPECT_TRUE(a.has_value());
-    EXPECT_EQ(4, a.value());
-    a = c;
-    EXPECT_FALSE(a.has_value());
-    a = 3;
-    EXPECT_TRUE(a.has_value());
-    EXPECT_EQ(3, a.value());
+  optional<int> a(5);
+  optional<int> b(4);
+  optional<int> c;
+  a = b;
+  EXPECT_TRUE(a.has_value());
+  EXPECT_EQ(4, a.value());
+  a = c;
+  EXPECT_FALSE(a.has_value());
+  a = 3;
+  EXPECT_TRUE(a.has_value());
+  EXPECT_EQ(3, a.value());
 }
 
-}  // namespace
-}  // namespace common
-}  // namespace cartographer
+} // namespace
+} // namespace common
+} // namespace cartographer

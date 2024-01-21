@@ -30,24 +30,24 @@ namespace cartographer {
 namespace sensor {
 
 struct LandmarkObservation {
-    std::string id;
-    transform::Rigid3d landmark_to_tracking_transform;
-    double translation_weight;
-    double rotation_weight;
+  std::string id;
+  transform::Rigid3d landmark_to_tracking_transform;
+  double translation_weight;
+  double rotation_weight;
 };
 
 struct LandmarkData {
-    common::Time time;
-    std::vector<LandmarkObservation> landmark_observations;
+  common::Time time;
+  std::vector<LandmarkObservation> landmark_observations;
 };
 
 // Converts 'landmark_data' to a proto::LandmarkData.
-proto::LandmarkData ToProto(const LandmarkData& landmark_data);
+proto::LandmarkData ToProto(const LandmarkData &landmark_data);
 
 // Converts 'proto' to an LandmarkData.
-LandmarkData FromProto(const proto::LandmarkData& proto);
+LandmarkData FromProto(const proto::LandmarkData &proto);
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_LANDMARK_DATA_H_
+#endif // CARTOGRAPHER_SENSOR_LANDMARK_DATA_H_

@@ -24,9 +24,9 @@ namespace cartographer {
 namespace mapping {
 
 proto::LocalTrajectoryBuilderOptions2D CreateLocalTrajectoryBuilderOptions2D(
-    common::LuaParameterDictionary* parameter_dictionary);
+    common::LuaParameterDictionary *parameter_dictionary);
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_2D_LOCAL_TRAJECTORY_BUILDER_OPTIONS_2D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_2D_LOCAL_TRAJECTORY_BUILDER_OPTIONS_2D_H_

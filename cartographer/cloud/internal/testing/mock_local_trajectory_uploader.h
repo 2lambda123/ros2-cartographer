@@ -28,22 +28,22 @@ namespace testing {
 
 class MockLocalTrajectoryUploader : public LocalTrajectoryUploaderInterface {
 public:
-    MOCK_METHOD1(DoEnqueueSensorData, void(proto::SensorData *));
-    void EnqueueSensorData(
-        std::unique_ptr<proto::SensorData> data_request) override {
-        DoEnqueueSensorData(data_request.get());
-    }
-    MOCK_METHOD0(Start, void());
-    MOCK_METHOD0(Shutdown, void());
-    MOCK_METHOD3(AddTrajectory,
-                 void(int, const std::set<SensorId> &,
-                      const mapping::proto::TrajectoryBuilderOptions &));
-    MOCK_METHOD1(FinishTrajectory, void(int));
-    MOCK_CONST_METHOD1(GetLocalSlamResultSensorId, SensorId(int));
+  MOCK_METHOD1(DoEnqueueSensorData, void(proto::SensorData *));
+  void
+  EnqueueSensorData(std::unique_ptr<proto::SensorData> data_request) override {
+    DoEnqueueSensorData(data_request.get());
+  }
+  MOCK_METHOD0(Start, void());
+  MOCK_METHOD0(Shutdown, void());
+  MOCK_METHOD3(AddTrajectory,
+               void(int, const std::set<SensorId> &,
+                    const mapping::proto::TrajectoryBuilderOptions &));
+  MOCK_METHOD1(FinishTrajectory, void(int));
+  MOCK_CONST_METHOD1(GetLocalSlamResultSensorId, SensorId(int));
 };
 
-}  // namespace testing
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace testing
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_TESTING_MOCK_LOCAL_TRAJECTORY_UPLOADER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_TESTING_MOCK_LOCAL_TRAJECTORY_UPLOADER_H

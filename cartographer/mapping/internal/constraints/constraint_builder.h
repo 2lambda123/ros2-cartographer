@@ -25,10 +25,10 @@ namespace mapping {
 namespace constraints {
 
 proto::ConstraintBuilderOptions CreateConstraintBuilderOptions(
-    common::LuaParameterDictionary* parameter_dictionary);
+    common::LuaParameterDictionary *parameter_dictionary);
 
-}  // namespace constraints
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace constraints
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_CONSTRAINTS_CONSTRAINT_BUILDER_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_CONSTRAINTS_CONSTRAINT_BUILDER_H_

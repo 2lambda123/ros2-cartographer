@@ -28,16 +28,16 @@ namespace cartographer {
 namespace mapping {
 
 proto::RangeDataInserterOptions CreateRangeDataInserterOptions(
-    common::LuaParameterDictionary* const parameter_dictionary);
+    common::LuaParameterDictionary *const parameter_dictionary);
 
 class RangeDataInserterInterface {
 public:
-    // Inserts 'range_data' into 'grid'.
-    virtual void Insert(const sensor::RangeData& range_data,
-                        GridInterface* grid) const = 0;
+  // Inserts 'range_data' into 'grid'.
+  virtual void Insert(const sensor::RangeData &range_data,
+                      GridInterface *grid) const = 0;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_RANGE_DATA_INSERTER_H_
+#endif // CARTOGRAPHER_MAPPING_RANGE_DATA_INSERTER_H_

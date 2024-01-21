@@ -24,25 +24,25 @@ namespace mapping {
 namespace {
 
 TEST(SubmapsTest, ToFromProto) {
-    const Submap3D expected(
-        0.05, 0.25,
-        transform::Rigid3d(Eigen::Vector3d(1., 2., 0.),
-                           Eigen::Quaterniond(0., 0., 0., 1.)));
-    proto::Submap proto;
-    expected.ToProto(&proto, true /* include_probability_grid_data */);
-    EXPECT_FALSE(proto.has_submap_2d());
-    EXPECT_TRUE(proto.has_submap_3d());
-    const auto actual = Submap3D(proto.submap_3d());
-    EXPECT_TRUE(expected.local_pose().translation().isApprox(
-                    actual.local_pose().translation(), 1e-6));
-    EXPECT_TRUE(expected.local_pose().rotation().isApprox(
-                    actual.local_pose().rotation(), 1e-6));
-    EXPECT_EQ(expected.num_range_data(), actual.num_range_data());
-    EXPECT_EQ(expected.finished(), actual.finished());
-    EXPECT_NEAR(expected.high_resolution_hybrid_grid().resolution(), 0.05, 1e-6);
-    EXPECT_NEAR(expected.low_resolution_hybrid_grid().resolution(), 0.25, 1e-6);
+  const Submap3D expected(
+      0.05, 0.25,
+      transform::Rigid3d(Eigen::Vector3d(1., 2., 0.),
+                         Eigen::Quaterniond(0., 0., 0., 1.)));
+  proto::Submap proto;
+  expected.ToProto(&proto, true /* include_probability_grid_data */);
+  EXPECT_FALSE(proto.has_submap_2d());
+  EXPECT_TRUE(proto.has_submap_3d());
+  const auto actual = Submap3D(proto.submap_3d());
+  EXPECT_TRUE(expected.local_pose().translation().isApprox(
+      actual.local_pose().translation(), 1e-6));
+  EXPECT_TRUE(expected.local_pose().rotation().isApprox(
+      actual.local_pose().rotation(), 1e-6));
+  EXPECT_EQ(expected.num_range_data(), actual.num_range_data());
+  EXPECT_EQ(expected.finished(), actual.finished());
+  EXPECT_NEAR(expected.high_resolution_hybrid_grid().resolution(), 0.05, 1e-6);
+  EXPECT_NEAR(expected.low_resolution_hybrid_grid().resolution(), 0.25, 1e-6);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

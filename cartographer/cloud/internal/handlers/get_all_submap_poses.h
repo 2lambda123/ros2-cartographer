@@ -33,11 +33,11 @@ DEFINE_HANDLER_SIGNATURE(
 class GetAllSubmapPosesHandler
     : public async_grpc::RpcHandler<GetAllSubmapPosesSignature> {
 public:
-    void OnRequest(const google::protobuf::Empty& request) override;
+  void OnRequest(const google::protobuf::Empty &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_ALL_SUBMAP_POSES_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_ALL_SUBMAP_POSES_H

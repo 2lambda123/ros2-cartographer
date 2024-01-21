@@ -27,11 +27,12 @@ namespace cartographer {
 namespace mapping {
 namespace scan_matching {
 
-std::function<float(const transform::Rigid3f&)> CreateLowResolutionMatcher(
-    const HybridGrid* low_resolution_grid, const sensor::PointCloud* points);
+std::function<float(const transform::Rigid3f &)>
+CreateLowResolutionMatcher(const HybridGrid *low_resolution_grid,
+                           const sensor::PointCloud *points);
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_LOW_RESOLUTION_MATCHER_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_LOW_RESOLUTION_MATCHER_H_

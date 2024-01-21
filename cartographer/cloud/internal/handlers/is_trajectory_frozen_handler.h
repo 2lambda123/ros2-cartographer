@@ -32,11 +32,11 @@ DEFINE_HANDLER_SIGNATURE(
 class IsTrajectoryFrozenHandler
     : public async_grpc::RpcHandler<IsTrajectoryFrozenSignature> {
 public:
-    void OnRequest(const proto::IsTrajectoryFrozenRequest& request) override;
+  void OnRequest(const proto::IsTrajectoryFrozenRequest &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_IS_TRAJECTORY_FROZEN_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_IS_TRAJECTORY_FROZEN_HANDLER_H

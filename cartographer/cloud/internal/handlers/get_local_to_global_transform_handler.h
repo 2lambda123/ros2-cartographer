@@ -33,12 +33,12 @@ DEFINE_HANDLER_SIGNATURE(
 class GetLocalToGlobalTransformHandler
     : public async_grpc::RpcHandler<GetLocalToGlobalTransformSignature> {
 public:
-    void OnRequest(
-        const proto::GetLocalToGlobalTransformRequest& request) override;
+  void
+  OnRequest(const proto::GetLocalToGlobalTransformRequest &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_LOCAL_TO_GLOBAL_TRANSFORM_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_LOCAL_TO_GLOBAL_TRANSFORM_HANDLER_H

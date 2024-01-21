@@ -33,11 +33,11 @@ DEFINE_HANDLER_SIGNATURE(
 class GetConstraintsHandler
     : public async_grpc::RpcHandler<GetConstraintsSignature> {
 public:
-    void OnRequest(const google::protobuf::Empty& request) override;
+  void OnRequest(const google::protobuf::Empty &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_CONSTRAINTS_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_CONSTRAINTS_HANDLER_H

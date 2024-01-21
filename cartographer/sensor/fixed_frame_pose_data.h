@@ -30,17 +30,17 @@ namespace sensor {
 // The fixed frame pose data (like GPS, pose, etc.) will be used in the
 // optimization.
 struct FixedFramePoseData {
-    common::Time time;
-    common::optional<transform::Rigid3d> pose;
+  common::Time time;
+  common::optional<transform::Rigid3d> pose;
 };
 
 // Converts 'pose_data' to a proto::FixedFramePoseData.
-proto::FixedFramePoseData ToProto(const FixedFramePoseData& pose_data);
+proto::FixedFramePoseData ToProto(const FixedFramePoseData &pose_data);
 
 // Converts 'proto' to an FixedFramePoseData.
-FixedFramePoseData FromProto(const proto::FixedFramePoseData& proto);
+FixedFramePoseData FromProto(const proto::FixedFramePoseData &proto);
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_FIXED_FRAME_POSE_DATA_H_
+#endif // CARTOGRAPHER_SENSOR_FIXED_FRAME_POSE_DATA_H_

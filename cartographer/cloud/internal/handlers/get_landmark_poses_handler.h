@@ -33,11 +33,11 @@ DEFINE_HANDLER_SIGNATURE(
 class GetLandmarkPosesHandler
     : public async_grpc::RpcHandler<GetLandmarkPosesSignature> {
 public:
-    void OnRequest(const google::protobuf::Empty& request) override;
+  void OnRequest(const google::protobuf::Empty &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_LANDMARK_POSES_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_LANDMARK_POSES_HANDLER_H

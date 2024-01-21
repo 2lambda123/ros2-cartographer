@@ -33,15 +33,15 @@ DEFINE_HANDLER_SIGNATURE(
 
 class LoadStateHandler : public async_grpc::RpcHandler<LoadStateSignature> {
 public:
-    void OnRequest(const proto::LoadStateRequest& request) override;
-    void OnReadsDone() override;
+  void OnRequest(const proto::LoadStateRequest &request) override;
+  void OnReadsDone() override;
 
 private:
-    io::InMemoryProtoStreamReader reader_;
+  io::InMemoryProtoStreamReader reader_;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_LOAD_STATE_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_LOAD_STATE_HANDLER_H

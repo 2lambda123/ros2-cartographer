@@ -31,9 +31,9 @@ DEFINE_HANDLER_SIGNATURE(
     "/cartographer.cloud.proto.MapBuilderService/AddImuData")
 
 class AddImuDataHandler : public async_grpc::RpcHandler<AddImuDataSignature> {
- public:
-  void OnRequest(const proto::AddImuDataRequest &request) override;
-  void OnReadsDone() override;
+public:
+    void OnRequest(const proto::AddImuDataRequest &request) override;
+    void OnReadsDone() override;
 };
 
 }  // namespace handlers

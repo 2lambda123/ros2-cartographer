@@ -31,8 +31,8 @@ DEFINE_HANDLER_SIGNATURE(
     "/cartographer.cloud.proto.MapBuilderService/WriteState")
 
 class WriteStateHandler : public async_grpc::RpcHandler<WriteStateSignature> {
- public:
-  void OnRequest(const google::protobuf::Empty& request) override;
+public:
+    void OnRequest(const google::protobuf::Empty& request) override;
 };
 
 }  // namespace handlers

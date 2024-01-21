@@ -30,16 +30,16 @@ namespace sensor {
 // was detected, and were inserted at a configured distance. It is assumed that
 // between the 'origin' and 'misses' is free space.
 struct RangeData {
-  Eigen::Vector3f origin;
-  PointCloud returns;
-  PointCloud misses;
+    Eigen::Vector3f origin;
+    PointCloud returns;
+    PointCloud misses;
 };
 
 // Like 'RangeData', but with 'TimedPointClouds'.
 struct TimedRangeData {
-  Eigen::Vector3f origin;
-  TimedPointCloud returns;
-  TimedPointCloud misses;
+    Eigen::Vector3f origin;
+    TimedPointCloud returns;
+    TimedPointCloud misses;
 };
 
 RangeData TransformRangeData(const RangeData& range_data,

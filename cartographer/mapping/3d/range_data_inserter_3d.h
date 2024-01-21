@@ -29,21 +29,21 @@ proto::RangeDataInserterOptions3D CreateRangeDataInserterOptions3D(
     common::LuaParameterDictionary* parameter_dictionary);
 
 class RangeDataInserter3D {
- public:
-  explicit RangeDataInserter3D(
-      const proto::RangeDataInserterOptions3D& options);
+public:
+    explicit RangeDataInserter3D(
+        const proto::RangeDataInserterOptions3D& options);
 
-  RangeDataInserter3D(const RangeDataInserter3D&) = delete;
-  RangeDataInserter3D& operator=(const RangeDataInserter3D&) = delete;
+    RangeDataInserter3D(const RangeDataInserter3D&) = delete;
+    RangeDataInserter3D& operator=(const RangeDataInserter3D&) = delete;
 
-  // Inserts 'range_data' into 'hybrid_grid'.
-  void Insert(const sensor::RangeData& range_data,
-              HybridGrid* hybrid_grid) const;
+    // Inserts 'range_data' into 'hybrid_grid'.
+    void Insert(const sensor::RangeData& range_data,
+                HybridGrid* hybrid_grid) const;
 
- private:
-  const proto::RangeDataInserterOptions3D options_;
-  const std::vector<uint16> hit_table_;
-  const std::vector<uint16> miss_table_;
+private:
+    const proto::RangeDataInserterOptions3D options_;
+    const std::vector<uint16> hit_table_;
+    const std::vector<uint16> miss_table_;
 };
 
 }  // namespace mapping

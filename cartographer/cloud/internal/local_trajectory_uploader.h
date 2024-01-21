@@ -29,28 +29,28 @@ namespace cartographer {
 namespace cloud {
 
 class LocalTrajectoryUploaderInterface {
- public:
-  using SensorId = mapping::TrajectoryBuilderInterface::SensorId;
+public:
+    using SensorId = mapping::TrajectoryBuilderInterface::SensorId;
 
-  virtual ~LocalTrajectoryUploaderInterface() = default;
+    virtual ~LocalTrajectoryUploaderInterface() = default;
 
-  // Starts the upload thread.
-  virtual void Start() = 0;
+    // Starts the upload thread.
+    virtual void Start() = 0;
 
-  // Shuts down the upload thread. This method blocks until the shutdown is
-  // complete.
-  virtual void Shutdown() = 0;
+    // Shuts down the upload thread. This method blocks until the shutdown is
+    // complete.
+    virtual void Shutdown() = 0;
 
-  // Enqueue an Add*DataRequest message to be uploaded.
-  virtual void EnqueueSensorData(
-      std::unique_ptr<proto::SensorData> sensor_data) = 0;
-  virtual void AddTrajectory(
-      int local_trajectory_id, const std::set<SensorId>& expected_sensor_ids,
-      const mapping::proto::TrajectoryBuilderOptions& trajectory_options) = 0;
-  virtual void FinishTrajectory(int local_trajectory_id) = 0;
+    // Enqueue an Add*DataRequest message to be uploaded.
+    virtual void EnqueueSensorData(
+        std::unique_ptr<proto::SensorData> sensor_data) = 0;
+    virtual void AddTrajectory(
+        int local_trajectory_id, const std::set<SensorId>& expected_sensor_ids,
+        const mapping::proto::TrajectoryBuilderOptions& trajectory_options) = 0;
+    virtual void FinishTrajectory(int local_trajectory_id) = 0;
 
-  virtual SensorId GetLocalSlamResultSensorId(
-      int local_trajectory_id) const = 0;
+    virtual SensorId GetLocalSlamResultSensorId(
+        int local_trajectory_id) const = 0;
 };
 
 // Returns LocalTrajectoryUploader with the actual implementation.

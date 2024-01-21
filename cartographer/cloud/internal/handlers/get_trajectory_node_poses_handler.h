@@ -32,8 +32,8 @@ DEFINE_HANDLER_SIGNATURE(
 
 class GetTrajectoryNodePosesHandler
     : public async_grpc::RpcHandler<GetTrajectoryNodePosesSignature> {
- public:
-  void OnRequest(const google::protobuf::Empty& request) override;
+public:
+    void OnRequest(const google::protobuf::Empty& request) override;
 };
 
 }  // namespace handlers

@@ -24,18 +24,18 @@ namespace cartographer {
 namespace metrics {
 
 class Histogram {
- public:
-  using BucketBoundaries = std::vector<double>;
+public:
+    using BucketBoundaries = std::vector<double>;
 
-  // Histogram instance that does nothing. Safe for use in static initializers.
-  static Histogram* Null();
+    // Histogram instance that does nothing. Safe for use in static initializers.
+    static Histogram* Null();
 
-  static BucketBoundaries FixedWidth(double width, int num_finite_buckets);
-  static BucketBoundaries ScaledPowersOf(double base, double scale_factor,
-                                         double max_value);
+    static BucketBoundaries FixedWidth(double width, int num_finite_buckets);
+    static BucketBoundaries ScaledPowersOf(double base, double scale_factor,
+                                           double max_value);
 
-  virtual ~Histogram() = default;
-  virtual void Observe(double value) = 0;
+    virtual ~Histogram() = default;
+    virtual void Observe(double value) = 0;
 };
 
 }  // namespace metrics

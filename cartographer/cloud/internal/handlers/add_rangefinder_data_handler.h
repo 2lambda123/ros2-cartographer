@@ -33,9 +33,9 @@ DEFINE_HANDLER_SIGNATURE(
 
 class AddRangefinderDataHandler
     : public async_grpc::RpcHandler<AddRangefinderDataSignature> {
- public:
-  void OnRequest(const proto::AddRangefinderDataRequest &request) override;
-  void OnReadsDone() override;
+public:
+    void OnRequest(const proto::AddRangefinderDataRequest &request) override;
+    void OnReadsDone() override;
 };
 
 }  // namespace handlers

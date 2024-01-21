@@ -32,8 +32,8 @@ DEFINE_HANDLER_SIGNATURE(
 
 class GetLandmarkPosesHandler
     : public async_grpc::RpcHandler<GetLandmarkPosesSignature> {
- public:
-  void OnRequest(const google::protobuf::Empty& request) override;
+public:
+    void OnRequest(const google::protobuf::Empty& request) override;
 };
 
 }  // namespace handlers

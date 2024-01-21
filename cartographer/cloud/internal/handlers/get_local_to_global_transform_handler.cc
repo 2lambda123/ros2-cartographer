@@ -28,15 +28,15 @@ namespace handlers {
 
 void GetLocalToGlobalTransformHandler::OnRequest(
     const proto::GetLocalToGlobalTransformRequest& request) {
-  auto response =
-      common::make_unique<proto::GetLocalToGlobalTransformResponse>();
-  auto local_to_global =
-      GetContext<MapBuilderContextInterface>()
-          ->map_builder()
-          .pose_graph()
-          ->GetLocalToGlobalTransform(request.trajectory_id());
-  *response->mutable_local_to_global() = transform::ToProto(local_to_global);
-  Send(std::move(response));
+    auto response =
+        common::make_unique<proto::GetLocalToGlobalTransformResponse>();
+    auto local_to_global =
+        GetContext<MapBuilderContextInterface>()
+        ->map_builder()
+        .pose_graph()
+        ->GetLocalToGlobalTransform(request.trajectory_id());
+    *response->mutable_local_to_global() = transform::ToProto(local_to_global);
+    Send(std::move(response));
 }
 
 }  // namespace handlers

@@ -32,8 +32,8 @@ DEFINE_HANDLER_SIGNATURE(
 
 class AddSensorDataBatchHandler
     : public async_grpc::RpcHandler<AddSensorDataBatchSignature> {
- public:
-  void OnRequest(const proto::AddSensorDataBatchRequest& request) override;
+public:
+    void OnRequest(const proto::AddSensorDataBatchRequest& request) override;
 };
 
 }  // namespace handlers

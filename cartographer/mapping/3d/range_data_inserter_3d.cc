@@ -29,42 +29,42 @@ void InsertMissesIntoGrid(const std::vector<uint16>& miss_table,
                           const sensor::PointCloud& returns,
                           HybridGrid* hybrid_grid,
                           const int num_free_space_voxels) {
-  const Eigen::Array3i origin_cell = hybrid_grid->GetCellIndex(origin);
-  for (const Eigen::Vector3f& hit : returns) {
-    const Eigen::Array3i hit_cell = hybrid_grid->GetCellIndex(hit);
+    const Eigen::Array3i origin_cell = hybrid_grid->GetCellIndex(origin);
+    for (const Eigen::Vector3f& hit : returns) {
+        const Eigen::Array3i hit_cell = hybrid_grid->GetCellIndex(hit);
 
-    const Eigen::Array3i delta = hit_cell - origin_cell;
-    const int num_samples = delta.cwiseAbs().maxCoeff();
-    CHECK_LT(num_samples, 1 << 15);
-    // 'num_samples' is the number of samples we equi-distantly place on the
-    // line between 'origin' and 'hit'. (including a fractional part for sub-
-    // voxels) It is chosen so that between two samples we change from one voxel
-    // to the next on the fastest changing dimension.
-    //
-    // Only the last 'num_free_space_voxels' are updated for performance.
-    for (int position = std::max(0, num_samples - num_free_space_voxels);
-         position < num_samples; ++position) {
-      const Eigen::Array3i miss_cell =
-          origin_cell + delta * position / num_samples;
-      hybrid_grid->ApplyLookupTable(miss_cell, miss_table);
+        const Eigen::Array3i delta = hit_cell - origin_cell;
+        const int num_samples = delta.cwiseAbs().maxCoeff();
+        CHECK_LT(num_samples, 1 << 15);
+        // 'num_samples' is the number of samples we equi-distantly place on the
+        // line between 'origin' and 'hit'. (including a fractional part for sub-
+        // voxels) It is chosen so that between two samples we change from one voxel
+        // to the next on the fastest changing dimension.
+        //
+        // Only the last 'num_free_space_voxels' are updated for performance.
+        for (int position = std::max(0, num_samples - num_free_space_voxels);
+                position < num_samples; ++position) {
+            const Eigen::Array3i miss_cell =
+                origin_cell + delta * position / num_samples;
+            hybrid_grid->ApplyLookupTable(miss_cell, miss_table);
+        }
     }
-  }
 }
 
 }  // namespace
 
 proto::RangeDataInserterOptions3D CreateRangeDataInserterOptions3D(
     common::LuaParameterDictionary* parameter_dictionary) {
-  proto::RangeDataInserterOptions3D options;
-  options.set_hit_probability(
-      parameter_dictionary->GetDouble("hit_probability"));
-  options.set_miss_probability(
-      parameter_dictionary->GetDouble("miss_probability"));
-  options.set_num_free_space_voxels(
-      parameter_dictionary->GetInt("num_free_space_voxels"));
-  CHECK_GT(options.hit_probability(), 0.5);
-  CHECK_LT(options.miss_probability(), 0.5);
-  return options;
+    proto::RangeDataInserterOptions3D options;
+    options.set_hit_probability(
+        parameter_dictionary->GetDouble("hit_probability"));
+    options.set_miss_probability(
+        parameter_dictionary->GetDouble("miss_probability"));
+    options.set_num_free_space_voxels(
+        parameter_dictionary->GetInt("num_free_space_voxels"));
+    CHECK_GT(options.hit_probability(), 0.5);
+    CHECK_LT(options.miss_probability(), 0.5);
+    return options;
 }
 
 RangeDataInserter3D::RangeDataInserter3D(
@@ -77,18 +77,18 @@ RangeDataInserter3D::RangeDataInserter3D(
 
 void RangeDataInserter3D::Insert(const sensor::RangeData& range_data,
                                  HybridGrid* hybrid_grid) const {
-  CHECK_NOTNULL(hybrid_grid);
+    CHECK_NOTNULL(hybrid_grid);
 
-  for (const Eigen::Vector3f& hit : range_data.returns) {
-    const Eigen::Array3i hit_cell = hybrid_grid->GetCellIndex(hit);
-    hybrid_grid->ApplyLookupTable(hit_cell, hit_table_);
-  }
+    for (const Eigen::Vector3f& hit : range_data.returns) {
+        const Eigen::Array3i hit_cell = hybrid_grid->GetCellIndex(hit);
+        hybrid_grid->ApplyLookupTable(hit_cell, hit_table_);
+    }
 
-  // By not starting a new update after hits are inserted, we give hits priority
-  // (i.e. no hits will be ignored because of a miss in the same cell).
-  InsertMissesIntoGrid(miss_table_, range_data.origin, range_data.returns,
-                       hybrid_grid, options_.num_free_space_voxels());
-  hybrid_grid->FinishUpdate();
+    // By not starting a new update after hits are inserted, we give hits priority
+    // (i.e. no hits will be ignored because of a miss in the same cell).
+    InsertMissesIntoGrid(miss_table_, range_data.origin, range_data.returns,
+                         hybrid_grid, options_.num_free_space_voxels());
+    hybrid_grid->FinishUpdate();
 }
 
 }  // namespace mapping

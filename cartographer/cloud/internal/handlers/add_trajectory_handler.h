@@ -31,8 +31,8 @@ DEFINE_HANDLER_SIGNATURE(
 
 class AddTrajectoryHandler
     : public async_grpc::RpcHandler<AddTrajectorySignature> {
- public:
-  void OnRequest(const proto::AddTrajectoryRequest& request) override;
+public:
+    void OnRequest(const proto::AddTrajectoryRequest& request) override;
 };
 
 }  // namespace handlers

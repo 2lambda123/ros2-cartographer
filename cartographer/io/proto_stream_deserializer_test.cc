@@ -52,106 +52,106 @@ constexpr char kLandmarkDataProtoString[] = "landmark_data {}";
 
 template <typename T>
 T ProtoFromStringOrDie(const std::string& proto_string) {
-  T msg;
-  CHECK(google::protobuf::TextFormat::ParseFromString(proto_string, &msg));
-  return msg;
+    T msg;
+    CHECK(google::protobuf::TextFormat::ParseFromString(proto_string, &msg));
+    return msg;
 }
 
 class ProtoStreamDeserializerTest : public ::testing::Test {
- protected:
-  void InitializeProtoReader(
-      const std::string& header_textpb,
-      const std::initializer_list<std::string>& data_textpbs) {
-    std::queue<std::unique_ptr<Message>> proto_queue;
-    proto_queue.emplace(make_unique<SerializationHeader>(
-        ProtoFromStringOrDie<SerializationHeader>(header_textpb)));
-    for (const std::string& data_textpb : data_textpbs) {
-      proto_queue.emplace(make_unique<SerializedData>(
-          ProtoFromStringOrDie<SerializedData>(data_textpb)));
+protected:
+    void InitializeProtoReader(
+        const std::string& header_textpb,
+        const std::initializer_list<std::string>& data_textpbs) {
+        std::queue<std::unique_ptr<Message>> proto_queue;
+        proto_queue.emplace(make_unique<SerializationHeader>(
+                                ProtoFromStringOrDie<SerializationHeader>(header_textpb)));
+        for (const std::string& data_textpb : data_textpbs) {
+            proto_queue.emplace(make_unique<SerializedData>(
+                                    ProtoFromStringOrDie<SerializedData>(data_textpb)));
+        }
+        reader_ = make_unique<InMemoryProtoStreamReader>(std::move(proto_queue));
     }
-    reader_ = make_unique<InMemoryProtoStreamReader>(std::move(proto_queue));
-  }
 
-  std::unique_ptr<InMemoryProtoStreamReader> reader_;
+    std::unique_ptr<InMemoryProtoStreamReader> reader_;
 };
 
 // This test checks if the serialization works.
 TEST_F(ProtoStreamDeserializerTest, WorksOnGoldenTextStream) {
-  // Load text proto into in_memory_reader.
-  InitializeProtoReader(kSerializationHeaderProtoString,
-                        {
-                            kPoseGraphProtoString,
-                            kAllTrajectoryBuilderOptionsProtoString,
-                            kSubmapProtoString,
-                            kNodeProtoString,
-                            kTrajectoryDataProtoString,
-                            kImuDataProtoString,
-                            kOdometryDataProtoString,
-                            kFixedFramePoseDataProtoString,
-                            kLandmarkDataProtoString,
-                        });
+    // Load text proto into in_memory_reader.
+    InitializeProtoReader(kSerializationHeaderProtoString,
+    {
+        kPoseGraphProtoString,
+        kAllTrajectoryBuilderOptionsProtoString,
+        kSubmapProtoString,
+        kNodeProtoString,
+        kTrajectoryDataProtoString,
+        kImuDataProtoString,
+        kOdometryDataProtoString,
+        kFixedFramePoseDataProtoString,
+        kLandmarkDataProtoString,
+    });
 
-  io::ProtoStreamDeserializer deserializer(reader_.get());
+    io::ProtoStreamDeserializer deserializer(reader_.get());
 
-  EXPECT_TRUE(MessageDifferencer::Equals(
-      deserializer.header(), ProtoFromStringOrDie<SerializationHeader>(
-                                 kSerializationHeaderProtoString)));
+    EXPECT_TRUE(MessageDifferencer::Equals(
+                    deserializer.header(), ProtoFromStringOrDie<SerializationHeader>(
+                        kSerializationHeaderProtoString)));
 
-  EXPECT_TRUE(MessageDifferencer::Equals(
-      deserializer.pose_graph(),
-      ProtoFromStringOrDie<SerializedData>(kPoseGraphProtoString)
-          .pose_graph()));
+    EXPECT_TRUE(MessageDifferencer::Equals(
+                    deserializer.pose_graph(),
+                    ProtoFromStringOrDie<SerializedData>(kPoseGraphProtoString)
+                    .pose_graph()));
 
-  EXPECT_TRUE(
-      MessageDifferencer::Equals(deserializer.all_trajectory_builder_options(),
-                                 ProtoFromStringOrDie<SerializedData>(
-                                     kAllTrajectoryBuilderOptionsProtoString)
-                                     .all_trajectory_builder_options()));
+    EXPECT_TRUE(
+        MessageDifferencer::Equals(deserializer.all_trajectory_builder_options(),
+                                   ProtoFromStringOrDie<SerializedData>(
+                                       kAllTrajectoryBuilderOptionsProtoString)
+                                   .all_trajectory_builder_options()));
 
-  SerializedData serialized_data;
-  EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
-  // TODO(sebastianklose): Add matcher for protos in common place and use here.
-  EXPECT_TRUE(MessageDifferencer::Equals(
-      serialized_data,
-      ProtoFromStringOrDie<SerializedData>(kSubmapProtoString)));
+    SerializedData serialized_data;
+    EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
+    // TODO(sebastianklose): Add matcher for protos in common place and use here.
+    EXPECT_TRUE(MessageDifferencer::Equals(
+                    serialized_data,
+                    ProtoFromStringOrDie<SerializedData>(kSubmapProtoString)));
 
-  EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
-  EXPECT_TRUE(MessageDifferencer::Equals(
-      serialized_data, ProtoFromStringOrDie<SerializedData>(kNodeProtoString)));
+    EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
+    EXPECT_TRUE(MessageDifferencer::Equals(
+                    serialized_data, ProtoFromStringOrDie<SerializedData>(kNodeProtoString)));
 
-  EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
-  EXPECT_TRUE(MessageDifferencer::Equals(
-      serialized_data,
-      ProtoFromStringOrDie<SerializedData>(kTrajectoryDataProtoString)));
+    EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
+    EXPECT_TRUE(MessageDifferencer::Equals(
+                    serialized_data,
+                    ProtoFromStringOrDie<SerializedData>(kTrajectoryDataProtoString)));
 
-  EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
-  EXPECT_TRUE(MessageDifferencer::Equals(
-      serialized_data,
-      ProtoFromStringOrDie<SerializedData>(kImuDataProtoString)));
+    EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
+    EXPECT_TRUE(MessageDifferencer::Equals(
+                    serialized_data,
+                    ProtoFromStringOrDie<SerializedData>(kImuDataProtoString)));
 
-  EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
-  EXPECT_TRUE(MessageDifferencer::Equals(
-      serialized_data,
-      ProtoFromStringOrDie<SerializedData>(kOdometryDataProtoString)));
+    EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
+    EXPECT_TRUE(MessageDifferencer::Equals(
+                    serialized_data,
+                    ProtoFromStringOrDie<SerializedData>(kOdometryDataProtoString)));
 
-  EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
-  EXPECT_TRUE(MessageDifferencer::Equals(
-      serialized_data,
-      ProtoFromStringOrDie<SerializedData>(kFixedFramePoseDataProtoString)));
+    EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
+    EXPECT_TRUE(MessageDifferencer::Equals(
+                    serialized_data,
+                    ProtoFromStringOrDie<SerializedData>(kFixedFramePoseDataProtoString)));
 
-  EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
-  EXPECT_TRUE(MessageDifferencer::Equals(
-      serialized_data,
-      ProtoFromStringOrDie<SerializedData>(kLandmarkDataProtoString)));
+    EXPECT_TRUE(deserializer.ReadNextSerializedData(&serialized_data));
+    EXPECT_TRUE(MessageDifferencer::Equals(
+                    serialized_data,
+                    ProtoFromStringOrDie<SerializedData>(kLandmarkDataProtoString)));
 
-  EXPECT_FALSE(deserializer.ReadNextSerializedData(&serialized_data));
-  EXPECT_TRUE(reader_->eof());
+    EXPECT_FALSE(deserializer.ReadNextSerializedData(&serialized_data));
+    EXPECT_TRUE(reader_->eof());
 }
 
 TEST_F(ProtoStreamDeserializerTest, FailsIfVersionNotSupported) {
-  InitializeProtoReader(kUnsupportedSerializationHeaderProtoString, {});
-  EXPECT_DEATH(common::make_unique<ProtoStreamDeserializer>(reader_.get()),
-               "Unsupported serialization format");
+    InitializeProtoReader(kUnsupportedSerializationHeaderProtoString, {});
+    EXPECT_DEATH(common::make_unique<ProtoStreamDeserializer>(reader_.get()),
+                 "Unsupported serialization format");
 }
 
 }  // namespace

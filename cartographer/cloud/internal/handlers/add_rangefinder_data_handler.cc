@@ -30,18 +30,18 @@ namespace handlers {
 
 void AddRangefinderDataHandler::OnRequest(
     const proto::AddRangefinderDataRequest &request) {
-  // The 'BlockingQueue' returned by 'sensor_data_queue()' is already
-  // thread-safe. Therefore it suffices to get an unsynchronized reference to
-  // the 'MapBuilderContext'.
-  GetUnsynchronizedContext<MapBuilderContextInterface>()->EnqueueSensorData(
-      request.sensor_metadata().trajectory_id(),
-      sensor::MakeDispatchable(
-          request.sensor_metadata().sensor_id(),
-          sensor::FromProto(request.timed_point_cloud_data())));
+    // The 'BlockingQueue' returned by 'sensor_data_queue()' is already
+    // thread-safe. Therefore it suffices to get an unsynchronized reference to
+    // the 'MapBuilderContext'.
+    GetUnsynchronizedContext<MapBuilderContextInterface>()->EnqueueSensorData(
+        request.sensor_metadata().trajectory_id(),
+        sensor::MakeDispatchable(
+            request.sensor_metadata().sensor_id(),
+            sensor::FromProto(request.timed_point_cloud_data())));
 }
 
 void AddRangefinderDataHandler::OnReadsDone() {
-  Send(common::make_unique<google::protobuf::Empty>());
+    Send(common::make_unique<google::protobuf::Empty>());
 }
 
 }  // namespace handlers

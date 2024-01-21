@@ -31,8 +31,8 @@ DEFINE_HANDLER_SIGNATURE(
 
 class IsTrajectoryFrozenHandler
     : public async_grpc::RpcHandler<IsTrajectoryFrozenSignature> {
- public:
-  void OnRequest(const proto::IsTrajectoryFrozenRequest& request) override;
+public:
+    void OnRequest(const proto::IsTrajectoryFrozenRequest& request) override;
 };
 
 }  // namespace handlers

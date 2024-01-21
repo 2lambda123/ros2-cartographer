@@ -34,45 +34,45 @@ using ::testing::Test;
 
 template <typename HandlerConcept, typename HandlerType>
 class HandlerTest : public Test {
- public:
-  void SetUp() override {
-    test_server_ = common::make_unique<
-        async_grpc::testing::RpcHandlerTestServer<HandlerConcept, HandlerType>>(
-        common::make_unique<MockMapBuilderContext>());
-    mock_map_builder_context_ =
-        test_server_
+public:
+    void SetUp() override {
+        test_server_ = common::make_unique<
+                       async_grpc::testing::RpcHandlerTestServer<HandlerConcept, HandlerType>>(
+                           common::make_unique<MockMapBuilderContext>());
+        mock_map_builder_context_ =
+            test_server_
             ->template GetUnsynchronizedContext<MockMapBuilderContext>();
-    mock_local_trajectory_uploader_ =
-        common::make_unique<MockLocalTrajectoryUploader>();
-    mock_map_builder_ = common::make_unique<mapping::testing::MockMapBuilder>();
-    mock_pose_graph_ = common::make_unique<mapping::testing::MockPoseGraph>();
+        mock_local_trajectory_uploader_ =
+            common::make_unique<MockLocalTrajectoryUploader>();
+        mock_map_builder_ = common::make_unique<mapping::testing::MockMapBuilder>();
+        mock_pose_graph_ = common::make_unique<mapping::testing::MockPoseGraph>();
 
-    EXPECT_CALL(*mock_map_builder_context_, map_builder())
+        EXPECT_CALL(*mock_map_builder_context_, map_builder())
         .Times(::testing::AnyNumber())
         .WillRepeatedly(::testing::ReturnPointee(mock_map_builder_.get()));
-    EXPECT_CALL(*mock_map_builder_, pose_graph())
+        EXPECT_CALL(*mock_map_builder_, pose_graph())
         .Times(::testing::AnyNumber())
         .WillRepeatedly(Return(mock_pose_graph_.get()));
-  }
+    }
 
-  void SetNoLocalTrajectoryUploader() {
-    EXPECT_CALL(*mock_map_builder_context_, local_trajectory_uploader())
+    void SetNoLocalTrajectoryUploader() {
+        EXPECT_CALL(*mock_map_builder_context_, local_trajectory_uploader())
         .WillOnce(Return(nullptr));
-  }
+    }
 
-  void SetMockLocalTrajectoryUploader() {
-    EXPECT_CALL(*mock_map_builder_context_, local_trajectory_uploader())
+    void SetMockLocalTrajectoryUploader() {
+        EXPECT_CALL(*mock_map_builder_context_, local_trajectory_uploader())
         .WillRepeatedly(Return(mock_local_trajectory_uploader_.get()));
-  }
+    }
 
- protected:
-  std::unique_ptr<
-      async_grpc::testing::RpcHandlerTestServer<HandlerConcept, HandlerType>>
-      test_server_;
-  MockMapBuilderContext *mock_map_builder_context_;
-  std::unique_ptr<MockLocalTrajectoryUploader> mock_local_trajectory_uploader_;
-  std::unique_ptr<mapping::testing::MockMapBuilder> mock_map_builder_;
-  std::unique_ptr<mapping::testing::MockPoseGraph> mock_pose_graph_;
+protected:
+    std::unique_ptr<
+    async_grpc::testing::RpcHandlerTestServer<HandlerConcept, HandlerType>>
+            test_server_;
+    MockMapBuilderContext *mock_map_builder_context_;
+    std::unique_ptr<MockLocalTrajectoryUploader> mock_local_trajectory_uploader_;
+    std::unique_ptr<mapping::testing::MockMapBuilder> mock_map_builder_;
+    std::unique_ptr<mapping::testing::MockPoseGraph> mock_pose_graph_;
 };
 
 }  // namespace testing

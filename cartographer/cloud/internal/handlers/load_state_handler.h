@@ -32,12 +32,12 @@ DEFINE_HANDLER_SIGNATURE(
     "/cartographer.cloud.proto.MapBuilderService/LoadState")
 
 class LoadStateHandler : public async_grpc::RpcHandler<LoadStateSignature> {
- public:
-  void OnRequest(const proto::LoadStateRequest& request) override;
-  void OnReadsDone() override;
+public:
+    void OnRequest(const proto::LoadStateRequest& request) override;
+    void OnReadsDone() override;
 
- private:
-  io::InMemoryProtoStreamReader reader_;
+private:
+    io::InMemoryProtoStreamReader reader_;
 };
 
 }  // namespace handlers

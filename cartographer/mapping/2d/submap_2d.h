@@ -40,27 +40,29 @@ proto::SubmapsOptions2D CreateSubmapsOptions2D(
     common::LuaParameterDictionary* parameter_dictionary);
 
 class Submap2D : public Submap {
- public:
-  Submap2D(const Eigen::Vector2f& origin, std::unique_ptr<Grid2D> grid);
-  explicit Submap2D(const proto::Submap2D& proto);
+public:
+    Submap2D(const Eigen::Vector2f& origin, std::unique_ptr<Grid2D> grid);
+    explicit Submap2D(const proto::Submap2D& proto);
 
-  void ToProto(proto::Submap* proto,
-               bool include_probability_grid_data) const override;
-  void UpdateFromProto(const proto::Submap& proto) override;
+    void ToProto(proto::Submap* proto,
+                 bool include_probability_grid_data) const override;
+    void UpdateFromProto(const proto::Submap& proto) override;
 
-  void ToResponseProto(const transform::Rigid3d& global_submap_pose,
-                       proto::SubmapQuery::Response* response) const override;
+    void ToResponseProto(const transform::Rigid3d& global_submap_pose,
+                         proto::SubmapQuery::Response* response) const override;
 
-  const Grid2D* grid() const { return grid_.get(); }
+    const Grid2D* grid() const {
+        return grid_.get();
+    }
 
-  // Insert 'range_data' into this submap using 'range_data_inserter'. The
-  // submap must not be finished yet.
-  void InsertRangeData(const sensor::RangeData& range_data,
-                       const RangeDataInserterInterface* range_data_inserter);
-  void Finish();
+    // Insert 'range_data' into this submap using 'range_data_inserter'. The
+    // submap must not be finished yet.
+    void InsertRangeData(const sensor::RangeData& range_data,
+                         const RangeDataInserterInterface* range_data_inserter);
+    void Finish();
 
- private:
-  std::unique_ptr<Grid2D> grid_;
+private:
+    std::unique_ptr<Grid2D> grid_;
 };
 
 // Except during initialization when only a single submap exists, there are
@@ -73,31 +75,31 @@ class Submap2D : public Submap {
 // is now the "old" submap and is used for scan-to-map matching. Moreover, a
 // "new" submap gets created. The "old" submap is forgotten by this object.
 class ActiveSubmaps2D {
- public:
-  explicit ActiveSubmaps2D(const proto::SubmapsOptions2D& options);
+public:
+    explicit ActiveSubmaps2D(const proto::SubmapsOptions2D& options);
 
-  ActiveSubmaps2D(const ActiveSubmaps2D&) = delete;
-  ActiveSubmaps2D& operator=(const ActiveSubmaps2D&) = delete;
+    ActiveSubmaps2D(const ActiveSubmaps2D&) = delete;
+    ActiveSubmaps2D& operator=(const ActiveSubmaps2D&) = delete;
 
-  // Returns the index of the newest initialized Submap which can be
-  // used for scan-to-map matching.
-  int matching_index() const;
+    // Returns the index of the newest initialized Submap which can be
+    // used for scan-to-map matching.
+    int matching_index() const;
 
-  // Inserts 'range_data' into the Submap collection.
-  void InsertRangeData(const sensor::RangeData& range_data);
+    // Inserts 'range_data' into the Submap collection.
+    void InsertRangeData(const sensor::RangeData& range_data);
 
-  std::vector<std::shared_ptr<Submap2D>> submaps() const;
+    std::vector<std::shared_ptr<Submap2D>> submaps() const;
 
- private:
-  std::unique_ptr<RangeDataInserterInterface> CreateRangeDataInserter();
-  std::unique_ptr<GridInterface> CreateGrid(const Eigen::Vector2f& origin);
-  void FinishSubmap();
-  void AddSubmap(const Eigen::Vector2f& origin);
+private:
+    std::unique_ptr<RangeDataInserterInterface> CreateRangeDataInserter();
+    std::unique_ptr<GridInterface> CreateGrid(const Eigen::Vector2f& origin);
+    void FinishSubmap();
+    void AddSubmap(const Eigen::Vector2f& origin);
 
-  const proto::SubmapsOptions2D options_;
-  int matching_submap_index_ = 0;
-  std::vector<std::shared_ptr<Submap2D>> submaps_;
-  std::unique_ptr<RangeDataInserterInterface> range_data_inserter_;
+    const proto::SubmapsOptions2D options_;
+    int matching_submap_index_ = 0;
+    std::vector<std::shared_ptr<Submap2D>> submaps_;
+    std::unique_ptr<RangeDataInserterInterface> range_data_inserter_;
 };
 
 }  // namespace mapping

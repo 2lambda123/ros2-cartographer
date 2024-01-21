@@ -31,8 +31,8 @@ DEFINE_HANDLER_SIGNATURE(
 
 class IsTrajectoryFinishedHandler
     : public async_grpc::RpcHandler<IsTrajectoryFinishedSignature> {
- public:
-  void OnRequest(const proto::IsTrajectoryFinishedRequest& request) override;
+public:
+    void OnRequest(const proto::IsTrajectoryFinishedRequest& request) override;
 };
 
 }  // namespace handlers

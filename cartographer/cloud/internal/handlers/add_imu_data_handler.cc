@@ -30,30 +30,30 @@ namespace cloud {
 namespace handlers {
 
 void AddImuDataHandler::OnRequest(const proto::AddImuDataRequest &request) {
-  // The 'BlockingQueue' returned by 'sensor_data_queue()' is already
-  // thread-safe. Therefore it suffices to get an unsynchronized reference to
-  // the 'MapBuilderContext'.
-  GetUnsynchronizedContext<MapBuilderContextInterface>()->EnqueueSensorData(
-      request.sensor_metadata().trajectory_id(),
-      sensor::MakeDispatchable(request.sensor_metadata().sensor_id(),
-                               sensor::FromProto(request.imu_data())));
+    // The 'BlockingQueue' returned by 'sensor_data_queue()' is already
+    // thread-safe. Therefore it suffices to get an unsynchronized reference to
+    // the 'MapBuilderContext'.
+    GetUnsynchronizedContext<MapBuilderContextInterface>()->EnqueueSensorData(
+        request.sensor_metadata().trajectory_id(),
+        sensor::MakeDispatchable(request.sensor_metadata().sensor_id(),
+                                 sensor::FromProto(request.imu_data())));
 
-  // The 'BlockingQueue' in 'LocalTrajectoryUploader' is thread-safe.
-  // Therefore it suffices to get an unsynchronized reference to the
-  // 'MapBuilderContext'.
-  if (GetUnsynchronizedContext<MapBuilderContextInterface>()
-          ->local_trajectory_uploader()) {
-    auto sensor_data = common::make_unique<proto::SensorData>();
-    *sensor_data->mutable_sensor_metadata() = request.sensor_metadata();
-    *sensor_data->mutable_imu_data() = request.imu_data();
-    GetUnsynchronizedContext<MapBuilderContextInterface>()
+    // The 'BlockingQueue' in 'LocalTrajectoryUploader' is thread-safe.
+    // Therefore it suffices to get an unsynchronized reference to the
+    // 'MapBuilderContext'.
+    if (GetUnsynchronizedContext<MapBuilderContextInterface>()
+            ->local_trajectory_uploader()) {
+        auto sensor_data = common::make_unique<proto::SensorData>();
+        *sensor_data->mutable_sensor_metadata() = request.sensor_metadata();
+        *sensor_data->mutable_imu_data() = request.imu_data();
+        GetUnsynchronizedContext<MapBuilderContextInterface>()
         ->local_trajectory_uploader()
         ->EnqueueSensorData(std::move(sensor_data));
-  }
+    }
 }
 
 void AddImuDataHandler::OnReadsDone() {
-  Send(common::make_unique<google::protobuf::Empty>());
+    Send(common::make_unique<google::protobuf::Empty>());
 }
 
 }  // namespace handlers

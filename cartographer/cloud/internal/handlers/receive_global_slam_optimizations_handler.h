@@ -34,12 +34,12 @@ DEFINE_HANDLER_SIGNATURE(
 
 class ReceiveGlobalSlamOptimizationsHandler
     : public async_grpc::RpcHandler<ReceiveGlobalSlamOptimizationsSignature> {
- public:
-  void OnRequest(const google::protobuf::Empty &request) override;
-  void OnFinish() override;
+public:
+    void OnRequest(const google::protobuf::Empty &request) override;
+    void OnFinish() override;
 
- private:
-  common::optional<int> subscription_index_;
+private:
+    common::optional<int> subscription_index_;
 };
 
 }  // namespace handlers

@@ -23,16 +23,16 @@ namespace {
 
 // Implementation of counter that does nothing.
 class NullCounter : public Counter {
- public:
-  void Increment() override{};
-  void Increment(double) override{};
+public:
+    void Increment() override {};
+    void Increment(double) override {};
 };
 
 }  // namespace
 
 Counter* Counter::Null() {
-  static NullCounter null_counter;
-  return &null_counter;
+    static NullCounter null_counter;
+    return &null_counter;
 }
 
 }  // namespace metrics

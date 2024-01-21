@@ -25,19 +25,19 @@ namespace cartographer {
 namespace sensor {
 
 struct TimedPointCloudData {
-  common::Time time;
-  Eigen::Vector3f origin;
-  sensor::TimedPointCloud ranges;
+    common::Time time;
+    Eigen::Vector3f origin;
+    sensor::TimedPointCloud ranges;
 };
 
 struct TimedPointCloudOriginData {
-  struct RangeMeasurement {
-    Eigen::Vector4f point_time;
-    size_t origin_index;
-  };
-  common::Time time;
-  std::vector<Eigen::Vector3f> origins;
-  std::vector<RangeMeasurement> ranges;
+    struct RangeMeasurement {
+        Eigen::Vector4f point_time;
+        size_t origin_index;
+    };
+    common::Time time;
+    std::vector<Eigen::Vector3f> origins;
+    std::vector<RangeMeasurement> ranges;
 };
 
 // Converts 'timed_point_cloud_data' to a proto::TimedPointCloudData.

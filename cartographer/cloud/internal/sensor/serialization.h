@@ -55,7 +55,7 @@ void CreateSensorDataForLocalSlamResult(
     const std::string& sensor_id, int trajectory_id, common::Time time,
     int starting_submap_index,
     const mapping::TrajectoryBuilderInterface::InsertionResult&
-        insertion_result,
+    insertion_result,
     proto::SensorData* proto);
 
 proto::SensorId ToProto(

@@ -34,13 +34,13 @@ DEFINE_HANDLER_SIGNATURE(
 
 class ReceiveLocalSlamResultsHandler
     : public async_grpc::RpcHandler<ReceiveLocalSlamResultsSignature> {
- public:
-  void OnRequest(const proto::ReceiveLocalSlamResultsRequest& request) override;
-  void OnFinish() override;
+public:
+    void OnRequest(const proto::ReceiveLocalSlamResultsRequest& request) override;
+    void OnFinish() override;
 
- private:
-  std::unique_ptr<MapBuilderContextInterface::LocalSlamSubscriptionId>
-      subscription_id_;
+private:
+    std::unique_ptr<MapBuilderContextInterface::LocalSlamSubscriptionId>
+    subscription_id_;
 };
 
 }  // namespace handlers

@@ -51,38 +51,38 @@ namespace scan_matching {
 
 // An implementation of "Real-Time Correlative Scan Matching" by Olson.
 class RealTimeCorrelativeScanMatcher2D {
- public:
-  explicit RealTimeCorrelativeScanMatcher2D(
-      const proto::RealTimeCorrelativeScanMatcherOptions& options);
+public:
+    explicit RealTimeCorrelativeScanMatcher2D(
+        const proto::RealTimeCorrelativeScanMatcherOptions& options);
 
-  RealTimeCorrelativeScanMatcher2D(const RealTimeCorrelativeScanMatcher2D&) =
-      delete;
-  RealTimeCorrelativeScanMatcher2D& operator=(
-      const RealTimeCorrelativeScanMatcher2D&) = delete;
+    RealTimeCorrelativeScanMatcher2D(const RealTimeCorrelativeScanMatcher2D&) =
+        delete;
+    RealTimeCorrelativeScanMatcher2D& operator=(
+        const RealTimeCorrelativeScanMatcher2D&) = delete;
 
-  // Aligns 'point_cloud' within the 'probability_grid' given an
-  // 'initial_pose_estimate' then updates 'pose_estimate' with the result and
-  // returns the score.
-  double Match(const transform::Rigid2d& initial_pose_estimate,
-               const sensor::PointCloud& point_cloud,
-               const ProbabilityGrid& probability_grid,
-               transform::Rigid2d* pose_estimate) const;
+    // Aligns 'point_cloud' within the 'probability_grid' given an
+    // 'initial_pose_estimate' then updates 'pose_estimate' with the result and
+    // returns the score.
+    double Match(const transform::Rigid2d& initial_pose_estimate,
+                 const sensor::PointCloud& point_cloud,
+                 const ProbabilityGrid& probability_grid,
+                 transform::Rigid2d* pose_estimate) const;
 
-  // Computes the score for each Candidate2D in a collection. The cost is
-  // computed as the sum of probabilities, different from the Ceres
-  // CostFunctions: http://ceres-solver.org/modeling.html
-  //
-  // Visible for testing.
-  void ScoreCandidates(const ProbabilityGrid& probability_grid,
-                       const std::vector<DiscreteScan2D>& discrete_scans,
-                       const SearchParameters& search_parameters,
-                       std::vector<Candidate2D>* candidates) const;
+    // Computes the score for each Candidate2D in a collection. The cost is
+    // computed as the sum of probabilities, different from the Ceres
+    // CostFunctions: http://ceres-solver.org/modeling.html
+    //
+    // Visible for testing.
+    void ScoreCandidates(const ProbabilityGrid& probability_grid,
+                         const std::vector<DiscreteScan2D>& discrete_scans,
+                         const SearchParameters& search_parameters,
+                         std::vector<Candidate2D>* candidates) const;
 
- private:
-  std::vector<Candidate2D> GenerateExhaustiveSearchCandidates(
-      const SearchParameters& search_parameters) const;
+private:
+    std::vector<Candidate2D> GenerateExhaustiveSearchCandidates(
+        const SearchParameters& search_parameters) const;
 
-  const proto::RealTimeCorrelativeScanMatcherOptions options_;
+    const proto::RealTimeCorrelativeScanMatcherOptions options_;
 };
 
 }  // namespace scan_matching

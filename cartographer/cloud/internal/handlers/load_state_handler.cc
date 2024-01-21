@@ -27,25 +27,25 @@ namespace cloud {
 namespace handlers {
 
 void LoadStateHandler::OnRequest(const proto::LoadStateRequest& request) {
-  switch (request.state_chunk_case()) {
+    switch (request.state_chunk_case()) {
     case proto::LoadStateRequest::kPoseGraph:
-      reader_.AddProto(request.pose_graph());
-      break;
+        reader_.AddProto(request.pose_graph());
+        break;
     case proto::LoadStateRequest::kAllTrajectoryBuilderOptions:
-      reader_.AddProto(request.all_trajectory_builder_options());
-      break;
+        reader_.AddProto(request.all_trajectory_builder_options());
+        break;
     case proto::LoadStateRequest::kSerializedData:
-      reader_.AddProto(request.serialized_data());
-      break;
+        reader_.AddProto(request.serialized_data());
+        break;
     default:
-      LOG(FATAL) << "Unhandled proto::LoadStateRequest case.";
-  }
+        LOG(FATAL) << "Unhandled proto::LoadStateRequest case.";
+    }
 }
 
 void LoadStateHandler::OnReadsDone() {
-  GetContext<MapBuilderContextInterface>()->map_builder().LoadState(&reader_,
-                                                                    true);
-  Send(common::make_unique<google::protobuf::Empty>());
+    GetContext<MapBuilderContextInterface>()->map_builder().LoadState(&reader_,
+            true);
+    Send(common::make_unique<google::protobuf::Empty>());
 }
 
 }  // namespace handlers

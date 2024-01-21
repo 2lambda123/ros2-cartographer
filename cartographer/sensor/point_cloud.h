@@ -39,8 +39,8 @@ typedef std::vector<Eigen::Vector3f> PointCloud;
 typedef std::vector<Eigen::Vector4f> TimedPointCloud;
 
 struct PointCloudWithIntensities {
-  TimedPointCloud points;
-  std::vector<float> intensities;
+    TimedPointCloud points;
+    std::vector<float> intensities;
 };
 
 // Transforms 'point_cloud' according to 'transform'.
@@ -49,7 +49,7 @@ PointCloud TransformPointCloud(const PointCloud& point_cloud,
 
 // Transforms 'point_cloud' according to 'transform'.
 TimedPointCloud TransformTimedPointCloud(const TimedPointCloud& point_cloud,
-                                         const transform::Rigid3f& transform);
+        const transform::Rigid3f& transform);
 
 // Returns a new point cloud without points that fall outside the region defined
 // by 'min_z' and 'max_z'.

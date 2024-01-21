@@ -26,23 +26,23 @@ DEFINE_string(output_pbstream_file, "",
               "Output filename for the migrated pbstream.");
 
 int main(int argc, char** argv) {
-  google::InitGoogleLogging(argv[0]);
-  FLAGS_logtostderr = true;
-  google::SetUsageMessage(
-      "\n\n"
-      "Tool for migrating files that use the serialization output of "
-      "Cartographer 0.3, to the new serialization format, which includes a "
-      "header (Version 1).");
-  google::ParseCommandLineFlags(&argc, &argv, true);
+    google::InitGoogleLogging(argv[0]);
+    FLAGS_logtostderr = true;
+    google::SetUsageMessage(
+        "\n\n"
+        "Tool for migrating files that use the serialization output of "
+        "Cartographer 0.3, to the new serialization format, which includes a "
+        "header (Version 1).");
+    google::ParseCommandLineFlags(&argc, &argv, true);
 
-  if (FLAGS_original_pbstream_file.empty() ||
-      FLAGS_output_pbstream_file.empty()) {
-    google::ShowUsageWithFlagsRestrict(argv[0], "migrate_serialization_format");
-    return EXIT_FAILURE;
-  }
-  cartographer::io::ProtoStreamReader input(FLAGS_original_pbstream_file);
-  cartographer::io::ProtoStreamWriter output(FLAGS_output_pbstream_file);
-  cartographer::io::MigrateStreamFormatToVersion1(&input, &output);
+    if (FLAGS_original_pbstream_file.empty() ||
+            FLAGS_output_pbstream_file.empty()) {
+        google::ShowUsageWithFlagsRestrict(argv[0], "migrate_serialization_format");
+        return EXIT_FAILURE;
+    }
+    cartographer::io::ProtoStreamReader input(FLAGS_original_pbstream_file);
+    cartographer::io::ProtoStreamWriter output(FLAGS_output_pbstream_file);
+    cartographer::io::MigrateStreamFormatToVersion1(&input, &output);
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }

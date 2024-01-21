@@ -27,30 +27,30 @@ namespace cloud {
 namespace handlers {
 
 void WriteStateHandler::OnRequest(const google::protobuf::Empty& request) {
-  auto writer = GetWriter();
-  io::ForwardingProtoStreamWriter proto_stream_writer(
-      [writer](const google::protobuf::Message* proto) {
+    auto writer = GetWriter();
+    io::ForwardingProtoStreamWriter proto_stream_writer(
+    [writer](const google::protobuf::Message* proto) {
         if (!proto) {
-          writer.WritesDone();
-          return true;
+            writer.WritesDone();
+            return true;
         }
 
         auto response = common::make_unique<proto::WriteStateResponse>();
         if (proto->GetTypeName() ==
-            "cartographer.mapping.proto.SerializationHeader") {
-          response->mutable_header()->CopyFrom(*proto);
+                "cartographer.mapping.proto.SerializationHeader") {
+            response->mutable_header()->CopyFrom(*proto);
         } else if (proto->GetTypeName() ==
                    "cartographer.mapping.proto.SerializedData") {
-          response->mutable_serialized_data()->CopyFrom(*proto);
+            response->mutable_serialized_data()->CopyFrom(*proto);
         } else {
-          LOG(FATAL) << "Unsupported message type: " << proto->GetTypeName();
+            LOG(FATAL) << "Unsupported message type: " << proto->GetTypeName();
         }
         writer.Write(std::move(response));
         return true;
-      });
-  GetContext<MapBuilderContextInterface>()->map_builder().SerializeState(
-      &proto_stream_writer);
-  proto_stream_writer.Close();
+    });
+    GetContext<MapBuilderContextInterface>()->map_builder().SerializeState(
+        &proto_stream_writer);
+    proto_stream_writer.Close();
 }
 
 }  // namespace handlers

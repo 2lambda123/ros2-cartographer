@@ -16,7 +16,7 @@
 Evaluation
 ==========
 
-Performing evaluation is a crucial part of developing a SLAM system. 
+Performing evaluation is a crucial part of developing a SLAM system.
 For this purpose, Cartographer offers built-in tools that can aid the tuning process or can be used for quality assurance purposes.
 
 These tools can be used to assess the SLAM result even when no dedicated ground truth is available.
@@ -31,7 +31,7 @@ The process comprises two steps:
 1. auto-generation of "ground truth" relations
 2. evaluation of the test data against the generated ground truth
 
-The evaluation is based on the pose relations metric proposed in [3]_. 
+The evaluation is based on the pose relations metric proposed in [3]_.
 Rather than comparing the pose of a trajectory node directly to the corresponding ground truth pose, it compares the relative poses between two trajectory nodes in the probe data to the corresponding relation of two trajectory nodes in the ground truth trajectory.
 
 In Cartographer, we can generate such ground truth relations from trajectories with loop closures.
@@ -45,7 +45,7 @@ We select the relations from loop closure constraints that satisfy the following
 We can assume the pose relations of neighboring trajectory nodes fulfilling these requirements to be locally correct in a fully optimized trajectory.
 Although this is not a ground truth in the sense of an independent input from another source, we can now use it to evaluate the quality of local SLAM results that were generated without loop closure optimization.
 
-The following figure illustrates the concept. 
+The following figure illustrates the concept.
 On the left side, the ground truth relations are visualized as green connections between trajectory nodes of a fully optimized trajectory.
 On the right side, the corresponding relations in a non-optimized trajectory are shown in red.
 
@@ -59,10 +59,10 @@ The actual metric that is computed is the difference between the ground truth (g
 Advantages & Limitations
 ========================
 
-The first obvious advantage is the easier data collection process compared to a cumbersome ground truth setup. 
+The first obvious advantage is the easier data collection process compared to a cumbersome ground truth setup.
 Another great advantage of this methodology is that the SLAM system can be evaluated in any custom sensor configuration (compared to public benchmarks where we are restricted to the data and the sensor configuration of the authors).
 
-However, this type of self-evaluation is not suitable for measuring the accuracy of the full SLAM system with all optimizations enabled - only an evaluation with *real* ground truth states can provide that. 
+However, this type of self-evaluation is not suitable for measuring the accuracy of the full SLAM system with all optimizations enabled - only an evaluation with *real* ground truth states can provide that.
 Furthermore, trajectory nodes outside of loop closure areas can't be considered.
 
 
@@ -72,7 +72,7 @@ How-To
 Given a serialized state of a fully optimized trajectory (here: ``optimized.pbstream`` file), the ground truth relations can be generated with the following command:
 
 .. code-block:: bash
-  
+
   cd <build>  # (directory where Cartographer's binaries are located)
   ./cartographer_autogenerate_ground_truth -pose_graph_filename optimized.pbstream -output_filename relations.pbstream -min_covered_distance 100 -outlier_threshold_meters 0.15 -outlier_threshold_radians 0.02
 
@@ -98,7 +98,7 @@ This will produce output in this form:
 References
 ==========
 
-.. [1] Andreas Geiger, Philip Lenz and Raquel Urtasun. 
+.. [1] Andreas Geiger, Philip Lenz and Raquel Urtasun.
       *Are we ready for Autonomous Driving? The KITTI Vision Benchmark Suite*.
       CVPR, 2012.
 .. [2] Jürgen Sturm, Nikolas Engelhard, Felix Endres, Wolfram Burgard and Daniel Cremers.

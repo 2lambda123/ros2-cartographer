@@ -35,4 +35,4 @@ ninja
 PATH="/usr/lib/llvm-3.8/bin/:$PATH" \
   ASAN_OPTIONS="detect_leaks=1 detect_stack_use_after_return=true" \
   ctest --output-on-failure -j20 --timeout 60 \
-    --test-arguments="--gtest_color=yes"
+  --test-arguments="--gtest_color=yes"

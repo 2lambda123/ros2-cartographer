@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2016 The Cartographer Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +12,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
 # Cartographer documentation build configuration file, created by
 # sphinx-quickstart on Fri Jul  8 10:41:33 2016.
 #
@@ -25,7 +23,6 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
-
 import os
 import sys
 

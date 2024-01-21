@@ -34,13 +34,14 @@ namespace optimization {
 // Cost function measuring the weighted error between the observed pose given by
 // the landmark measurement and the linearly interpolated pose.
 class LandmarkCostFunction3D {
- public:
+public:
   using LandmarkObservation =
       PoseGraphInterface::LandmarkNode::LandmarkObservation;
 
-  static ceres::CostFunction* CreateAutoDiffCostFunction(
-      const LandmarkObservation& observation, const NodeSpec3D& prev_node,
-      const NodeSpec3D& next_node) {
+  static ceres::CostFunction *
+  CreateAutoDiffCostFunction(const LandmarkObservation &observation,
+                             const NodeSpec3D &prev_node,
+                             const NodeSpec3D &next_node) {
     return new ceres::AutoDiffCostFunction<
         LandmarkCostFunction3D, 6 /* residuals */,
         4 /* previous node rotation variables */,
@@ -53,16 +54,17 @@ class LandmarkCostFunction3D {
   }
 
   template <typename T>
-  bool operator()(const T* const prev_node_rotation,
-                  const T* const prev_node_translation,
-                  const T* const next_node_rotation,
-                  const T* const next_node_translation,
-                  const T* const landmark_rotation,
-                  const T* const landmark_translation, T* const e) const {
+  bool operator()(const T *const prev_node_rotation,
+                  const T *const prev_node_translation,
+                  const T *const next_node_rotation,
+                  const T *const next_node_translation,
+                  const T *const landmark_rotation,
+                  const T *const landmark_translation, T *const e) const {
     const std::tuple<std::array<T, 4>, std::array<T, 3>>
-        interpolated_rotation_and_translation = InterpolateNodes3D(
-            prev_node_rotation, prev_node_translation, next_node_rotation,
-            next_node_translation, interpolation_parameter_);
+        interpolated_rotation_and_translation =
+            InterpolateNodes3D(prev_node_rotation, prev_node_translation,
+                               next_node_rotation, next_node_translation,
+                               interpolation_parameter_);
     const std::array<T, 6> error = ScaleError(
         ComputeUnscaledError(
             landmark_to_tracking_transform_,
@@ -74,10 +76,10 @@ class LandmarkCostFunction3D {
     return true;
   }
 
- private:
-  LandmarkCostFunction3D(const LandmarkObservation& observation,
-                         const NodeSpec3D& prev_node,
-                         const NodeSpec3D& next_node)
+private:
+  LandmarkCostFunction3D(const LandmarkObservation &observation,
+                         const NodeSpec3D &prev_node,
+                         const NodeSpec3D &next_node)
       : landmark_to_tracking_transform_(
             observation.landmark_to_tracking_transform),
         translation_weight_(observation.translation_weight),
@@ -92,8 +94,8 @@ class LandmarkCostFunction3D {
   const double interpolation_parameter_;
 };
 
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_COST_FUNCTIONS_LANDMARK_COST_FUNCTION_3D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_COST_FUNCTIONS_LANDMARK_COST_FUNCTION_3D_H_

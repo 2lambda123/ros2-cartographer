@@ -39,7 +39,7 @@ namespace {
 // of the current values in the collection can be retrieved.
 // All of it in (amortized) O(1).
 class SlidingWindowMaximum {
- public:
+public:
   void AddValue(const float value) {
     while (!non_ascending_maxima_.empty() &&
            value > non_ascending_maxima_.back()) {
@@ -67,17 +67,17 @@ class SlidingWindowMaximum {
 
   void CheckIsEmpty() const { CHECK_EQ(non_ascending_maxima_.size(), 0); }
 
- private:
+private:
   // Maximum of the current sliding window at the front. Then the maximum of the
   // remaining window that came after this values first occurrence, and so on.
   std::deque<float> non_ascending_maxima_;
 };
 
-}  // namespace
+} // namespace
 
 proto::FastCorrelativeScanMatcherOptions2D
 CreateFastCorrelativeScanMatcherOptions2D(
-    common::LuaParameterDictionary* const parameter_dictionary) {
+    common::LuaParameterDictionary *const parameter_dictionary) {
   proto::FastCorrelativeScanMatcherOptions2D options;
   options.set_linear_search_window(
       parameter_dictionary->GetDouble("linear_search_window"));
@@ -89,8 +89,8 @@ CreateFastCorrelativeScanMatcherOptions2D(
 }
 
 PrecomputationGrid2D::PrecomputationGrid2D(
-    const Grid2D& grid, const CellLimits& limits, const int width,
-    std::vector<float>* reusable_intermediate_grid)
+    const Grid2D &grid, const CellLimits &limits, const int width,
+    std::vector<float> *reusable_intermediate_grid)
     : offset_(-width + 1, -width + 1),
       wide_limits_(limits.num_x_cells + width - 1,
                    limits.num_y_cells + width - 1),
@@ -103,7 +103,7 @@ PrecomputationGrid2D::PrecomputationGrid2D(
   const int stride = wide_limits_.num_x_cells;
   // First we compute the maximum probability for each (x0, y) achieved in the
   // span defined by x0 <= x < x0 + width.
-  std::vector<float>& intermediate = *reusable_intermediate_grid;
+  std::vector<float> &intermediate = *reusable_intermediate_grid;
   intermediate.resize(wide_limits_.num_x_cells * limits.num_y_cells);
   for (int y = 0; y != limits.num_y_cells; ++y) {
     SlidingWindowMaximum current_values;
@@ -169,8 +169,8 @@ uint8 PrecomputationGrid2D::ComputeCellValue(const float probability) const {
 }
 
 PrecomputationGridStack2D::PrecomputationGridStack2D(
-    const Grid2D& grid,
-    const proto::FastCorrelativeScanMatcherOptions2D& options) {
+    const Grid2D &grid,
+    const proto::FastCorrelativeScanMatcherOptions2D &options) {
   CHECK_GE(options.branch_and_bound_depth(), 1);
   const int max_width = 1 << (options.branch_and_bound_depth() - 1);
   precomputation_grids_.reserve(options.branch_and_bound_depth());
@@ -186,19 +186,18 @@ PrecomputationGridStack2D::PrecomputationGridStack2D(
 }
 
 FastCorrelativeScanMatcher2D::FastCorrelativeScanMatcher2D(
-    const Grid2D& grid,
-    const proto::FastCorrelativeScanMatcherOptions2D& options)
-    : options_(options),
-      limits_(grid.limits()),
+    const Grid2D &grid,
+    const proto::FastCorrelativeScanMatcherOptions2D &options)
+    : options_(options), limits_(grid.limits()),
       precomputation_grid_stack_(
           common::make_unique<PrecomputationGridStack2D>(grid, options)) {}
 
 FastCorrelativeScanMatcher2D::~FastCorrelativeScanMatcher2D() {}
 
 bool FastCorrelativeScanMatcher2D::Match(
-    const transform::Rigid2d& initial_pose_estimate,
-    const sensor::PointCloud& point_cloud, const float min_score, float* score,
-    transform::Rigid2d* pose_estimate) const {
+    const transform::Rigid2d &initial_pose_estimate,
+    const sensor::PointCloud &point_cloud, const float min_score, float *score,
+    transform::Rigid2d *pose_estimate) const {
   const SearchParameters search_parameters(options_.linear_search_window(),
                                            options_.angular_search_window(),
                                            point_cloud, limits_.resolution());
@@ -208,13 +207,13 @@ bool FastCorrelativeScanMatcher2D::Match(
 }
 
 bool FastCorrelativeScanMatcher2D::MatchFullSubmap(
-    const sensor::PointCloud& point_cloud, float min_score, float* score,
-    transform::Rigid2d* pose_estimate) const {
+    const sensor::PointCloud &point_cloud, float min_score, float *score,
+    transform::Rigid2d *pose_estimate) const {
   // Compute a search window around the center of the submap that includes it
   // fully.
   const SearchParameters search_parameters(
-      1e6 * limits_.resolution(),  // Linear search window, 1e6 cells/direction.
-      M_PI,  // Angular search window, 180 degrees in both directions.
+      1e6 * limits_.resolution(), // Linear search window, 1e6 cells/direction.
+      M_PI, // Angular search window, 180 degrees in both directions.
       point_cloud, limits_.resolution());
   const transform::Rigid2d center = transform::Rigid2d::Translation(
       limits_.max() - 0.5 * limits_.resolution() *
@@ -226,9 +225,9 @@ bool FastCorrelativeScanMatcher2D::MatchFullSubmap(
 
 bool FastCorrelativeScanMatcher2D::MatchWithSearchParameters(
     SearchParameters search_parameters,
-    const transform::Rigid2d& initial_pose_estimate,
-    const sensor::PointCloud& point_cloud, float min_score, float* score,
-    transform::Rigid2d* pose_estimate) const {
+    const transform::Rigid2d &initial_pose_estimate,
+    const sensor::PointCloud &point_cloud, float min_score, float *score,
+    transform::Rigid2d *pose_estimate) const {
   CHECK_NOTNULL(score);
   CHECK_NOTNULL(pose_estimate);
 
@@ -263,8 +262,8 @@ bool FastCorrelativeScanMatcher2D::MatchWithSearchParameters(
 
 std::vector<Candidate2D>
 FastCorrelativeScanMatcher2D::ComputeLowestResolutionCandidates(
-    const std::vector<DiscreteScan2D>& discrete_scans,
-    const SearchParameters& search_parameters) const {
+    const std::vector<DiscreteScan2D> &discrete_scans,
+    const SearchParameters &search_parameters) const {
   std::vector<Candidate2D> lowest_resolution_candidates =
       GenerateLowestResolutionCandidates(search_parameters);
   ScoreCandidates(
@@ -275,7 +274,7 @@ FastCorrelativeScanMatcher2D::ComputeLowestResolutionCandidates(
 
 std::vector<Candidate2D>
 FastCorrelativeScanMatcher2D::GenerateLowestResolutionCandidates(
-    const SearchParameters& search_parameters) const {
+    const SearchParameters &search_parameters) const {
   const int linear_step_size = 1 << precomputation_grid_stack_->max_depth();
   int num_candidates = 0;
   for (int scan_index = 0; scan_index != search_parameters.num_scans;
@@ -312,13 +311,13 @@ FastCorrelativeScanMatcher2D::GenerateLowestResolutionCandidates(
 }
 
 void FastCorrelativeScanMatcher2D::ScoreCandidates(
-    const PrecomputationGrid2D& precomputation_grid,
-    const std::vector<DiscreteScan2D>& discrete_scans,
-    const SearchParameters& search_parameters,
-    std::vector<Candidate2D>* const candidates) const {
-  for (Candidate2D& candidate : *candidates) {
+    const PrecomputationGrid2D &precomputation_grid,
+    const std::vector<DiscreteScan2D> &discrete_scans,
+    const SearchParameters &search_parameters,
+    std::vector<Candidate2D> *const candidates) const {
+  for (Candidate2D &candidate : *candidates) {
     int sum = 0;
-    for (const Eigen::Array2i& xy_index :
+    for (const Eigen::Array2i &xy_index :
          discrete_scans[candidate.scan_index]) {
       const Eigen::Array2i proposed_xy_index(
           xy_index.x() + candidate.x_index_offset,
@@ -333,9 +332,9 @@ void FastCorrelativeScanMatcher2D::ScoreCandidates(
 }
 
 Candidate2D FastCorrelativeScanMatcher2D::BranchAndBound(
-    const std::vector<DiscreteScan2D>& discrete_scans,
-    const SearchParameters& search_parameters,
-    const std::vector<Candidate2D>& candidates, const int candidate_depth,
+    const std::vector<DiscreteScan2D> &discrete_scans,
+    const SearchParameters &search_parameters,
+    const std::vector<Candidate2D> &candidates, const int candidate_depth,
     float min_score) const {
   if (candidate_depth == 0) {
     // Return the best candidate.
@@ -344,7 +343,7 @@ Candidate2D FastCorrelativeScanMatcher2D::BranchAndBound(
 
   Candidate2D best_high_resolution_candidate(0, 0, 0, search_parameters);
   best_high_resolution_candidate.score = min_score;
-  for (const Candidate2D& candidate : candidates) {
+  for (const Candidate2D &candidate : candidates) {
     if (candidate.score <= min_score) {
       break;
     }
@@ -377,6 +376,6 @@ Candidate2D FastCorrelativeScanMatcher2D::BranchAndBound(
   return best_high_resolution_candidate;
 }
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

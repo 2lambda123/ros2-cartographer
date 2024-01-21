@@ -41,23 +41,22 @@ namespace cartographer {
 namespace mapping {
 namespace constraints {
 
-static auto* kConstraintsSearchedMetric = metrics::Counter::Null();
-static auto* kConstraintsFoundMetric = metrics::Counter::Null();
-static auto* kGlobalConstraintsSearchedMetric = metrics::Counter::Null();
-static auto* kGlobalConstraintsFoundMetric = metrics::Counter::Null();
-static auto* kQueueLengthMetric = metrics::Gauge::Null();
-static auto* kConstraintScoresMetric = metrics::Histogram::Null();
-static auto* kGlobalConstraintScoresMetric = metrics::Histogram::Null();
+static auto *kConstraintsSearchedMetric = metrics::Counter::Null();
+static auto *kConstraintsFoundMetric = metrics::Counter::Null();
+static auto *kGlobalConstraintsSearchedMetric = metrics::Counter::Null();
+static auto *kGlobalConstraintsFoundMetric = metrics::Counter::Null();
+static auto *kQueueLengthMetric = metrics::Gauge::Null();
+static auto *kConstraintScoresMetric = metrics::Histogram::Null();
+static auto *kGlobalConstraintScoresMetric = metrics::Histogram::Null();
 
-transform::Rigid2d ComputeSubmapPose(const Submap2D& submap) {
+transform::Rigid2d ComputeSubmapPose(const Submap2D &submap) {
   return transform::Project2D(submap.local_pose());
 }
 
 ConstraintBuilder2D::ConstraintBuilder2D(
-    const constraints::proto::ConstraintBuilderOptions& options,
-    common::ThreadPoolInterface* const thread_pool)
-    : options_(options),
-      thread_pool_(thread_pool),
+    const constraints::proto::ConstraintBuilderOptions &options,
+    common::ThreadPoolInterface *const thread_pool)
+    : options_(options), thread_pool_(thread_pool),
       finish_node_task_(common::make_unique<common::Task>()),
       when_done_task_(common::make_unique<common::Task>()),
       sampler_(options.sampling_ratio()),
@@ -73,14 +72,15 @@ ConstraintBuilder2D::~ConstraintBuilder2D() {
 }
 
 void ConstraintBuilder2D::MaybeAddConstraint(
-    const SubmapId& submap_id, const Submap2D* const submap,
-    const NodeId& node_id, const TrajectoryNode::Data* const constant_data,
-    const transform::Rigid2d& initial_relative_pose) {
+    const SubmapId &submap_id, const Submap2D *const submap,
+    const NodeId &node_id, const TrajectoryNode::Data *const constant_data,
+    const transform::Rigid2d &initial_relative_pose) {
   if (initial_relative_pose.translation().norm() >
       options_.max_constraint_distance()) {
     return;
   }
-  if (!sampler_.Pulse()) return;
+  if (!sampler_.Pulse())
+    return;
 
   common::MutexLocker locker(&mutex_);
   if (when_done_) {
@@ -89,8 +89,8 @@ void ConstraintBuilder2D::MaybeAddConstraint(
   }
   constraints_.emplace_back();
   kQueueLengthMetric->Set(constraints_.size());
-  auto* const constraint = &constraints_.back();
-  const auto* scan_matcher =
+  auto *const constraint = &constraints_.back();
+  const auto *scan_matcher =
       DispatchScanMatcherConstruction(submap_id, submap->grid());
   auto constraint_task = common::make_unique<common::Task>();
   constraint_task->SetWorkItem([=]() EXCLUDES(mutex_) {
@@ -105,8 +105,8 @@ void ConstraintBuilder2D::MaybeAddConstraint(
 }
 
 void ConstraintBuilder2D::MaybeAddGlobalConstraint(
-    const SubmapId& submap_id, const Submap2D* const submap,
-    const NodeId& node_id, const TrajectoryNode::Data* const constant_data) {
+    const SubmapId &submap_id, const Submap2D *const submap,
+    const NodeId &node_id, const TrajectoryNode::Data *const constant_data) {
   common::MutexLocker locker(&mutex_);
   if (when_done_) {
     LOG(WARNING)
@@ -114,8 +114,8 @@ void ConstraintBuilder2D::MaybeAddGlobalConstraint(
   }
   constraints_.emplace_back();
   kQueueLengthMetric->Set(constraints_.size());
-  auto* const constraint = &constraints_.back();
-  const auto* scan_matcher =
+  auto *const constraint = &constraints_.back();
+  const auto *scan_matcher =
       DispatchScanMatcherConstruction(submap_id, submap->grid());
   auto constraint_task = common::make_unique<common::Task>();
   constraint_task->SetWorkItem([=]() EXCLUDES(mutex_) {
@@ -144,27 +144,27 @@ void ConstraintBuilder2D::NotifyEndOfNode() {
 }
 
 void ConstraintBuilder2D::WhenDone(
-    const std::function<void(const ConstraintBuilder2D::Result&)>& callback) {
+    const std::function<void(const ConstraintBuilder2D::Result &)> &callback) {
   common::MutexLocker locker(&mutex_);
   CHECK(when_done_ == nullptr);
   // TODO(gaschler): Consider using just std::function, it can also be empty.
   when_done_ =
-      common::make_unique<std::function<void(const Result&)>>(callback);
+      common::make_unique<std::function<void(const Result &)>>(callback);
   CHECK(when_done_task_ != nullptr);
   when_done_task_->SetWorkItem([this] { RunWhenDoneCallback(); });
   thread_pool_->Schedule(std::move(when_done_task_));
   when_done_task_ = common::make_unique<common::Task>();
 }
 
-const ConstraintBuilder2D::SubmapScanMatcher*
-ConstraintBuilder2D::DispatchScanMatcherConstruction(const SubmapId& submap_id,
-                                                     const Grid2D* const grid) {
+const ConstraintBuilder2D::SubmapScanMatcher *
+ConstraintBuilder2D::DispatchScanMatcherConstruction(const SubmapId &submap_id,
+                                                     const Grid2D *const grid) {
   if (submap_scan_matchers_.count(submap_id) != 0) {
     return &submap_scan_matchers_.at(submap_id);
   }
-  auto& submap_scan_matcher = submap_scan_matchers_[submap_id];
+  auto &submap_scan_matcher = submap_scan_matchers_[submap_id];
   submap_scan_matcher.grid = grid;
-  auto& scan_matcher_options = options_.fast_correlative_scan_matcher_options();
+  auto &scan_matcher_options = options_.fast_correlative_scan_matcher_options();
   auto scan_matcher_task = common::make_unique<common::Task>();
   scan_matcher_task->SetWorkItem(
       [&submap_scan_matcher, &scan_matcher_options]() {
@@ -178,12 +178,12 @@ ConstraintBuilder2D::DispatchScanMatcherConstruction(const SubmapId& submap_id,
 }
 
 void ConstraintBuilder2D::ComputeConstraint(
-    const SubmapId& submap_id, const Submap2D* const submap,
-    const NodeId& node_id, bool match_full_submap,
-    const TrajectoryNode::Data* const constant_data,
-    const transform::Rigid2d& initial_relative_pose,
-    const SubmapScanMatcher& submap_scan_matcher,
-    std::unique_ptr<ConstraintBuilder2D::Constraint>* constraint) {
+    const SubmapId &submap_id, const Submap2D *const submap,
+    const NodeId &node_id, bool match_full_submap,
+    const TrajectoryNode::Data *const constant_data,
+    const transform::Rigid2d &initial_relative_pose,
+    const SubmapScanMatcher &submap_scan_matcher,
+    std::unique_ptr<ConstraintBuilder2D::Constraint> *constraint) {
   const transform::Rigid2d initial_pose =
       ComputeSubmapPose(*submap) * initial_relative_pose;
 
@@ -269,12 +269,13 @@ void ConstraintBuilder2D::ComputeConstraint(
 
 void ConstraintBuilder2D::RunWhenDoneCallback() {
   Result result;
-  std::unique_ptr<std::function<void(const Result&)>> callback;
+  std::unique_ptr<std::function<void(const Result &)>> callback;
   {
     common::MutexLocker locker(&mutex_);
     CHECK(when_done_ != nullptr);
-    for (const std::unique_ptr<Constraint>& constraint : constraints_) {
-      if (constraint == nullptr) continue;
+    for (const std::unique_ptr<Constraint> &constraint : constraints_) {
+      if (constraint == nullptr)
+        continue;
       result.push_back(*constraint);
     }
     if (options_.log_matches()) {
@@ -295,7 +296,7 @@ int ConstraintBuilder2D::GetNumFinishedNodes() {
   return num_finished_nodes_;
 }
 
-void ConstraintBuilder2D::DeleteScanMatcher(const SubmapId& submap_id) {
+void ConstraintBuilder2D::DeleteScanMatcher(const SubmapId &submap_id) {
   common::MutexLocker locker(&mutex_);
   if (when_done_) {
     LOG(WARNING)
@@ -304,8 +305,8 @@ void ConstraintBuilder2D::DeleteScanMatcher(const SubmapId& submap_id) {
   submap_scan_matchers_.erase(submap_id);
 }
 
-void ConstraintBuilder2D::RegisterMetrics(metrics::FamilyFactory* factory) {
-  auto* counts = factory->NewCounterFamily(
+void ConstraintBuilder2D::RegisterMetrics(metrics::FamilyFactory *factory) {
+  auto *counts = factory->NewCounterFamily(
       "mapping_internal_constraints_constraint_builder_2d_constraints",
       "Constraints computed");
   kConstraintsSearchedMetric =
@@ -316,18 +317,18 @@ void ConstraintBuilder2D::RegisterMetrics(metrics::FamilyFactory* factory) {
       counts->Add({{"search_region", "global"}, {"matcher", "searched"}});
   kGlobalConstraintsFoundMetric =
       counts->Add({{"search_region", "global"}, {"matcher", "found"}});
-  auto* queue_length = factory->NewGaugeFamily(
+  auto *queue_length = factory->NewGaugeFamily(
       "mapping_internal_constraints_constraint_builder_2d_queue_length",
       "Queue length");
   kQueueLengthMetric = queue_length->Add({});
   auto boundaries = metrics::Histogram::FixedWidth(0.05, 20);
-  auto* scores = factory->NewHistogramFamily(
+  auto *scores = factory->NewHistogramFamily(
       "mapping_internal_constraints_constraint_builder_2d_scores",
       "Constraint scores built", boundaries);
   kConstraintScoresMetric = scores->Add({{"search_region", "local"}});
   kGlobalConstraintScoresMetric = scores->Add({{"search_region", "global"}});
 }
 
-}  // namespace constraints
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace constraints
+} // namespace mapping
+} // namespace cartographer

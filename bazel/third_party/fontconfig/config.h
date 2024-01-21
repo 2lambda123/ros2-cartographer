@@ -256,7 +256,7 @@
 #define PACKAGE "fontconfig"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT \
+#define PACKAGE_BUGREPORT                                                      \
   "https://bugs.freedesktop.org/enter_bug.cgi?product=fontconfig"
 
 /* Define to the full name of this package. */

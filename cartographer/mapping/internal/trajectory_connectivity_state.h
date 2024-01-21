@@ -29,12 +29,12 @@ namespace mapping {
 //
 // This class is thread-compatible.
 class TrajectoryConnectivityState {
- public:
+public:
   TrajectoryConnectivityState() {}
 
-  TrajectoryConnectivityState(const TrajectoryConnectivityState&) = delete;
-  TrajectoryConnectivityState& operator=(const TrajectoryConnectivityState&) =
-      delete;
+  TrajectoryConnectivityState(const TrajectoryConnectivityState &) = delete;
+  TrajectoryConnectivityState &
+  operator=(const TrajectoryConnectivityState &) = delete;
 
   // Add a trajectory which is initially connected to only itself.
   void Add(int trajectory_id);
@@ -59,7 +59,7 @@ class TrajectoryConnectivityState {
   // beginning of time.
   common::Time LastConnectionTime(int trajectory_id_a, int trajectory_id_b);
 
- private:
+private:
   // ConnectedComponents are thread safe.
   mutable ConnectedComponents connected_components_;
 
@@ -71,7 +71,7 @@ class TrajectoryConnectivityState {
   std::map<std::pair<int, int>, common::Time> last_connection_time_map_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_TRAJECTORY_CONNECTIVITY_STATE_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_TRAJECTORY_CONNECTIVITY_STATE_H_

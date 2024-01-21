@@ -30,18 +30,17 @@
 namespace cartographer {
 namespace mapping {
 
-static auto* kLocalSlamLatencyMetric = metrics::Gauge::Null();
-static auto* kRealTimeCorrelativeScanMatcherScoreMetric =
+static auto *kLocalSlamLatencyMetric = metrics::Gauge::Null();
+static auto *kRealTimeCorrelativeScanMatcherScoreMetric =
     metrics::Histogram::Null();
-static auto* kCeresScanMatcherCostMetric = metrics::Histogram::Null();
-static auto* kScanMatcherResidualDistanceMetric = metrics::Histogram::Null();
-static auto* kScanMatcherResidualAngleMetric = metrics::Histogram::Null();
+static auto *kCeresScanMatcherCostMetric = metrics::Histogram::Null();
+static auto *kScanMatcherResidualDistanceMetric = metrics::Histogram::Null();
+static auto *kScanMatcherResidualAngleMetric = metrics::Histogram::Null();
 
 LocalTrajectoryBuilder3D::LocalTrajectoryBuilder3D(
-    const mapping::proto::LocalTrajectoryBuilderOptions3D& options,
-    const std::vector<std::string>& expected_range_sensor_ids)
-    : options_(options),
-      active_submaps_(options.submaps_options()),
+    const mapping::proto::LocalTrajectoryBuilderOptions3D &options,
+    const std::vector<std::string> &expected_range_sensor_ids)
+    : options_(options), active_submaps_(options.submaps_options()),
       motion_filter_(options.motion_filter_options()),
       real_time_correlative_scan_matcher_(
           common::make_unique<scan_matching::RealTimeCorrelativeScanMatcher3D>(
@@ -54,7 +53,7 @@ LocalTrajectoryBuilder3D::LocalTrajectoryBuilder3D(
 
 LocalTrajectoryBuilder3D::~LocalTrajectoryBuilder3D() {}
 
-void LocalTrajectoryBuilder3D::AddImuData(const sensor::ImuData& imu_data) {
+void LocalTrajectoryBuilder3D::AddImuData(const sensor::ImuData &imu_data) {
   if (extrapolator_ != nullptr) {
     extrapolator_->AddImuData(imu_data);
     return;
@@ -70,8 +69,8 @@ void LocalTrajectoryBuilder3D::AddImuData(const sensor::ImuData& imu_data) {
 
 std::unique_ptr<LocalTrajectoryBuilder3D::MatchingResult>
 LocalTrajectoryBuilder3D::AddRangeData(
-    const std::string& sensor_id,
-    const sensor::TimedPointCloudData& unsynchronized_data) {
+    const std::string &sensor_id,
+    const sensor::TimedPointCloudData &unsynchronized_data) {
   auto synchronized_data =
       range_data_collator_.AddRangeData(sensor_id, unsynchronized_data);
   if (synchronized_data.ranges.empty()) {
@@ -79,7 +78,7 @@ LocalTrajectoryBuilder3D::AddRangeData(
     return nullptr;
   }
 
-  const common::Time& time = synchronized_data.time;
+  const common::Time &time = synchronized_data.time;
   if (extrapolator_ == nullptr) {
     // Until we've initialized the extrapolator with our first IMU message, we
     // cannot compute the orientation of the rangefinder.
@@ -108,7 +107,7 @@ LocalTrajectoryBuilder3D::AddRangeData(
   std::vector<transform::Rigid3f> hits_poses;
   hits_poses.reserve(hits.size());
   bool warned = false;
-  for (const auto& hit : hits) {
+  for (const auto &hit : hits) {
     common::Time time_point = time + common::FromSeconds(hit.point_time[3]);
     if (time_point < extrapolator_->GetLastExtrapolatedTime()) {
       if (!warned) {
@@ -169,7 +168,7 @@ LocalTrajectoryBuilder3D::AddRangeData(
 std::unique_ptr<LocalTrajectoryBuilder3D::MatchingResult>
 LocalTrajectoryBuilder3D::AddAccumulatedRangeData(
     const common::Time time,
-    const sensor::RangeData& filtered_range_data_in_tracking) {
+    const sensor::RangeData &filtered_range_data_in_tracking) {
   if (filtered_range_data_in_tracking.returns.empty()) {
     LOG(WARNING) << "Dropped empty range data.";
     return nullptr;
@@ -248,7 +247,7 @@ LocalTrajectoryBuilder3D::AddAccumulatedRangeData(
 }
 
 void LocalTrajectoryBuilder3D::AddOdometryData(
-    const sensor::OdometryData& odometry_data) {
+    const sensor::OdometryData &odometry_data) {
   if (extrapolator_ == nullptr) {
     // Until we've initialized the extrapolator we cannot add odometry data.
     LOG(INFO) << "Extrapolator not yet initialized.";
@@ -260,19 +259,19 @@ void LocalTrajectoryBuilder3D::AddOdometryData(
 std::unique_ptr<LocalTrajectoryBuilder3D::InsertionResult>
 LocalTrajectoryBuilder3D::InsertIntoSubmap(
     const common::Time time,
-    const sensor::RangeData& filtered_range_data_in_local,
-    const sensor::RangeData& filtered_range_data_in_tracking,
-    const sensor::PointCloud& high_resolution_point_cloud_in_tracking,
-    const sensor::PointCloud& low_resolution_point_cloud_in_tracking,
-    const transform::Rigid3d& pose_estimate,
-    const Eigen::Quaterniond& gravity_alignment) {
+    const sensor::RangeData &filtered_range_data_in_local,
+    const sensor::RangeData &filtered_range_data_in_tracking,
+    const sensor::PointCloud &high_resolution_point_cloud_in_tracking,
+    const sensor::PointCloud &low_resolution_point_cloud_in_tracking,
+    const transform::Rigid3d &pose_estimate,
+    const Eigen::Quaterniond &gravity_alignment) {
   if (motion_filter_.IsSimilar(time, pose_estimate)) {
     return nullptr;
   }
   // Querying the active submaps must be done here before calling
   // InsertRangeData() since the queried values are valid for next insertion.
   std::vector<std::shared_ptr<const mapping::Submap3D>> insertion_submaps;
-  for (const std::shared_ptr<mapping::Submap3D>& submap :
+  for (const std::shared_ptr<mapping::Submap3D> &submap :
        active_submaps_.submaps()) {
     insertion_submaps.push_back(submap);
   }
@@ -289,7 +288,7 @@ LocalTrajectoryBuilder3D::InsertIntoSubmap(
                           mapping::TrajectoryNode::Data{
                               time,
                               gravity_alignment,
-                              {},  // 'filtered_point_cloud' is only used in 2D.
+                              {}, // 'filtered_point_cloud' is only used in 2D.
                               high_resolution_point_cloud_in_tracking,
                               low_resolution_point_cloud_in_tracking,
                               rotational_scan_matcher_histogram,
@@ -298,25 +297,25 @@ LocalTrajectoryBuilder3D::InsertIntoSubmap(
 }
 
 void LocalTrajectoryBuilder3D::RegisterMetrics(
-    metrics::FamilyFactory* family_factory) {
-  auto* latency = family_factory->NewGaugeFamily(
+    metrics::FamilyFactory *family_factory) {
+  auto *latency = family_factory->NewGaugeFamily(
       "mapping_internal_3d_local_trajectory_builder_latency",
       "Duration from first incoming point cloud in accumulation to local slam "
       "result");
   kLocalSlamLatencyMetric = latency->Add({});
   auto score_boundaries = metrics::Histogram::FixedWidth(0.05, 20);
-  auto* scores = family_factory->NewHistogramFamily(
+  auto *scores = family_factory->NewHistogramFamily(
       "mapping_internal_3d_local_trajectory_builder_scores",
       "Local scan matcher scores", score_boundaries);
   kRealTimeCorrelativeScanMatcherScoreMetric =
       scores->Add({{"scan_matcher", "real_time_correlative"}});
   auto cost_boundaries = metrics::Histogram::ScaledPowersOf(2, 0.01, 100);
-  auto* costs = family_factory->NewHistogramFamily(
+  auto *costs = family_factory->NewHistogramFamily(
       "mapping_internal_3d_local_trajectory_builder_costs",
       "Local scan matcher costs", cost_boundaries);
   kCeresScanMatcherCostMetric = costs->Add({{"scan_matcher", "ceres"}});
   auto distance_boundaries = metrics::Histogram::ScaledPowersOf(2, 0.01, 10);
-  auto* residuals = family_factory->NewHistogramFamily(
+  auto *residuals = family_factory->NewHistogramFamily(
       "mapping_internal_3d_local_trajectory_builder_residuals",
       "Local scan matcher residuals", distance_boundaries);
   kScanMatcherResidualDistanceMetric =
@@ -324,5 +323,5 @@ void LocalTrajectoryBuilder3D::RegisterMetrics(
   kScanMatcherResidualAngleMetric = residuals->Add({{"component", "angle"}});
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

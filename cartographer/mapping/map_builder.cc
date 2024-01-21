@@ -42,9 +42,9 @@ namespace {
 using mapping::proto::SerializedData;
 
 std::vector<std::string> SelectRangeSensorIds(
-    const std::set<MapBuilder::SensorId>& expected_sensor_ids) {
+    const std::set<MapBuilder::SensorId> &expected_sensor_ids) {
   std::vector<std::string> range_sensor_ids;
-  for (const MapBuilder::SensorId& sensor_id : expected_sensor_ids) {
+  for (const MapBuilder::SensorId &sensor_id : expected_sensor_ids) {
     if (sensor_id.type == MapBuilder::SensorId::SensorType::RANGE) {
       range_sensor_ids.push_back(sensor_id.id);
     }
@@ -52,10 +52,10 @@ std::vector<std::string> SelectRangeSensorIds(
   return range_sensor_ids;
 }
 
-}  // namespace
+} // namespace
 
 proto::MapBuilderOptions CreateMapBuilderOptions(
-    common::LuaParameterDictionary* const parameter_dictionary) {
+    common::LuaParameterDictionary *const parameter_dictionary) {
   proto::MapBuilderOptions options;
   options.set_use_trajectory_builder_2d(
       parameter_dictionary->GetBool("use_trajectory_builder_2d"));
@@ -70,7 +70,7 @@ proto::MapBuilderOptions CreateMapBuilderOptions(
   return options;
 }
 
-MapBuilder::MapBuilder(const proto::MapBuilderOptions& options)
+MapBuilder::MapBuilder(const proto::MapBuilderOptions &options)
     : options_(options), thread_pool_(options.num_background_threads()) {
   CHECK(options.use_trajectory_builder_2d() ^
         options.use_trajectory_builder_3d());
@@ -96,8 +96,8 @@ MapBuilder::MapBuilder(const proto::MapBuilderOptions& options)
 }
 
 int MapBuilder::AddTrajectoryBuilder(
-    const std::set<SensorId>& expected_sensor_ids,
-    const proto::TrajectoryBuilderOptions& trajectory_options,
+    const std::set<SensorId> &expected_sensor_ids,
+    const proto::TrajectoryBuilderOptions &trajectory_options,
     LocalSlamResultCallback local_slam_result_callback) {
   const int trajectory_id = trajectory_builders_.size();
   if (options_.use_trajectory_builder_3d()) {
@@ -107,13 +107,13 @@ int MapBuilder::AddTrajectoryBuilder(
           trajectory_options.trajectory_builder_3d_options(),
           SelectRangeSensorIds(expected_sensor_ids));
     }
-    DCHECK(dynamic_cast<PoseGraph3D*>(pose_graph_.get()));
+    DCHECK(dynamic_cast<PoseGraph3D *>(pose_graph_.get()));
     trajectory_builders_.push_back(
         common::make_unique<CollatedTrajectoryBuilder>(
             sensor_collator_.get(), trajectory_id, expected_sensor_ids,
             CreateGlobalTrajectoryBuilder3D(
                 std::move(local_trajectory_builder), trajectory_id,
-                static_cast<PoseGraph3D*>(pose_graph_.get()),
+                static_cast<PoseGraph3D *>(pose_graph_.get()),
                 local_slam_result_callback)));
   } else {
     std::unique_ptr<LocalTrajectoryBuilder2D> local_trajectory_builder;
@@ -122,17 +122,17 @@ int MapBuilder::AddTrajectoryBuilder(
           trajectory_options.trajectory_builder_2d_options(),
           SelectRangeSensorIds(expected_sensor_ids));
     }
-    DCHECK(dynamic_cast<PoseGraph2D*>(pose_graph_.get()));
+    DCHECK(dynamic_cast<PoseGraph2D *>(pose_graph_.get()));
     trajectory_builders_.push_back(
         common::make_unique<CollatedTrajectoryBuilder>(
             sensor_collator_.get(), trajectory_id, expected_sensor_ids,
             CreateGlobalTrajectoryBuilder2D(
                 std::move(local_trajectory_builder), trajectory_id,
-                static_cast<PoseGraph2D*>(pose_graph_.get()),
+                static_cast<PoseGraph2D *>(pose_graph_.get()),
                 local_slam_result_callback)));
 
     if (trajectory_options.has_overlapping_submaps_trimmer_2d()) {
-      const auto& trimmer_options =
+      const auto &trimmer_options =
           trajectory_options.overlapping_submaps_trimmer_2d();
       pose_graph_->AddTrimmer(common::make_unique<OverlappingSubmapsTrimmer2D>(
           trimmer_options.fresh_submaps_count(),
@@ -150,7 +150,7 @@ int MapBuilder::AddTrajectoryBuilder(
         trajectory_id, kSubmapsToKeep));
   }
   if (trajectory_options.has_initial_trajectory_pose()) {
-    const auto& initial_trajectory_pose =
+    const auto &initial_trajectory_pose =
         trajectory_options.initial_trajectory_pose();
     pose_graph_->SetInitialTrajectoryPose(
         trajectory_id, initial_trajectory_pose.to_trajectory_id(),
@@ -158,7 +158,7 @@ int MapBuilder::AddTrajectoryBuilder(
         common::FromUniversal(initial_trajectory_pose.timestamp()));
   }
   proto::TrajectoryBuilderOptionsWithSensorIds options_with_sensor_ids_proto;
-  for (const auto& sensor_id : expected_sensor_ids) {
+  for (const auto &sensor_id : expected_sensor_ids) {
     *options_with_sensor_ids_proto.add_sensor_id() = ToProto(sensor_id);
   }
   *options_with_sensor_ids_proto.mutable_trajectory_builder_options() =
@@ -169,8 +169,8 @@ int MapBuilder::AddTrajectoryBuilder(
 }
 
 int MapBuilder::AddTrajectoryForDeserialization(
-    const proto::TrajectoryBuilderOptionsWithSensorIds&
-        options_with_sensor_ids_proto) {
+    const proto::TrajectoryBuilderOptionsWithSensorIds
+        &options_with_sensor_ids_proto) {
   const int trajectory_id = trajectory_builders_.size();
   trajectory_builders_.emplace_back();
   all_trajectory_builder_options_.push_back(options_with_sensor_ids_proto);
@@ -183,8 +183,9 @@ void MapBuilder::FinishTrajectory(const int trajectory_id) {
   pose_graph_->FinishTrajectory(trajectory_id);
 }
 
-std::string MapBuilder::SubmapToProto(
-    const SubmapId& submap_id, proto::SubmapQuery::Response* const response) {
+std::string
+MapBuilder::SubmapToProto(const SubmapId &submap_id,
+                          proto::SubmapQuery::Response *const response) {
   if (submap_id.trajectory_id < 0 ||
       submap_id.trajectory_id >= num_trajectory_builders()) {
     return "Requested submap from trajectory " +
@@ -202,23 +203,23 @@ std::string MapBuilder::SubmapToProto(
   return "";
 }
 
-void MapBuilder::SerializeState(io::ProtoStreamWriterInterface* const writer) {
+void MapBuilder::SerializeState(io::ProtoStreamWriterInterface *const writer) {
   io::WritePbStream(*pose_graph_, all_trajectory_builder_options_, writer);
 }
 
-void MapBuilder::LoadState(io::ProtoStreamReaderInterface* const reader,
+void MapBuilder::LoadState(io::ProtoStreamReaderInterface *const reader,
                            bool load_frozen_state) {
   io::ProtoStreamDeserializer deserializer(reader);
 
   // Create a copy of the pose_graph_proto, such that we can re-write the
   // trajectory ids.
   proto::PoseGraph pose_graph_proto = deserializer.pose_graph();
-  const auto& all_builder_options_proto =
+  const auto &all_builder_options_proto =
       deserializer.all_trajectory_builder_options();
 
   std::map<int, int> trajectory_remapping;
-  for (auto& trajectory_proto : *pose_graph_proto.mutable_trajectory()) {
-    const auto& options_with_sensor_ids_proto =
+  for (auto &trajectory_proto : *pose_graph_proto.mutable_trajectory()) {
+    const auto &options_with_sensor_ids_proto =
         all_builder_options_proto.options_with_sensor_ids(
             trajectory_proto.trajectory_id());
     const int new_trajectory_id =
@@ -234,7 +235,7 @@ void MapBuilder::LoadState(io::ProtoStreamReaderInterface* const reader,
   }
 
   // Apply the calculated remapping to constraints in the pose graph proto.
-  for (auto& constraint_proto : *pose_graph_proto.mutable_constraint()) {
+  for (auto &constraint_proto : *pose_graph_proto.mutable_constraint()) {
     constraint_proto.mutable_submap_id()->set_trajectory_id(
         trajectory_remapping.at(constraint_proto.submap_id().trajectory_id()));
     constraint_proto.mutable_node_id()->set_trajectory_id(
@@ -242,9 +243,9 @@ void MapBuilder::LoadState(io::ProtoStreamReaderInterface* const reader,
   }
 
   MapById<SubmapId, transform::Rigid3d> submap_poses;
-  for (const proto::Trajectory& trajectory_proto :
+  for (const proto::Trajectory &trajectory_proto :
        pose_graph_proto.trajectory()) {
-    for (const proto::Trajectory::Submap& submap_proto :
+    for (const proto::Trajectory::Submap &submap_proto :
          trajectory_proto.submap()) {
       submap_poses.Insert(SubmapId{trajectory_proto.trajectory_id(),
                                    submap_proto.submap_index()},
@@ -253,9 +254,9 @@ void MapBuilder::LoadState(io::ProtoStreamReaderInterface* const reader,
   }
 
   MapById<NodeId, transform::Rigid3d> node_poses;
-  for (const proto::Trajectory& trajectory_proto :
+  for (const proto::Trajectory &trajectory_proto :
        pose_graph_proto.trajectory()) {
-    for (const proto::Trajectory::Node& node_proto : trajectory_proto.node()) {
+    for (const proto::Trajectory::Node &node_proto : trajectory_proto.node()) {
       node_poses.Insert(
           NodeId{trajectory_proto.trajectory_id(), node_proto.node_index()},
           transform::ToRigid3(node_proto.pose()));
@@ -263,7 +264,7 @@ void MapBuilder::LoadState(io::ProtoStreamReaderInterface* const reader,
   }
 
   // Set global poses of landmarks.
-  for (const auto& landmark : pose_graph_proto.landmark_poses()) {
+  for (const auto &landmark : pose_graph_proto.landmark_poses()) {
     pose_graph_->SetLandmarkPose(landmark.landmark_id(),
                                  transform::ToRigid3(landmark.global_pose()));
   }
@@ -271,80 +272,83 @@ void MapBuilder::LoadState(io::ProtoStreamReaderInterface* const reader,
   SerializedData proto;
   while (deserializer.ReadNextSerializedData(&proto)) {
     switch (proto.data_case()) {
-      case SerializedData::kPoseGraph:
-        LOG(ERROR) << "Found multiple serialized `PoseGraph`. Serialized "
-                      "stream likely corrupt!.";
+    case SerializedData::kPoseGraph:
+      LOG(ERROR) << "Found multiple serialized `PoseGraph`. Serialized "
+                    "stream likely corrupt!.";
+      break;
+    case SerializedData::kAllTrajectoryBuilderOptions:
+      LOG(ERROR) << "Found multiple serialized "
+                    "`AllTrajectoryBuilderOptions`. Serialized stream likely "
+                    "corrupt!.";
+      break;
+    case SerializedData::kSubmap: {
+      proto.mutable_submap()->mutable_submap_id()->set_trajectory_id(
+          trajectory_remapping.at(proto.submap().submap_id().trajectory_id()));
+      const transform::Rigid3d &submap_pose =
+          submap_poses.at(SubmapId{proto.submap().submap_id().trajectory_id(),
+                                   proto.submap().submap_id().submap_index()});
+      pose_graph_->AddSubmapFromProto(submap_pose, proto.submap());
+      break;
+    }
+    case SerializedData::kNode: {
+      proto.mutable_node()->mutable_node_id()->set_trajectory_id(
+          trajectory_remapping.at(proto.node().node_id().trajectory_id()));
+      const transform::Rigid3d &node_pose =
+          node_poses.at(NodeId{proto.node().node_id().trajectory_id(),
+                               proto.node().node_id().node_index()});
+      pose_graph_->AddNodeFromProto(node_pose, proto.node());
+      break;
+    }
+    case SerializedData::kTrajectoryData: {
+      proto.mutable_trajectory_data()->set_trajectory_id(
+          trajectory_remapping.at(proto.trajectory_data().trajectory_id()));
+      pose_graph_->SetTrajectoryDataFromProto(proto.trajectory_data());
+      break;
+    }
+    case SerializedData::kImuData: {
+      if (load_frozen_state)
         break;
-      case SerializedData::kAllTrajectoryBuilderOptions:
-        LOG(ERROR) << "Found multiple serialized "
-                      "`AllTrajectoryBuilderOptions`. Serialized stream likely "
-                      "corrupt!.";
+      pose_graph_->AddImuData(
+          trajectory_remapping.at(proto.imu_data().trajectory_id()),
+          sensor::FromProto(proto.imu_data().imu_data()));
+      break;
+    }
+    case SerializedData::kOdometryData: {
+      if (load_frozen_state)
         break;
-      case SerializedData::kSubmap: {
-        proto.mutable_submap()->mutable_submap_id()->set_trajectory_id(
-            trajectory_remapping.at(
-                proto.submap().submap_id().trajectory_id()));
-        const transform::Rigid3d& submap_pose = submap_poses.at(
-            SubmapId{proto.submap().submap_id().trajectory_id(),
-                     proto.submap().submap_id().submap_index()});
-        pose_graph_->AddSubmapFromProto(submap_pose, proto.submap());
+      pose_graph_->AddOdometryData(
+          trajectory_remapping.at(proto.odometry_data().trajectory_id()),
+          sensor::FromProto(proto.odometry_data().odometry_data()));
+      break;
+    }
+    case SerializedData::kFixedFramePoseData: {
+      if (load_frozen_state)
         break;
-      }
-      case SerializedData::kNode: {
-        proto.mutable_node()->mutable_node_id()->set_trajectory_id(
-            trajectory_remapping.at(proto.node().node_id().trajectory_id()));
-        const transform::Rigid3d& node_pose =
-            node_poses.at(NodeId{proto.node().node_id().trajectory_id(),
-                                 proto.node().node_id().node_index()});
-        pose_graph_->AddNodeFromProto(node_pose, proto.node());
+      pose_graph_->AddFixedFramePoseData(
+          trajectory_remapping.at(
+              proto.fixed_frame_pose_data().trajectory_id()),
+          sensor::FromProto(
+              proto.fixed_frame_pose_data().fixed_frame_pose_data()));
+      break;
+    }
+    case SerializedData::kLandmarkData: {
+      if (load_frozen_state)
         break;
-      }
-      case SerializedData::kTrajectoryData: {
-        proto.mutable_trajectory_data()->set_trajectory_id(
-            trajectory_remapping.at(proto.trajectory_data().trajectory_id()));
-        pose_graph_->SetTrajectoryDataFromProto(proto.trajectory_data());
-        break;
-      }
-      case SerializedData::kImuData: {
-        if (load_frozen_state) break;
-        pose_graph_->AddImuData(
-            trajectory_remapping.at(proto.imu_data().trajectory_id()),
-            sensor::FromProto(proto.imu_data().imu_data()));
-        break;
-      }
-      case SerializedData::kOdometryData: {
-        if (load_frozen_state) break;
-        pose_graph_->AddOdometryData(
-            trajectory_remapping.at(proto.odometry_data().trajectory_id()),
-            sensor::FromProto(proto.odometry_data().odometry_data()));
-        break;
-      }
-      case SerializedData::kFixedFramePoseData: {
-        if (load_frozen_state) break;
-        pose_graph_->AddFixedFramePoseData(
-            trajectory_remapping.at(
-                proto.fixed_frame_pose_data().trajectory_id()),
-            sensor::FromProto(
-                proto.fixed_frame_pose_data().fixed_frame_pose_data()));
-        break;
-      }
-      case SerializedData::kLandmarkData: {
-        if (load_frozen_state) break;
-        pose_graph_->AddLandmarkData(
-            trajectory_remapping.at(proto.landmark_data().trajectory_id()),
-            sensor::FromProto(proto.landmark_data().landmark_data()));
-        break;
-      }
-      default:
-        LOG(WARNING) << "Skipping unknown message type in stream: "
-                     << proto.GetTypeName();
+      pose_graph_->AddLandmarkData(
+          trajectory_remapping.at(proto.landmark_data().trajectory_id()),
+          sensor::FromProto(proto.landmark_data().landmark_data()));
+      break;
+    }
+    default:
+      LOG(WARNING) << "Skipping unknown message type in stream: "
+                   << proto.GetTypeName();
     }
   }
 
   if (load_frozen_state) {
     // Add information about which nodes belong to which submap.
     // Required for 3D pure localization.
-    for (const proto::PoseGraph::Constraint& constraint_proto :
+    for (const proto::PoseGraph::Constraint &constraint_proto :
          pose_graph_proto.constraint()) {
       if (constraint_proto.tag() !=
           proto::PoseGraph::Constraint::INTRA_SUBMAP) {
@@ -366,5 +370,5 @@ void MapBuilder::LoadState(io::ProtoStreamReaderInterface* const reader,
   CHECK(reader->eof());
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

@@ -22,13 +22,13 @@
 namespace cartographer {
 namespace io {
 
-FakeFileWriter::FakeFileWriter(const std::string& filename,
+FakeFileWriter::FakeFileWriter(const std::string &filename,
                                std::shared_ptr<std::vector<char>> content)
     : is_closed_(false), content_(content), filename_(filename) {
   CHECK(content != nullptr);
 }
 
-bool FakeFileWriter::Write(const char* const data, const size_t len) {
+bool FakeFileWriter::Write(const char *const data, const size_t len) {
   EXPECT_FALSE(is_closed_);
   content_->insert(content_->end(), data, data + len);
   return true;
@@ -40,7 +40,7 @@ bool FakeFileWriter::Close() {
   return true;
 }
 
-bool FakeFileWriter::WriteHeader(const char* const data, const size_t len) {
+bool FakeFileWriter::WriteHeader(const char *const data, const size_t len) {
   EXPECT_FALSE(is_closed_);
   if (content_->size() < len) {
     content_->resize(len);
@@ -51,5 +51,5 @@ bool FakeFileWriter::WriteHeader(const char* const data, const size_t len) {
 
 std::string FakeFileWriter::GetFilename() { return filename_; }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

@@ -25,13 +25,13 @@ namespace {
 
 // Implementation of histogram that does nothing.
 class NullHistogram : public Histogram {
- public:
+public:
   void Observe(double) override {}
 };
 
-}  // namespace
+} // namespace
 
-Histogram* Histogram::Null() {
+Histogram *Histogram::Null() {
   static NullHistogram null_histogram;
   return &null_histogram;
 }
@@ -47,9 +47,8 @@ Histogram::BucketBoundaries Histogram::FixedWidth(double width,
   return result;
 }
 
-Histogram::BucketBoundaries Histogram::ScaledPowersOf(double base,
-                                                      double scale_factor,
-                                                      double max_value) {
+Histogram::BucketBoundaries
+Histogram::ScaledPowersOf(double base, double scale_factor, double max_value) {
   CHECK_GT(base, 1);
   CHECK_GT(scale_factor, 0);
   BucketBoundaries result;
@@ -61,5 +60,5 @@ Histogram::BucketBoundaries Histogram::ScaledPowersOf(double base,
   return result;
 }
 
-}  // namespace metrics
-}  // namespace cartographer
+} // namespace metrics
+} // namespace cartographer

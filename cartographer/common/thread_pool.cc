@@ -16,10 +16,10 @@
 
 #include "cartographer/common/thread_pool.h"
 
-#include <unistd.h>
 #include <algorithm>
 #include <chrono>
 #include <numeric>
+#include <unistd.h>
 
 #include "cartographer/common/make_unique.h"
 #include "cartographer/common/task.h"
@@ -28,9 +28,9 @@
 namespace cartographer {
 namespace common {
 
-void ThreadPoolInterface::Execute(Task* task) { task->Execute(); }
+void ThreadPoolInterface::Execute(Task *task) { task->Execute(); }
 
-void ThreadPoolInterface::SetThreadPool(Task* task) {
+void ThreadPoolInterface::SetThreadPool(Task *task) {
   task->SetThreadPool(this);
 }
 
@@ -49,12 +49,12 @@ ThreadPool::~ThreadPool() {
     CHECK_EQ(task_queue_.size(), 0);
     CHECK_EQ(tasks_not_ready_.size(), 0);
   }
-  for (std::thread& thread : pool_) {
+  for (std::thread &thread : pool_) {
     thread.join();
   }
 }
 
-void ThreadPool::NotifyDependenciesCompleted(Task* task) {
+void ThreadPool::NotifyDependenciesCompleted(Task *task) {
   MutexLocker locker(&mutex_);
   CHECK(running_);
   auto it = tasks_not_ready_.find(task);
@@ -104,5 +104,5 @@ void ThreadPool::DoWork() {
   }
 }
 
-}  // namespace common
-}  // namespace cartographer
+} // namespace common
+} // namespace cartographer

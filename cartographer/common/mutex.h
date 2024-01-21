@@ -30,7 +30,7 @@ namespace common {
 #if defined(__SUPPORT_TS_ANNOTATION__) || defined(__clang__)
 #define THREAD_ANNOTATION_ATTRIBUTE__(x) __attribute__((x))
 #else
-#define THREAD_ANNOTATION_ATTRIBUTE__(x)  // no-op
+#define THREAD_ANNOTATION_ATTRIBUTE__(x) // no-op
 #endif
 
 #define CAPABILITY(x) THREAD_ANNOTATION_ATTRIBUTE__(capability(x))
@@ -41,30 +41,30 @@ namespace common {
 
 #define PT_GUARDED_BY(x) THREAD_ANNOTATION_ATTRIBUTE__(pt_guarded_by(x))
 
-#define REQUIRES(...) \
+#define REQUIRES(...)                                                          \
   THREAD_ANNOTATION_ATTRIBUTE__(requires_capability(__VA_ARGS__))
 
-#define ACQUIRE(...) \
+#define ACQUIRE(...)                                                           \
   THREAD_ANNOTATION_ATTRIBUTE__(acquire_capability(__VA_ARGS__))
 
-#define RELEASE(...) \
+#define RELEASE(...)                                                           \
   THREAD_ANNOTATION_ATTRIBUTE__(release_capability(__VA_ARGS__))
 
 #define EXCLUDES(...) THREAD_ANNOTATION_ATTRIBUTE__(locks_excluded(__VA_ARGS__))
 
-#define NO_THREAD_SAFETY_ANALYSIS \
+#define NO_THREAD_SAFETY_ANALYSIS                                              \
   THREAD_ANNOTATION_ATTRIBUTE__(no_thread_safety_analysis)
 
 // Defines an annotated mutex that can only be locked through its scoped locker
 // implementation.
 class CAPABILITY("mutex") Mutex {
- public:
+public:
   // A RAII class that acquires a mutex in its constructor, and
   // releases it in its destructor. It also implements waiting functionality on
   // conditions that get checked whenever the mutex is released.
   class SCOPED_CAPABILITY Locker {
-   public:
-    Locker(Mutex* mutex) ACQUIRE(mutex) : mutex_(mutex), lock_(mutex->mutex_) {}
+  public:
+    Locker(Mutex *mutex) ACQUIRE(mutex) : mutex_(mutex), lock_(mutex->mutex_) {}
 
     ~Locker() RELEASE() {
       mutex_->condition_.notify_all();
@@ -82,19 +82,19 @@ class CAPABILITY("mutex") Mutex {
       return mutex_->condition_.wait_for(lock_, timeout, predicate);
     }
 
-   private:
-    Mutex* mutex_;
+  private:
+    Mutex *mutex_;
     std::unique_lock<std::mutex> lock_;
   };
 
- private:
+private:
   std::condition_variable condition_;
   std::mutex mutex_;
 };
 
 using MutexLocker = Mutex::Locker;
 
-}  // namespace common
-}  // namespace cartographer
+} // namespace common
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_COMMON_MUTEX_H_
+#endif // CARTOGRAPHER_COMMON_MUTEX_H_

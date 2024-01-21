@@ -27,7 +27,7 @@ namespace cartographer {
 namespace cloud {
 
 class MapBuilderServerInterface {
- public:
+public:
   virtual ~MapBuilderServerInterface() {}
 
   // Starts the gRPC server, the 'LocalTrajectoryUploader' and the SLAM thread.
@@ -47,14 +47,14 @@ class MapBuilderServerInterface {
 };
 
 // Registers all metrics for the MapBuilderServer.
-void RegisterMapBuilderServerMetrics(metrics::FamilyFactory* factory);
+void RegisterMapBuilderServerMetrics(metrics::FamilyFactory *factory);
 
 // Returns MapBuilderServer with the actual implementation.
 std::unique_ptr<MapBuilderServerInterface> CreateMapBuilderServer(
-    const proto::MapBuilderServerOptions& map_builder_server_options,
+    const proto::MapBuilderServerOptions &map_builder_server_options,
     std::unique_ptr<mapping::MapBuilderInterface> map_builder);
 
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_MAP_BUILDER_SERVER_INTERFACE_H
+#endif // CARTOGRAPHER_CLOUD_MAP_BUILDER_SERVER_INTERFACE_H

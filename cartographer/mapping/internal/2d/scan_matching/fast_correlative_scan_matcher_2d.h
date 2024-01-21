@@ -41,19 +41,19 @@ namespace scan_matching {
 
 proto::FastCorrelativeScanMatcherOptions2D
 CreateFastCorrelativeScanMatcherOptions2D(
-    common::LuaParameterDictionary* parameter_dictionary);
+    common::LuaParameterDictionary *parameter_dictionary);
 
 // A precomputed grid that contains in each cell (x0, y0) the maximum
 // probability in the width x width area defined by x0 <= x < x0 + width and
 // y0 <= y < y0.
 class PrecomputationGrid2D {
- public:
-  PrecomputationGrid2D(const Grid2D& grid, const CellLimits& limits, int width,
-                       std::vector<float>* reusable_intermediate_grid);
+public:
+  PrecomputationGrid2D(const Grid2D &grid, const CellLimits &limits, int width,
+                       std::vector<float> *reusable_intermediate_grid);
 
   // Returns a value between 0 and 255 to represent probabilities between
   // min_score and max_score.
-  int GetValue(const Eigen::Array2i& xy_index) const {
+  int GetValue(const Eigen::Array2i &xy_index) const {
     const Eigen::Array2i local_xy_index = xy_index - offset_;
     // The static_cast<unsigned> is for performance to check with 2 comparisons
     // xy_index.x() < offset_.x() || xy_index.y() < offset_.y() ||
@@ -75,7 +75,7 @@ class PrecomputationGrid2D {
     return min_score_ + value * ((max_score_ - min_score_) / 255.f);
   }
 
- private:
+private:
   uint8 ComputeCellValue(float probability) const;
 
   // Offset of the precomputation grid in relation to the 'grid'
@@ -93,69 +93,70 @@ class PrecomputationGrid2D {
 };
 
 class PrecomputationGridStack2D {
- public:
+public:
   PrecomputationGridStack2D(
-      const Grid2D& grid,
-      const proto::FastCorrelativeScanMatcherOptions2D& options);
+      const Grid2D &grid,
+      const proto::FastCorrelativeScanMatcherOptions2D &options);
 
-  const PrecomputationGrid2D& Get(int index) {
+  const PrecomputationGrid2D &Get(int index) {
     return precomputation_grids_[index];
   }
 
   int max_depth() const { return precomputation_grids_.size() - 1; }
 
- private:
+private:
   std::vector<PrecomputationGrid2D> precomputation_grids_;
 };
 
 // An implementation of "Real-Time Correlative Scan Matching" by Olson.
 class FastCorrelativeScanMatcher2D {
- public:
+public:
   FastCorrelativeScanMatcher2D(
-      const Grid2D& grid,
-      const proto::FastCorrelativeScanMatcherOptions2D& options);
+      const Grid2D &grid,
+      const proto::FastCorrelativeScanMatcherOptions2D &options);
   ~FastCorrelativeScanMatcher2D();
 
-  FastCorrelativeScanMatcher2D(const FastCorrelativeScanMatcher2D&) = delete;
-  FastCorrelativeScanMatcher2D& operator=(const FastCorrelativeScanMatcher2D&) =
-      delete;
+  FastCorrelativeScanMatcher2D(const FastCorrelativeScanMatcher2D &) = delete;
+  FastCorrelativeScanMatcher2D &
+  operator=(const FastCorrelativeScanMatcher2D &) = delete;
 
   // Aligns 'point_cloud' within the 'grid' given an
   // 'initial_pose_estimate'. If a score above 'min_score' (excluding equality)
   // is possible, true is returned, and 'score' and 'pose_estimate' are updated
   // with the result.
-  bool Match(const transform::Rigid2d& initial_pose_estimate,
-             const sensor::PointCloud& point_cloud, float min_score,
-             float* score, transform::Rigid2d* pose_estimate) const;
+  bool Match(const transform::Rigid2d &initial_pose_estimate,
+             const sensor::PointCloud &point_cloud, float min_score,
+             float *score, transform::Rigid2d *pose_estimate) const;
 
   // Aligns 'point_cloud' within the full 'grid', i.e., not
   // restricted to the configured search window. If a score above 'min_score'
   // (excluding equality) is possible, true is returned, and 'score' and
   // 'pose_estimate' are updated with the result.
-  bool MatchFullSubmap(const sensor::PointCloud& point_cloud, float min_score,
-                       float* score, transform::Rigid2d* pose_estimate) const;
+  bool MatchFullSubmap(const sensor::PointCloud &point_cloud, float min_score,
+                       float *score, transform::Rigid2d *pose_estimate) const;
 
- private:
+private:
   // The actual implementation of the scan matcher, called by Match() and
   // MatchFullSubmap() with appropriate 'initial_pose_estimate' and
   // 'search_parameters'.
-  bool MatchWithSearchParameters(
-      SearchParameters search_parameters,
-      const transform::Rigid2d& initial_pose_estimate,
-      const sensor::PointCloud& point_cloud, float min_score, float* score,
-      transform::Rigid2d* pose_estimate) const;
+  bool
+  MatchWithSearchParameters(SearchParameters search_parameters,
+                            const transform::Rigid2d &initial_pose_estimate,
+                            const sensor::PointCloud &point_cloud,
+                            float min_score, float *score,
+                            transform::Rigid2d *pose_estimate) const;
   std::vector<Candidate2D> ComputeLowestResolutionCandidates(
-      const std::vector<DiscreteScan2D>& discrete_scans,
-      const SearchParameters& search_parameters) const;
+      const std::vector<DiscreteScan2D> &discrete_scans,
+      const SearchParameters &search_parameters) const;
   std::vector<Candidate2D> GenerateLowestResolutionCandidates(
-      const SearchParameters& search_parameters) const;
-  void ScoreCandidates(const PrecomputationGrid2D& precomputation_grid,
-                       const std::vector<DiscreteScan2D>& discrete_scans,
-                       const SearchParameters& search_parameters,
-                       std::vector<Candidate2D>* const candidates) const;
-  Candidate2D BranchAndBound(const std::vector<DiscreteScan2D>& discrete_scans,
-                             const SearchParameters& search_parameters,
-                             const std::vector<Candidate2D>& candidates,
+      const SearchParameters &search_parameters) const;
+  void ScoreCandidates(const PrecomputationGrid2D &precomputation_grid,
+                       const std::vector<DiscreteScan2D> &discrete_scans,
+                       const SearchParameters &search_parameters,
+                       std::vector<Candidate2D> *const candidates) const;
+  Candidate2D BranchAndBound(const std::vector<DiscreteScan2D> &discrete_scans,
+                             const SearchParameters &search_parameters,
+                             const std::vector<Candidate2D> &candidates,
                              int candidate_depth, float min_score) const;
 
   const proto::FastCorrelativeScanMatcherOptions2D options_;
@@ -163,8 +164,8 @@ class FastCorrelativeScanMatcher2D {
   std::unique_ptr<PrecomputationGridStack2D> precomputation_grid_stack_;
 };
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_2D_SCAN_MATCHING_FAST_CORRELATIVE_SCAN_MATCHER_2D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_2D_SCAN_MATCHING_FAST_CORRELATIVE_SCAN_MATCHER_2D_H_

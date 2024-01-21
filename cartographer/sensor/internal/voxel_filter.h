@@ -32,53 +32,53 @@ namespace sensor {
 // contains the first point that fell into it from any of the inserted point
 // clouds.
 class VoxelFilter {
- public:
+public:
   // 'size' is the length of a voxel edge.
   explicit VoxelFilter(float size) : resolution_(size) {}
 
-  VoxelFilter(const VoxelFilter&) = delete;
-  VoxelFilter& operator=(const VoxelFilter&) = delete;
+  VoxelFilter(const VoxelFilter &) = delete;
+  VoxelFilter &operator=(const VoxelFilter &) = delete;
 
   // Returns a voxel filtered copy of 'point_cloud'.
-  PointCloud Filter(const PointCloud& point_cloud);
+  PointCloud Filter(const PointCloud &point_cloud);
 
   // Same for TimedPointCloud.
-  TimedPointCloud Filter(const TimedPointCloud& timed_point_cloud);
+  TimedPointCloud Filter(const TimedPointCloud &timed_point_cloud);
 
   // Same for RangeMeasurement.
-  std::vector<sensor::TimedPointCloudOriginData::RangeMeasurement> Filter(
-      const std::vector<sensor::TimedPointCloudOriginData::RangeMeasurement>&
-          range_measurements);
+  std::vector<sensor::TimedPointCloudOriginData::RangeMeasurement>
+  Filter(const std::vector<sensor::TimedPointCloudOriginData::RangeMeasurement>
+             &range_measurements);
 
- private:
+private:
   using KeyType = std::bitset<3 * 32>;
 
-  static KeyType IndexToKey(const Eigen::Array3i& index);
+  static KeyType IndexToKey(const Eigen::Array3i &index);
 
-  Eigen::Array3i GetCellIndex(const Eigen::Vector3f& point) const;
+  Eigen::Array3i GetCellIndex(const Eigen::Vector3f &point) const;
 
   float resolution_;
   std::unordered_set<KeyType> voxel_set_;
 };
 
 proto::AdaptiveVoxelFilterOptions CreateAdaptiveVoxelFilterOptions(
-    common::LuaParameterDictionary* const parameter_dictionary);
+    common::LuaParameterDictionary *const parameter_dictionary);
 
 class AdaptiveVoxelFilter {
- public:
+public:
   explicit AdaptiveVoxelFilter(
-      const proto::AdaptiveVoxelFilterOptions& options);
+      const proto::AdaptiveVoxelFilterOptions &options);
 
-  AdaptiveVoxelFilter(const AdaptiveVoxelFilter&) = delete;
-  AdaptiveVoxelFilter& operator=(const AdaptiveVoxelFilter&) = delete;
+  AdaptiveVoxelFilter(const AdaptiveVoxelFilter &) = delete;
+  AdaptiveVoxelFilter &operator=(const AdaptiveVoxelFilter &) = delete;
 
-  PointCloud Filter(const PointCloud& point_cloud) const;
+  PointCloud Filter(const PointCloud &point_cloud) const;
 
- private:
+private:
   const proto::AdaptiveVoxelFilterOptions options_;
 };
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_INTERNAL_VOXEL_FILTER_H_
+#endif // CARTOGRAPHER_SENSOR_INTERNAL_VOXEL_FILTER_H_

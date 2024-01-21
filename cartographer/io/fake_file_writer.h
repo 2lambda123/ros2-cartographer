@@ -28,23 +28,23 @@ namespace io {
 
 // Fakes a FileWriter by just writing the data to a std::vector<char>.
 class FakeFileWriter : public FileWriter {
- public:
-  FakeFileWriter(const std::string& filename,
+public:
+  FakeFileWriter(const std::string &filename,
                  std::shared_ptr<std::vector<char>> content);
   ~FakeFileWriter() override = default;
 
-  bool WriteHeader(const char* data, size_t len) override;
-  bool Write(const char* data, size_t len) override;
+  bool WriteHeader(const char *data, size_t len) override;
+  bool Write(const char *data, size_t len) override;
   bool Close() override;
   std::string GetFilename() override;
 
- private:
+private:
   bool is_closed_;
   std::shared_ptr<std::vector<char>> content_;
   std::string filename_;
 };
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_IO_FAKE_FILE_WRITER_H_
+#endif // CARTOGRAPHER_IO_FAKE_FILE_WRITER_H_

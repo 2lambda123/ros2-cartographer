@@ -25,7 +25,7 @@ DEFINE_string(
 DEFINE_string(output_pbstream_file, "",
               "Output filename for the migrated pbstream.");
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   google::InitGoogleLogging(argv[0]);
   FLAGS_logtostderr = true;
   google::SetUsageMessage(

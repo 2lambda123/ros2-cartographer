@@ -28,7 +28,7 @@ namespace mapping {
 namespace test {
 
 std::unique_ptr<::cartographer::common::LuaParameterDictionary>
-ResolveLuaParameters(const std::string& lua_code) {
+ResolveLuaParameters(const std::string &lua_code) {
   auto file_resolver = ::cartographer::common::make_unique<
       ::cartographer::common::ConfigurationFileResolver>(
       std::vector<std::string>{
@@ -88,8 +88,8 @@ proto::Node CreateFakeNode(int trajectory_id, int node_index) {
   return proto;
 }
 
-proto::PoseGraph::Constraint CreateFakeConstraint(const proto::Node& node,
-                                                  const proto::Submap& submap) {
+proto::PoseGraph::Constraint CreateFakeConstraint(const proto::Node &node,
+                                                  const proto::Submap &submap) {
   proto::PoseGraph::Constraint proto;
   proto.mutable_submap_id()->set_submap_index(
       submap.submap_id().submap_index());
@@ -107,42 +107,43 @@ proto::PoseGraph::Constraint CreateFakeConstraint(const proto::Node& node,
   return proto;
 }
 
-proto::Trajectory* CreateTrajectoryIfNeeded(int trajectory_id,
-                                            proto::PoseGraph* pose_graph) {
+proto::Trajectory *CreateTrajectoryIfNeeded(int trajectory_id,
+                                            proto::PoseGraph *pose_graph) {
   for (int i = 0; i < pose_graph->trajectory_size(); ++i) {
-    proto::Trajectory* trajectory = pose_graph->mutable_trajectory(i);
+    proto::Trajectory *trajectory = pose_graph->mutable_trajectory(i);
     if (trajectory->trajectory_id() == trajectory_id) {
       return trajectory;
     }
   }
-  proto::Trajectory* trajectory = pose_graph->add_trajectory();
+  proto::Trajectory *trajectory = pose_graph->add_trajectory();
   trajectory->set_trajectory_id(trajectory_id);
   return trajectory;
 }
 
-proto::PoseGraph::LandmarkPose CreateFakeLandmark(
-    const std::string& landmark_id, const transform::Rigid3d& global_pose) {
+proto::PoseGraph::LandmarkPose
+CreateFakeLandmark(const std::string &landmark_id,
+                   const transform::Rigid3d &global_pose) {
   proto::PoseGraph::LandmarkPose landmark;
   landmark.set_landmark_id(landmark_id);
   *landmark.mutable_global_pose() = transform::ToProto(global_pose);
   return landmark;
 }
 
-void AddToProtoGraph(const proto::Node& node_data,
-                     proto::PoseGraph* pose_graph) {
-  auto* trajectory =
+void AddToProtoGraph(const proto::Node &node_data,
+                     proto::PoseGraph *pose_graph) {
+  auto *trajectory =
       CreateTrajectoryIfNeeded(node_data.node_id().trajectory_id(), pose_graph);
-  auto* node = trajectory->add_node();
+  auto *node = trajectory->add_node();
   node->set_timestamp(node_data.node_data().timestamp());
   node->set_node_index(node_data.node_id().node_index());
   *node->mutable_pose() = node_data.node_data().local_pose();
 }
 
-void AddToProtoGraph(const proto::Submap& submap_data,
-                     proto::PoseGraph* pose_graph) {
-  auto* trajectory = CreateTrajectoryIfNeeded(
+void AddToProtoGraph(const proto::Submap &submap_data,
+                     proto::PoseGraph *pose_graph) {
+  auto *trajectory = CreateTrajectoryIfNeeded(
       submap_data.submap_id().trajectory_id(), pose_graph);
-  auto* submap = trajectory->add_submap();
+  auto *submap = trajectory->add_submap();
   submap->set_submap_index(submap_data.submap_id().submap_index());
   if (submap_data.has_submap_2d()) {
     *submap->mutable_pose() = submap_data.submap_2d().local_pose();
@@ -151,16 +152,16 @@ void AddToProtoGraph(const proto::Submap& submap_data,
   }
 }
 
-void AddToProtoGraph(const proto::PoseGraph::Constraint& constraint,
-                     proto::PoseGraph* pose_graph) {
+void AddToProtoGraph(const proto::PoseGraph::Constraint &constraint,
+                     proto::PoseGraph *pose_graph) {
   *pose_graph->add_constraint() = constraint;
 }
 
-void AddToProtoGraph(const proto::PoseGraph::LandmarkPose& landmark,
-                     proto::PoseGraph* pose_graph) {
+void AddToProtoGraph(const proto::PoseGraph::LandmarkPose &landmark,
+                     proto::PoseGraph *pose_graph) {
   *pose_graph->add_landmark_poses() = landmark;
 }
 
-}  // namespace test
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace test
+} // namespace mapping
+} // namespace cartographer

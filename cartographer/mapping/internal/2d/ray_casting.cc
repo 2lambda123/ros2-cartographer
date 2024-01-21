@@ -26,9 +26,9 @@ constexpr int kSubpixelScale = 1000;
 // We divide each pixel in kSubpixelScale x kSubpixelScale subpixels. 'begin'
 // and 'end' are coordinates at subpixel precision. We compute all pixels in
 // which some part of the line segment connecting 'begin' and 'end' lies.
-void CastRay(const Eigen::Array2i& begin, const Eigen::Array2i& end,
-             const std::vector<uint16>& miss_table,
-             ProbabilityGrid* const probability_grid) {
+void CastRay(const Eigen::Array2i &begin, const Eigen::Array2i &end,
+             const std::vector<uint16> &miss_table,
+             ProbabilityGrid *const probability_grid) {
   // For simplicity, we order 'begin' and 'end' by their x coordinate.
   if (begin.x() > end.x()) {
     CastRay(end, begin, miss_table, probability_grid);
@@ -145,14 +145,14 @@ void CastRay(const Eigen::Array2i& begin, const Eigen::Array2i& end,
   CHECK_EQ(current.y(), end.y() / kSubpixelScale);
 }
 
-void GrowAsNeeded(const sensor::RangeData& range_data,
-                  ProbabilityGrid* const probability_grid) {
+void GrowAsNeeded(const sensor::RangeData &range_data,
+                  ProbabilityGrid *const probability_grid) {
   Eigen::AlignedBox2f bounding_box(range_data.origin.head<2>());
   constexpr float kPadding = 1e-6f;
-  for (const Eigen::Vector3f& hit : range_data.returns) {
+  for (const Eigen::Vector3f &hit : range_data.returns) {
     bounding_box.extend(hit.head<2>());
   }
-  for (const Eigen::Vector3f& miss : range_data.misses) {
+  for (const Eigen::Vector3f &miss : range_data.misses) {
     bounding_box.extend(miss.head<2>());
   }
   probability_grid->GrowLimits(bounding_box.min() -
@@ -161,16 +161,16 @@ void GrowAsNeeded(const sensor::RangeData& range_data,
                                kPadding * Eigen::Vector2f::Ones());
 }
 
-}  // namespace
+} // namespace
 
-void CastRays(const sensor::RangeData& range_data,
-              const std::vector<uint16>& hit_table,
-              const std::vector<uint16>& miss_table,
+void CastRays(const sensor::RangeData &range_data,
+              const std::vector<uint16> &hit_table,
+              const std::vector<uint16> &miss_table,
               const bool insert_free_space,
-              ProbabilityGrid* const probability_grid) {
+              ProbabilityGrid *const probability_grid) {
   GrowAsNeeded(range_data, probability_grid);
 
-  const MapLimits& limits = probability_grid->limits();
+  const MapLimits &limits = probability_grid->limits();
   const double superscaled_resolution = limits.resolution() / kSubpixelScale;
   const MapLimits superscaled_limits(
       superscaled_resolution, limits.max(),
@@ -181,7 +181,7 @@ void CastRays(const sensor::RangeData& range_data,
   // Compute and add the end points.
   std::vector<Eigen::Array2i> ends;
   ends.reserve(range_data.returns.size());
-  for (const Eigen::Vector3f& hit : range_data.returns) {
+  for (const Eigen::Vector3f &hit : range_data.returns) {
     ends.push_back(superscaled_limits.GetCellIndex(hit.head<2>()));
     probability_grid->ApplyLookupTable(ends.back() / kSubpixelScale, hit_table);
   }
@@ -191,16 +191,16 @@ void CastRays(const sensor::RangeData& range_data,
   }
 
   // Now add the misses.
-  for (const Eigen::Array2i& end : ends) {
+  for (const Eigen::Array2i &end : ends) {
     CastRay(begin, end, miss_table, probability_grid);
   }
 
   // Finally, compute and add empty rays based on misses in the range data.
-  for (const Eigen::Vector3f& missing_echo : range_data.misses) {
+  for (const Eigen::Vector3f &missing_echo : range_data.misses) {
     CastRay(begin, superscaled_limits.GetCellIndex(missing_echo.head<2>()),
             miss_table, probability_grid);
   }
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

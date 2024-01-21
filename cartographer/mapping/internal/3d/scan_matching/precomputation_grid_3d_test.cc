@@ -76,7 +76,7 @@ TEST(PrecomputedGridGenerator3DTest, TestAgainstNaiveAlgorithm) {
   }
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

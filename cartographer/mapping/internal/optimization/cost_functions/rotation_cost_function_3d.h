@@ -26,10 +26,10 @@ namespace mapping {
 
 // Penalizes differences between IMU data and optimized orientations.
 class RotationCostFunction3D {
- public:
-  static ceres::CostFunction* CreateAutoDiffCostFunction(
+public:
+  static ceres::CostFunction *CreateAutoDiffCostFunction(
       const double scaling_factor,
-      const Eigen::Quaterniond& delta_rotation_imu_frame) {
+      const Eigen::Quaterniond &delta_rotation_imu_frame) {
     return new ceres::AutoDiffCostFunction<
         RotationCostFunction3D, 3 /* residuals */, 4 /* rotation variables */,
         4 /* rotation variables */, 4 /* rotation variables */
@@ -37,8 +37,8 @@ class RotationCostFunction3D {
   }
 
   template <typename T>
-  bool operator()(const T* const start_rotation, const T* const end_rotation,
-                  const T* const imu_calibration, T* residual) const {
+  bool operator()(const T *const start_rotation, const T *const end_rotation,
+                  const T *const imu_calibration, T *residual) const {
     const Eigen::Quaternion<T> start(start_rotation[0], start_rotation[1],
                                      start_rotation[2], start_rotation[3]);
     const Eigen::Quaternion<T> end(end_rotation[0], end_rotation[1],
@@ -55,20 +55,20 @@ class RotationCostFunction3D {
     return true;
   }
 
- private:
+private:
   RotationCostFunction3D(const double scaling_factor,
-                         const Eigen::Quaterniond& delta_rotation_imu_frame)
+                         const Eigen::Quaterniond &delta_rotation_imu_frame)
       : scaling_factor_(scaling_factor),
         delta_rotation_imu_frame_(delta_rotation_imu_frame) {}
 
-  RotationCostFunction3D(const RotationCostFunction3D&) = delete;
-  RotationCostFunction3D& operator=(const RotationCostFunction3D&) = delete;
+  RotationCostFunction3D(const RotationCostFunction3D &) = delete;
+  RotationCostFunction3D &operator=(const RotationCostFunction3D &) = delete;
 
   const double scaling_factor_;
   const Eigen::Quaterniond delta_rotation_imu_frame_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_COST_FUNCTIONS_ROTATION_COST_FUNCTION_3D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_COST_FUNCTIONS_ROTATION_COST_FUNCTION_3D_H_

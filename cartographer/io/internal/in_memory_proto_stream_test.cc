@@ -30,7 +30,7 @@ using mapping::proto::PoseGraph;
 using mapping::proto::SerializedData;
 
 class InMemoryProtoStreamTest : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {
     pose_graph_.add_trajectory()->set_trajectory_id(1);
     serialized_data_.mutable_odometry_data()->set_trajectory_id(2);
@@ -78,6 +78,6 @@ TEST_F(InMemoryProtoStreamTest, ReadStreamInitializedIncrementally) {
   EXPECT_TRUE(reader.eof());
 }
 
-}  // namespace
-}  // namespace io
-}  // namespace cartographer
+} // namespace
+} // namespace io
+} // namespace cartographer

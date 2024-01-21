@@ -26,7 +26,7 @@ namespace mapping {
 // Trims submaps that have less than 'min_covered_cells_count' cells not
 // overlapped by at least 'fresh_submaps_count` submaps.
 class OverlappingSubmapsTrimmer2D : public PoseGraphTrimmer {
- public:
+public:
   OverlappingSubmapsTrimmer2D(uint16 fresh_submaps_count,
                               uint16 min_covered_cells_count,
                               uint16 min_added_submaps_count)
@@ -35,10 +35,10 @@ class OverlappingSubmapsTrimmer2D : public PoseGraphTrimmer {
         min_added_submaps_count_(min_added_submaps_count) {}
   ~OverlappingSubmapsTrimmer2D() override = default;
 
-  void Trim(Trimmable* pose_graph) override;
+  void Trim(Trimmable *pose_graph) override;
   bool IsFinished() override { return finished_; }
 
- private:
+private:
   // Number of the most recent submaps to keep.
   const uint16 fresh_submaps_count_;
   // Minimal number of covered cells to keep submap from trimming.
@@ -51,7 +51,7 @@ class OverlappingSubmapsTrimmer2D : public PoseGraphTrimmer {
   bool finished_ = false;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_2D_OVERLAPPING_SUBMAPS_TRIMMER_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_2D_OVERLAPPING_SUBMAPS_TRIMMER_H_

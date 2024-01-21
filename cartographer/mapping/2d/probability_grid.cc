@@ -24,18 +24,18 @@
 namespace cartographer {
 namespace mapping {
 
-ProbabilityGrid::ProbabilityGrid(const MapLimits& limits)
+ProbabilityGrid::ProbabilityGrid(const MapLimits &limits)
     : Grid2D(limits, kMinCorrespondenceCost, kMaxCorrespondenceCost) {}
 
-ProbabilityGrid::ProbabilityGrid(const proto::Grid2D& proto) : Grid2D(proto) {
+ProbabilityGrid::ProbabilityGrid(const proto::Grid2D &proto) : Grid2D(proto) {
   CHECK(proto.has_probability_grid_2d());
 }
 
 // Sets the probability of the cell at 'cell_index' to the given
 // 'probability'. Only allowed if the cell was unknown before.
-void ProbabilityGrid::SetProbability(const Eigen::Array2i& cell_index,
+void ProbabilityGrid::SetProbability(const Eigen::Array2i &cell_index,
                                      const float probability) {
-  uint16& cell =
+  uint16 &cell =
       (*mutable_correspondence_cost_cells())[ToFlatIndex(cell_index)];
   CHECK_EQ(cell, kUnknownProbabilityValue);
   cell =
@@ -50,11 +50,11 @@ void ProbabilityGrid::SetProbability(const Eigen::Array2i& cell_index,
 //
 // If this is the first call to ApplyOdds() for the specified cell, its value
 // will be set to probability corresponding to 'odds'.
-bool ProbabilityGrid::ApplyLookupTable(const Eigen::Array2i& cell_index,
-                                       const std::vector<uint16>& table) {
+bool ProbabilityGrid::ApplyLookupTable(const Eigen::Array2i &cell_index,
+                                       const std::vector<uint16> &table) {
   DCHECK_EQ(table.size(), kUpdateMarker);
   const int flat_index = ToFlatIndex(cell_index);
-  uint16* cell = &(*mutable_correspondence_cost_cells())[flat_index];
+  uint16 *cell = &(*mutable_correspondence_cost_cells())[flat_index];
   if (*cell >= kUpdateMarker) {
     return false;
   }
@@ -66,8 +66,9 @@ bool ProbabilityGrid::ApplyLookupTable(const Eigen::Array2i& cell_index,
 }
 
 // Returns the probability of the cell with 'cell_index'.
-float ProbabilityGrid::GetProbability(const Eigen::Array2i& cell_index) const {
-  if (!limits().Contains(cell_index)) return kMinProbability;
+float ProbabilityGrid::GetProbability(const Eigen::Array2i &cell_index) const {
+  if (!limits().Contains(cell_index))
+    return kMinProbability;
   return CorrespondenceCostToProbability(ValueToCorrespondenceCost(
       correspondence_cost_cells()[ToFlatIndex(cell_index)]));
 }
@@ -89,8 +90,9 @@ std::unique_ptr<Grid2D> ProbabilityGrid::ComputeCroppedGrid() const {
   std::unique_ptr<ProbabilityGrid> cropped_grid =
       common::make_unique<ProbabilityGrid>(
           MapLimits(resolution, max, cell_limits));
-  for (const Eigen::Array2i& xy_index : XYIndexRangeIterator(cell_limits)) {
-    if (!IsKnown(xy_index + offset)) continue;
+  for (const Eigen::Array2i &xy_index : XYIndexRangeIterator(cell_limits)) {
+    if (!IsKnown(xy_index + offset))
+      continue;
     cropped_grid->SetProbability(xy_index, GetProbability(xy_index + offset));
   }
 
@@ -98,14 +100,14 @@ std::unique_ptr<Grid2D> ProbabilityGrid::ComputeCroppedGrid() const {
 }
 
 bool ProbabilityGrid::DrawToSubmapTexture(
-    proto::SubmapQuery::Response::SubmapTexture* const texture,
+    proto::SubmapQuery::Response::SubmapTexture *const texture,
     transform::Rigid3d local_pose) const {
   Eigen::Array2i offset;
   CellLimits cell_limits;
   ComputeCroppedLimits(&offset, &cell_limits);
 
   std::string cells;
-  for (const Eigen::Array2i& xy_index : XYIndexRangeIterator(cell_limits)) {
+  for (const Eigen::Array2i &xy_index : XYIndexRangeIterator(cell_limits)) {
     if (!IsKnown(xy_index + offset)) {
       cells.push_back(0 /* unknown log odds value */);
       cells.push_back(0 /* alpha */);
@@ -139,5 +141,5 @@ bool ProbabilityGrid::DrawToSubmapTexture(
   return true;
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

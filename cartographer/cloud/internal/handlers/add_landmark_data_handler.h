@@ -32,13 +32,13 @@ DEFINE_HANDLER_SIGNATURE(
 
 class AddLandmarkDataHandler
     : public async_grpc::RpcHandler<AddLandmarkDataSignature> {
- public:
+public:
   void OnRequest(const proto::AddLandmarkDataRequest &request) override;
   void OnReadsDone() override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_LANDMARK_DATA_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_LANDMARK_DATA_HANDLER_H

@@ -46,8 +46,8 @@ namespace cartographer {
 namespace ground_truth {
 namespace {
 
-std::vector<double> ComputeCoveredDistance(
-    const mapping::proto::Trajectory& trajectory) {
+std::vector<double>
+ComputeCoveredDistance(const mapping::proto::Trajectory &trajectory) {
   std::vector<double> covered_distance;
   covered_distance.push_back(0.);
   CHECK_GT(trajectory.node_size(), 0)
@@ -66,10 +66,10 @@ std::vector<double> ComputeCoveredDistance(
 //
 // TODO(whess): Should we consider all nodes inserted into the submap and
 // exclude, e.g. based on large relative linear or angular distance?
-std::vector<int> ComputeSubmapRepresentativeNode(
-    const mapping::proto::PoseGraph& pose_graph) {
+std::vector<int>
+ComputeSubmapRepresentativeNode(const mapping::proto::PoseGraph &pose_graph) {
   std::vector<int> submap_to_node_index;
-  for (const auto& constraint : pose_graph.constraint()) {
+  for (const auto &constraint : pose_graph.constraint()) {
     if (constraint.tag() !=
         mapping::proto::PoseGraph::Constraint::INTRA_SUBMAP) {
       continue;
@@ -89,11 +89,12 @@ std::vector<int> ComputeSubmapRepresentativeNode(
   return submap_to_node_index;
 }
 
-proto::GroundTruth GenerateGroundTruth(
-    const mapping::proto::PoseGraph& pose_graph,
-    const double min_covered_distance, const double outlier_threshold_meters,
-    const double outlier_threshold_radians) {
-  const mapping::proto::Trajectory& trajectory = pose_graph.trajectory(0);
+proto::GroundTruth
+GenerateGroundTruth(const mapping::proto::PoseGraph &pose_graph,
+                    const double min_covered_distance,
+                    const double outlier_threshold_meters,
+                    const double outlier_threshold_radians) {
+  const mapping::proto::Trajectory &trajectory = pose_graph.trajectory(0);
   const std::vector<double> covered_distance =
       ComputeCoveredDistance(trajectory);
 
@@ -102,7 +103,7 @@ proto::GroundTruth GenerateGroundTruth(
 
   int num_outliers = 0;
   proto::GroundTruth ground_truth;
-  for (const auto& constraint : pose_graph.constraint()) {
+  for (const auto &constraint : pose_graph.constraint()) {
     // We're only interested in loop closure constraints.
     if (constraint.tag() ==
         mapping::proto::PoseGraph::Constraint::INTRA_SUBMAP) {
@@ -154,7 +155,7 @@ proto::GroundTruth GenerateGroundTruth(
       ++num_outliers;
       continue;
     }
-    auto* const new_relation = ground_truth.add_relation();
+    auto *const new_relation = ground_truth.add_relation();
     new_relation->set_timestamp1(
         trajectory.node(representative_node).timestamp());
     new_relation->set_timestamp2(trajectory.node(matched_node).timestamp());
@@ -166,8 +167,8 @@ proto::GroundTruth GenerateGroundTruth(
   return ground_truth;
 }
 
-void Run(const std::string& pose_graph_filename,
-         const std::string& output_filename, const double min_covered_distance,
+void Run(const std::string &pose_graph_filename,
+         const std::string &output_filename, const double min_covered_distance,
          const double outlier_threshold_meters,
          const double outlier_threshold_radians) {
   LOG(INFO) << "Reading pose graph from '" << pose_graph_filename << "'...";
@@ -190,11 +191,11 @@ void Run(const std::string& pose_graph_filename,
   }
 }
 
-}  // namespace
-}  // namespace ground_truth
-}  // namespace cartographer
+} // namespace
+} // namespace ground_truth
+} // namespace cartographer
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   google::InitGoogleLogging(argv[0]);
   FLAGS_logtostderr = true;
   google::SetUsageMessage(

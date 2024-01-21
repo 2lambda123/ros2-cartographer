@@ -28,7 +28,7 @@ namespace cloud {
 namespace testing {
 
 class MockMapBuilderContext : public MapBuilderContextInterface {
- public:
+public:
   MOCK_METHOD0(map_builder, mapping::MapBuilderInterface &());
   MOCK_METHOD0(
       sensor_data_queue,
@@ -61,8 +61,8 @@ class MockMapBuilderContext : public MapBuilderContextInterface {
                     const mapping::proto::LocalSlamResultData &));
 };
 
-}  // namespace testing
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace testing
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_TESTING_MOCK_MAP_BUILDER_CONTEXT_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_TESTING_MOCK_MAP_BUILDER_CONTEXT_H

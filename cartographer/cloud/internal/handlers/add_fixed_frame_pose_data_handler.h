@@ -33,13 +33,13 @@ DEFINE_HANDLER_SIGNATURE(
 
 class AddFixedFramePoseDataHandler
     : public async_grpc::RpcHandler<AddFixedFramePoseDataSignature> {
- public:
+public:
   void OnRequest(const proto::AddFixedFramePoseDataRequest &request) override;
   void OnReadsDone() override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_FIXED_FRAME_POSE_DATA_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_FIXED_FRAME_POSE_DATA_HANDLER_H

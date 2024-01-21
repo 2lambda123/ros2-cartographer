@@ -37,17 +37,17 @@ inline int DivideByTwoRoundingTowardsNegativeInfinity(const int value) {
 
 // Computes the half resolution index corresponding to the full resolution
 // 'cell_index'.
-Eigen::Array3i CellIndexAtHalfResolution(const Eigen::Array3i& cell_index) {
+Eigen::Array3i CellIndexAtHalfResolution(const Eigen::Array3i &cell_index) {
   return Eigen::Array3i(
       DivideByTwoRoundingTowardsNegativeInfinity(cell_index[0]),
       DivideByTwoRoundingTowardsNegativeInfinity(cell_index[1]),
       DivideByTwoRoundingTowardsNegativeInfinity(cell_index[2]));
 }
 
-}  // namespace
+} // namespace
 
-PrecomputationGrid3D ConvertToPrecomputationGrid(
-    const HybridGrid& hybrid_grid) {
+PrecomputationGrid3D
+ConvertToPrecomputationGrid(const HybridGrid &hybrid_grid) {
   PrecomputationGrid3D result(hybrid_grid.resolution());
   for (auto it = HybridGrid::Iterator(hybrid_grid); !it.Done(); it.Next()) {
     const int cell_value = common::RoundToInt(
@@ -60,9 +60,9 @@ PrecomputationGrid3D ConvertToPrecomputationGrid(
   return result;
 }
 
-PrecomputationGrid3D PrecomputeGrid(const PrecomputationGrid3D& grid,
+PrecomputationGrid3D PrecomputeGrid(const PrecomputationGrid3D &grid,
                                     const bool half_resolution,
-                                    const Eigen::Array3i& shift) {
+                                    const Eigen::Array3i &shift) {
   PrecomputationGrid3D result(grid.resolution());
   for (auto it = PrecomputationGrid3D::Iterator(grid); !it.Done(); it.Next()) {
     for (int i = 0; i != 8; ++i) {
@@ -72,7 +72,7 @@ PrecomputationGrid3D PrecomputeGrid(const PrecomputationGrid3D& grid,
       // this results in precomputation grids analogous to the 2D case.
       const Eigen::Array3i cell_index =
           it.GetCellIndex() - shift * PrecomputationGrid3D::GetOctant(i);
-      auto* const cell_value = result.mutable_value(
+      auto *const cell_value = result.mutable_value(
           half_resolution ? CellIndexAtHalfResolution(cell_index) : cell_index);
       *cell_value = std::max(it.GetValue(), *cell_value);
     }
@@ -80,6 +80,6 @@ PrecomputationGrid3D PrecomputeGrid(const PrecomputationGrid3D& grid,
   return result;
 }
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

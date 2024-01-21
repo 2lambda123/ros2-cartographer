@@ -63,7 +63,7 @@ TEST(ProbabilityGridTest, ToProto) {
 TEST(ProbabilityGridTest, ApplyOdds) {
   ProbabilityGrid probability_grid(
       MapLimits(1., Eigen::Vector2d(1., 1.), CellLimits(2, 2)));
-  const MapLimits& limits = probability_grid.limits();
+  const MapLimits &limits = probability_grid.limits();
 
   EXPECT_TRUE(limits.Contains(Array2i(0, 0)));
   EXPECT_TRUE(limits.Contains(Array2i(0, 1)));
@@ -111,11 +111,11 @@ TEST(ProbabilityGridTest, GetProbability) {
   ProbabilityGrid probability_grid(
       MapLimits(1., Eigen::Vector2d(1., 2.), CellLimits(2, 2)));
 
-  const MapLimits& limits = probability_grid.limits();
+  const MapLimits &limits = probability_grid.limits();
   EXPECT_EQ(1., limits.max().x());
   EXPECT_EQ(2., limits.max().y());
 
-  const CellLimits& cell_limits = limits.cell_limits();
+  const CellLimits &cell_limits = limits.cell_limits();
   ASSERT_EQ(2, cell_limits.num_x_cells);
   ASSERT_EQ(2, cell_limits.num_y_cells);
 
@@ -124,7 +124,7 @@ TEST(ProbabilityGridTest, GetProbability) {
   EXPECT_NEAR(probability_grid.GetProbability(
                   limits.GetCellIndex(Vector2f(-0.5f, 0.5f))),
               kMaxProbability, 1e-6);
-  for (const Array2i& xy_index : {limits.GetCellIndex(Vector2f(-0.5f, 1.5f)),
+  for (const Array2i &xy_index : {limits.GetCellIndex(Vector2f(-0.5f, 1.5f)),
                                   limits.GetCellIndex(Vector2f(0.5f, 0.5f)),
                                   limits.GetCellIndex(Vector2f(0.5f, 1.5f))}) {
     EXPECT_TRUE(limits.Contains(xy_index));
@@ -136,8 +136,8 @@ TEST(ProbabilityGridTest, GetCellIndex) {
   ProbabilityGrid probability_grid(
       MapLimits(2., Eigen::Vector2d(8., 14.), CellLimits(14, 8)));
 
-  const MapLimits& limits = probability_grid.limits();
-  const CellLimits& cell_limits = limits.cell_limits();
+  const MapLimits &limits = probability_grid.limits();
+  const CellLimits &cell_limits = limits.cell_limits();
   ASSERT_EQ(14, cell_limits.num_x_cells);
   ASSERT_EQ(8, cell_limits.num_y_cells);
   EXPECT_TRUE(
@@ -169,7 +169,7 @@ TEST(ProbabilityGridTest, CorrectCropping) {
                                                            kMaxProbability);
   ProbabilityGrid probability_grid(
       MapLimits(0.05, Eigen::Vector2d(10., 10.), CellLimits(400, 400)));
-  for (const Array2i& xy_index :
+  for (const Array2i &xy_index :
        XYIndexRangeIterator(Array2i(100, 100), Array2i(299, 299))) {
     probability_grid.SetProbability(xy_index, value_distribution(rng));
   }
@@ -181,6 +181,6 @@ TEST(ProbabilityGridTest, CorrectCropping) {
   EXPECT_EQ(limits.num_y_cells, 200);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

@@ -27,7 +27,7 @@ namespace cartographer {
 namespace mapping {
 
 proto::LocalTrajectoryBuilderOptions3D CreateLocalTrajectoryBuilderOptions3D(
-    common::LuaParameterDictionary* parameter_dictionary) {
+    common::LuaParameterDictionary *parameter_dictionary) {
   proto::LocalTrajectoryBuilderOptions3D options;
   options.set_min_range(parameter_dictionary->GetDouble("min_range"));
   options.set_max_range(parameter_dictionary->GetDouble("max_range"));
@@ -66,5 +66,5 @@ proto::LocalTrajectoryBuilderOptions3D CreateLocalTrajectoryBuilderOptions3D(
   return options;
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

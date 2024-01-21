@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "cartographer/mapping/internal/constraints/constraint_builder_2d.h"
 #include "cartographer/mapping/2d/probability_grid.h"
+#include "cartographer/mapping/internal/constraints/constraint_builder_2d.h"
 
 #include <functional>
 
@@ -32,12 +32,12 @@ namespace constraints {
 namespace {
 
 class MockCallback {
- public:
-  MOCK_METHOD1(Run, void(const ConstraintBuilder2D::Result&));
+public:
+  MOCK_METHOD1(Run, void(const ConstraintBuilder2D::Result &));
 };
 
 class ConstraintBuilder2DTest : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {
     auto constraint_builder_parameters = test::ResolveLuaParameters(R"text(
             include "pose_graph.lua"
@@ -104,7 +104,7 @@ TEST_F(ConstraintBuilder2DTest, FindsConstraints) {
   }
 }
 
-}  // namespace
-}  // namespace constraints
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace constraints
+} // namespace mapping
+} // namespace cartographer

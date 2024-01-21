@@ -20,13 +20,13 @@ set -o verbose
 # Install the required libraries that are available as debs.
 sudo apt-get update
 sudo apt-get install -y \
-    wget \
-    pkg-config \
-    zip \
-    g++ \
-    zlib1g-dev \
-    unzip \
-    python
+  wget \
+  pkg-config \
+  zip \
+  g++ \
+  zlib1g-dev \
+  unzip \
+  python
 wget https://github.com/bazelbuild/bazel/releases/download/0.9.0/bazel-0.9.0-installer-linux-x86_64.sh
 chmod +x bazel-0.9.0-installer-linux-x86_64.sh
 ./bazel-0.9.0-installer-linux-x86_64.sh

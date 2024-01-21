@@ -37,7 +37,7 @@ namespace mapping {
 
 // Converts an 'index' with each dimension from 0 to 2^'bits' - 1 to a flat
 // z-major index.
-inline int ToFlatIndex(const Eigen::Array3i& index, const int bits) {
+inline int ToFlatIndex(const Eigen::Array3i &index, const int bits) {
   DCHECK((index >= 0).all() && (index < (1 << bits)).all()) << index;
   return (((index.z() << bits) + index.y()) << bits) + index.x();
 }
@@ -52,55 +52,53 @@ inline Eigen::Array3i To3DIndex(const int index, const int bits) {
 }
 
 // A function to compare value to the default value. (Allows specializations).
-template <typename TValueType>
-bool IsDefaultValue(const TValueType& v) {
+template <typename TValueType> bool IsDefaultValue(const TValueType &v) {
   return v == TValueType();
 }
 
 // Specialization to compare a std::vector to the default value.
 template <typename TElementType>
-bool IsDefaultValue(const std::vector<TElementType>& v) {
+bool IsDefaultValue(const std::vector<TElementType> &v) {
   return v.empty();
 }
 
 // A flat grid of '2^kBits' x '2^kBits' x '2^kBits' voxels storing values of
 // type 'ValueType' in contiguous memory. Indices in each dimension are 0-based.
-template <typename TValueType, int kBits>
-class FlatGrid {
- public:
+template <typename TValueType, int kBits> class FlatGrid {
+public:
   using ValueType = TValueType;
 
   // Creates a new flat grid with all values being default constructed.
   FlatGrid() {
-    for (ValueType& value : cells_) {
+    for (ValueType &value : cells_) {
       value = ValueType();
     }
   }
 
-  FlatGrid(const FlatGrid&) = delete;
-  FlatGrid& operator=(const FlatGrid&) = delete;
+  FlatGrid(const FlatGrid &) = delete;
+  FlatGrid &operator=(const FlatGrid &) = delete;
 
   // Returns the number of voxels per dimension.
   static int grid_size() { return 1 << kBits; }
 
   // Returns the value stored at 'index', each dimension of 'index' being
   // between 0 and grid_size() - 1.
-  ValueType value(const Eigen::Array3i& index) const {
+  ValueType value(const Eigen::Array3i &index) const {
     return cells_[ToFlatIndex(index, kBits)];
   }
 
   // Returns a pointer to a value to allow changing it.
-  ValueType* mutable_value(const Eigen::Array3i& index) {
+  ValueType *mutable_value(const Eigen::Array3i &index) {
     return &cells_[ToFlatIndex(index, kBits)];
   }
 
   // An iterator for iterating over all values not comparing equal to the
   // default constructed value.
   class Iterator {
-   public:
+  public:
     Iterator() : current_(nullptr), end_(nullptr) {}
 
-    explicit Iterator(const FlatGrid& flat_grid)
+    explicit Iterator(const FlatGrid &flat_grid)
         : current_(flat_grid.cells_.data()),
           end_(flat_grid.cells_.data() + flat_grid.cells_.size()) {
       while (!Done() && IsDefaultValue(*current_)) {
@@ -123,26 +121,25 @@ class FlatGrid {
       return To3DIndex(index, kBits);
     }
 
-    const ValueType& GetValue() const {
+    const ValueType &GetValue() const {
       DCHECK(!Done());
       return *current_;
     }
 
-   private:
-    const ValueType* current_;
-    const ValueType* end_;
+  private:
+    const ValueType *current_;
+    const ValueType *end_;
   };
 
- private:
+private:
   std::array<ValueType, 1 << (3 * kBits)> cells_;
 };
 
 // A grid consisting of '2^kBits' x '2^kBits' x '2^kBits' grids of type
 // 'WrappedGrid'. Wrapped grids are constructed on first access via
 // 'mutable_value()'.
-template <typename WrappedGrid, int kBits>
-class NestedGrid {
- public:
+template <typename WrappedGrid, int kBits> class NestedGrid {
+public:
   using ValueType = typename WrappedGrid::ValueType;
 
   // Returns the number of voxels per dimension.
@@ -150,9 +147,9 @@ class NestedGrid {
 
   // Returns the value stored at 'index', each dimension of 'index' being
   // between 0 and grid_size() - 1.
-  ValueType value(const Eigen::Array3i& index) const {
+  ValueType value(const Eigen::Array3i &index) const {
     const Eigen::Array3i meta_index = GetMetaIndex(index);
-    const WrappedGrid* const meta_cell =
+    const WrappedGrid *const meta_cell =
         meta_cells_[ToFlatIndex(meta_index, kBits)].get();
     if (meta_cell == nullptr) {
       return ValueType();
@@ -164,9 +161,9 @@ class NestedGrid {
 
   // Returns a pointer to the value at 'index' to allow changing it. If
   // necessary a new wrapped grid is constructed to contain that value.
-  ValueType* mutable_value(const Eigen::Array3i& index) {
+  ValueType *mutable_value(const Eigen::Array3i &index) {
     const Eigen::Array3i meta_index = GetMetaIndex(index);
-    std::unique_ptr<WrappedGrid>& meta_cell =
+    std::unique_ptr<WrappedGrid> &meta_cell =
         meta_cells_[ToFlatIndex(meta_index, kBits)];
     if (meta_cell == nullptr) {
       meta_cell = common::make_unique<WrappedGrid>();
@@ -179,10 +176,10 @@ class NestedGrid {
   // An iterator for iterating over all values not comparing equal to the
   // default constructed value.
   class Iterator {
-   public:
+  public:
     Iterator() : current_(nullptr), end_(nullptr), nested_iterator_() {}
 
-    explicit Iterator(const NestedGrid& nested_grid)
+    explicit Iterator(const NestedGrid &nested_grid)
         : current_(nested_grid.meta_cells_.data()),
           end_(nested_grid.meta_cells_.data() + nested_grid.meta_cells_.size()),
           nested_iterator_() {
@@ -208,12 +205,12 @@ class NestedGrid {
              nested_iterator_.GetCellIndex();
     }
 
-    const ValueType& GetValue() const {
+    const ValueType &GetValue() const {
       DCHECK(!Done());
       return nested_iterator_.GetValue();
     }
 
-   private:
+  private:
     void AdvanceToValidNestedIterator() {
       for (; !Done(); ++current_) {
         if (*current_ != nullptr) {
@@ -225,15 +222,15 @@ class NestedGrid {
       }
     }
 
-    const std::unique_ptr<WrappedGrid>* current_;
-    const std::unique_ptr<WrappedGrid>* end_;
+    const std::unique_ptr<WrappedGrid> *current_;
+    const std::unique_ptr<WrappedGrid> *end_;
     typename WrappedGrid::Iterator nested_iterator_;
   };
 
- private:
+private:
   // Returns the Eigen::Array3i (meta) index of the meta cell containing
   // 'index'.
-  Eigen::Array3i GetMetaIndex(const Eigen::Array3i& index) const {
+  Eigen::Array3i GetMetaIndex(const Eigen::Array3i &index) const {
     DCHECK((index >= 0).all()) << index;
     const Eigen::Array3i meta_index = index / WrappedGrid::grid_size();
     DCHECK((meta_index < (1 << kBits)).all()) << index;
@@ -247,20 +244,19 @@ class NestedGrid {
 // grids are constructed on first access via 'mutable_value()'. If necessary,
 // the grid grows to twice the size in each dimension. The range of indices is
 // (almost) symmetric around the origin, i.e. negative indices are allowed.
-template <typename WrappedGrid>
-class DynamicGrid {
- public:
+template <typename WrappedGrid> class DynamicGrid {
+public:
   using ValueType = typename WrappedGrid::ValueType;
 
   DynamicGrid() : bits_(1), meta_cells_(8) {}
-  DynamicGrid(DynamicGrid&&) = default;
-  DynamicGrid& operator=(DynamicGrid&&) = default;
+  DynamicGrid(DynamicGrid &&) = default;
+  DynamicGrid &operator=(DynamicGrid &&) = default;
 
   // Returns the current number of voxels per dimension.
   int grid_size() const { return WrappedGrid::grid_size() << bits_; }
 
   // Returns the value stored at 'index'.
-  ValueType value(const Eigen::Array3i& index) const {
+  ValueType value(const Eigen::Array3i &index) const {
     const Eigen::Array3i shifted_index = index + (grid_size() >> 1);
     // The cast to unsigned is for performance to check with 3 comparisons
     // shifted_index.[xyz] >= 0 and shifted_index.[xyz] < grid_size.
@@ -268,7 +264,7 @@ class DynamicGrid {
       return ValueType();
     }
     const Eigen::Array3i meta_index = GetMetaIndex(shifted_index);
-    const WrappedGrid* const meta_cell =
+    const WrappedGrid *const meta_cell =
         meta_cells_[ToFlatIndex(meta_index, bits_)].get();
     if (meta_cell == nullptr) {
       return ValueType();
@@ -280,7 +276,7 @@ class DynamicGrid {
 
   // Returns a pointer to the value at 'index' to allow changing it, dynamically
   // growing the DynamicGrid and constructing new WrappedGrids as needed.
-  ValueType* mutable_value(const Eigen::Array3i& index) {
+  ValueType *mutable_value(const Eigen::Array3i &index) {
     const Eigen::Array3i shifted_index = index + (grid_size() >> 1);
     // The cast to unsigned is for performance to check with 3 comparisons
     // shifted_index.[xyz] >= 0 and shifted_index.[xyz] < grid_size.
@@ -289,7 +285,7 @@ class DynamicGrid {
       return mutable_value(index);
     }
     const Eigen::Array3i meta_index = GetMetaIndex(shifted_index);
-    std::unique_ptr<WrappedGrid>& meta_cell =
+    std::unique_ptr<WrappedGrid> &meta_cell =
         meta_cells_[ToFlatIndex(meta_index, bits_)];
     if (meta_cell == nullptr) {
       meta_cell = common::make_unique<WrappedGrid>();
@@ -302,10 +298,9 @@ class DynamicGrid {
   // An iterator for iterating over all values not comparing equal to the
   // default constructed value.
   class Iterator {
-   public:
-    explicit Iterator(const DynamicGrid& dynamic_grid)
-        : bits_(dynamic_grid.bits_),
-          current_(dynamic_grid.meta_cells_.data()),
+  public:
+    explicit Iterator(const DynamicGrid &dynamic_grid)
+        : bits_(dynamic_grid.bits_), current_(dynamic_grid.meta_cells_.data()),
           end_(dynamic_grid.meta_cells_.data() +
                dynamic_grid.meta_cells_.size()),
           nested_iterator_() {
@@ -333,7 +328,7 @@ class DynamicGrid {
       return shifted_index - ((1 << (bits_ - 1)) * WrappedGrid::grid_size());
     }
 
-    const ValueType& GetValue() const {
+    const ValueType &GetValue() const {
       DCHECK(!Done());
       return nested_iterator_.GetValue();
     }
@@ -344,16 +339,16 @@ class DynamicGrid {
       return std::pair<Eigen::Array3i, ValueType>(GetCellIndex(), GetValue());
     }
 
-    Iterator& operator++() {
+    Iterator &operator++() {
       Next();
       return *this;
     }
 
-    bool operator!=(const Iterator& it) const {
+    bool operator!=(const Iterator &it) const {
       return it.current_ != current_;
     }
 
-   private:
+  private:
     void AdvanceToValidNestedIterator() {
       for (; !Done(); ++current_) {
         if (*current_ != nullptr) {
@@ -366,15 +361,15 @@ class DynamicGrid {
     }
 
     int bits_;
-    const std::unique_ptr<WrappedGrid>* current_;
-    const std::unique_ptr<WrappedGrid>* const end_;
+    const std::unique_ptr<WrappedGrid> *current_;
+    const std::unique_ptr<WrappedGrid> *const end_;
     typename WrappedGrid::Iterator nested_iterator_;
   };
 
- private:
+private:
   // Returns the Eigen::Array3i (meta) index of the meta cell containing
   // 'index'.
-  Eigen::Array3i GetMetaIndex(const Eigen::Array3i& index) const {
+  Eigen::Array3i GetMetaIndex(const Eigen::Array3i &index) const {
     DCHECK((index >= 0).all()) << index;
     const Eigen::Array3i meta_index = index / WrappedGrid::grid_size();
     DCHECK((meta_index < (1 << bits_)).all()) << index;
@@ -412,7 +407,7 @@ using GridBase = DynamicGrid<NestedGrid<FlatGrid<ValueType, 3>, 3>>;
 // Represents a 3D grid as a wide, shallow tree.
 template <typename ValueType>
 class HybridGridBase : public GridBase<ValueType> {
- public:
+public:
   using Iterator = typename GridBase<ValueType>::Iterator;
 
   // Creates a new tree-based probability grid with voxels having edge length
@@ -425,7 +420,7 @@ class HybridGridBase : public GridBase<ValueType> {
   // Returns the index of the cell containing the 'point'. Indices are integer
   // vectors identifying cells, for this the coordinates are rounded to the next
   // multiple of the resolution.
-  Eigen::Array3i GetCellIndex(const Eigen::Vector3f& point) const {
+  Eigen::Array3i GetCellIndex(const Eigen::Vector3f &point) const {
     Eigen::Array3f index = point.array() / resolution_;
     return Eigen::Array3i(common::RoundToInt(index.x()),
                           common::RoundToInt(index.y()),
@@ -441,7 +436,7 @@ class HybridGridBase : public GridBase<ValueType> {
   }
 
   // Returns the center of the cell at 'index'.
-  Eigen::Vector3f GetCenterOfCell(const Eigen::Array3i& index) const {
+  Eigen::Vector3f GetCenterOfCell(const Eigen::Array3i &index) const {
     return index.matrix().cast<float>() * resolution_;
   }
 
@@ -454,7 +449,7 @@ class HybridGridBase : public GridBase<ValueType> {
     return it;
   }
 
- private:
+private:
   // Edge length of each voxel.
   const float resolution_;
 };
@@ -466,11 +461,11 @@ class HybridGridBase : public GridBase<ValueType> {
 // can only be tens of meters from the origin.
 // The hard limit of cell indexes is +/- 8192 around the origin.
 class HybridGrid : public HybridGridBase<uint16> {
- public:
+public:
   explicit HybridGrid(const float resolution)
       : HybridGridBase<uint16>(resolution) {}
 
-  explicit HybridGrid(const proto::HybridGrid& proto)
+  explicit HybridGrid(const proto::HybridGrid &proto)
       : HybridGrid(proto.resolution()) {
     CHECK_EQ(proto.values_size(), proto.x_indices_size());
     CHECK_EQ(proto.values_size(), proto.y_indices_size());
@@ -484,7 +479,7 @@ class HybridGrid : public HybridGridBase<uint16> {
   }
 
   // Sets the probability of the cell at 'index' to the given 'probability'.
-  void SetProbability(const Eigen::Array3i& index, const float probability) {
+  void SetProbability(const Eigen::Array3i &index, const float probability) {
     *mutable_value(index) = ProbabilityToValue(probability);
   }
 
@@ -504,10 +499,10 @@ class HybridGrid : public HybridGridBase<uint16> {
   //
   // If this is the first call to ApplyOdds() for the specified cell, its value
   // will be set to probability corresponding to 'odds'.
-  bool ApplyLookupTable(const Eigen::Array3i& index,
-                        const std::vector<uint16>& table) {
+  bool ApplyLookupTable(const Eigen::Array3i &index,
+                        const std::vector<uint16> &table) {
     DCHECK_EQ(table.size(), kUpdateMarker);
-    uint16* const cell = mutable_value(index);
+    uint16 *const cell = mutable_value(index);
     if (*cell >= kUpdateMarker) {
       return false;
     }
@@ -518,12 +513,12 @@ class HybridGrid : public HybridGridBase<uint16> {
   }
 
   // Returns the probability of the cell with 'index'.
-  float GetProbability(const Eigen::Array3i& index) const {
+  float GetProbability(const Eigen::Array3i &index) const {
     return ValueToProbability(value(index));
   }
 
   // Returns true if the probability at the specified 'index' is known.
-  bool IsKnown(const Eigen::Array3i& index) const { return value(index) != 0; }
+  bool IsKnown(const Eigen::Array3i &index) const { return value(index) != 0; }
 
   proto::HybridGrid ToProto() const {
     CHECK(update_indices_.empty()) << "Serializing a grid during an update is "
@@ -539,12 +534,12 @@ class HybridGrid : public HybridGridBase<uint16> {
     return result;
   }
 
- private:
+private:
   // Markers at changed cells.
-  std::vector<ValueType*> update_indices_;
+  std::vector<ValueType *> update_indices_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_3D_HYBRID_GRID_H_
+#endif // CARTOGRAPHER_MAPPING_3D_HYBRID_GRID_H_

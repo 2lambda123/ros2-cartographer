@@ -42,7 +42,7 @@ namespace mapping {
 // without loop closure.
 // TODO(gaschler): Add test for this class similar to the 3D test.
 class LocalTrajectoryBuilder2D {
- public:
+public:
   struct InsertionResult {
     std::shared_ptr<const TrajectoryNode::Data> constant_data;
     std::vector<std::shared_ptr<const Submap2D>> insertion_submaps;
@@ -56,45 +56,48 @@ class LocalTrajectoryBuilder2D {
   };
 
   explicit LocalTrajectoryBuilder2D(
-      const proto::LocalTrajectoryBuilderOptions2D& options,
-      const std::vector<std::string>& expected_range_sensor_ids);
+      const proto::LocalTrajectoryBuilderOptions2D &options,
+      const std::vector<std::string> &expected_range_sensor_ids);
   ~LocalTrajectoryBuilder2D();
 
-  LocalTrajectoryBuilder2D(const LocalTrajectoryBuilder2D&) = delete;
-  LocalTrajectoryBuilder2D& operator=(const LocalTrajectoryBuilder2D&) = delete;
+  LocalTrajectoryBuilder2D(const LocalTrajectoryBuilder2D &) = delete;
+  LocalTrajectoryBuilder2D &
+  operator=(const LocalTrajectoryBuilder2D &) = delete;
 
   // Returns 'MatchingResult' when range data accumulation completed,
   // otherwise 'nullptr'. Range data must be approximately horizontal
   // for 2D SLAM. `TimedPointCloudData::time` is when the last point in
   // `range_data` was acquired, `TimedPointCloudData::ranges` contains the
   // relative time of point with respect to `TimedPointCloudData::time`.
-  std::unique_ptr<MatchingResult> AddRangeData(
-      const std::string& sensor_id,
-      const sensor::TimedPointCloudData& range_data);
-  void AddImuData(const sensor::ImuData& imu_data);
-  void AddOdometryData(const sensor::OdometryData& odometry_data);
+  std::unique_ptr<MatchingResult>
+  AddRangeData(const std::string &sensor_id,
+               const sensor::TimedPointCloudData &range_data);
+  void AddImuData(const sensor::ImuData &imu_data);
+  void AddOdometryData(const sensor::OdometryData &odometry_data);
 
-  static void RegisterMetrics(metrics::FamilyFactory* family_factory);
+  static void RegisterMetrics(metrics::FamilyFactory *family_factory);
 
- private:
-  std::unique_ptr<MatchingResult> AddAccumulatedRangeData(
-      common::Time time, const sensor::RangeData& gravity_aligned_range_data,
-      const transform::Rigid3d& gravity_alignment);
+private:
+  std::unique_ptr<MatchingResult>
+  AddAccumulatedRangeData(common::Time time,
+                          const sensor::RangeData &gravity_aligned_range_data,
+                          const transform::Rigid3d &gravity_alignment);
   sensor::RangeData TransformToGravityAlignedFrameAndFilter(
-      const transform::Rigid3f& transform_to_gravity_aligned_frame,
-      const sensor::RangeData& range_data) const;
+      const transform::Rigid3f &transform_to_gravity_aligned_frame,
+      const sensor::RangeData &range_data) const;
 
-  std::unique_ptr<InsertionResult> InsertIntoSubmap(
-      common::Time time, const sensor::RangeData& range_data_in_local,
-      const sensor::RangeData& gravity_aligned_range_data,
-      const transform::Rigid3d& pose_estimate,
-      const Eigen::Quaterniond& gravity_alignment);
+  std::unique_ptr<InsertionResult>
+  InsertIntoSubmap(common::Time time,
+                   const sensor::RangeData &range_data_in_local,
+                   const sensor::RangeData &gravity_aligned_range_data,
+                   const transform::Rigid3d &pose_estimate,
+                   const Eigen::Quaterniond &gravity_alignment);
 
   // Scan matches 'gravity_aligned_range_data' and returns the observed pose,
   // or nullptr on failure.
-  std::unique_ptr<transform::Rigid2d> ScanMatch(
-      common::Time time, const transform::Rigid2d& pose_prediction,
-      const sensor::RangeData& gravity_aligned_range_data);
+  std::unique_ptr<transform::Rigid2d>
+  ScanMatch(common::Time time, const transform::Rigid2d &pose_prediction,
+            const sensor::RangeData &gravity_aligned_range_data);
 
   // Lazily constructs a PoseExtrapolator.
   void InitializeExtrapolator(common::Time time);
@@ -116,7 +119,7 @@ class LocalTrajectoryBuilder2D {
   RangeDataCollator range_data_collator_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_2D_LOCAL_TRAJECTORY_BUILDER_2D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_2D_LOCAL_TRAJECTORY_BUILDER_2D_H_

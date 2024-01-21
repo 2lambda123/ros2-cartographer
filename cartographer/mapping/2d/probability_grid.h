@@ -29,13 +29,13 @@ namespace mapping {
 
 // Represents a 2D grid of probabilities.
 class ProbabilityGrid : public Grid2D {
- public:
-  explicit ProbabilityGrid(const MapLimits& limits);
-  explicit ProbabilityGrid(const proto::Grid2D& proto);
+public:
+  explicit ProbabilityGrid(const MapLimits &limits);
+  explicit ProbabilityGrid(const proto::Grid2D &proto);
 
   // Sets the probability of the cell at 'cell_index' to the given
   // 'probability'. Only allowed if the cell was unknown before.
-  void SetProbability(const Eigen::Array2i& cell_index,
+  void SetProbability(const Eigen::Array2i &cell_index,
                       const float probability);
 
   // Applies the 'odds' specified when calling ComputeLookupTableToApplyOdds()
@@ -45,20 +45,20 @@ class ProbabilityGrid : public Grid2D {
   //
   // If this is the first call to ApplyOdds() for the specified cell, its value
   // will be set to probability corresponding to 'odds'.
-  bool ApplyLookupTable(const Eigen::Array2i& cell_index,
-                        const std::vector<uint16>& table);
+  bool ApplyLookupTable(const Eigen::Array2i &cell_index,
+                        const std::vector<uint16> &table);
 
   // Returns the probability of the cell with 'cell_index'.
-  float GetProbability(const Eigen::Array2i& cell_index) const;
+  float GetProbability(const Eigen::Array2i &cell_index) const;
 
   virtual proto::Grid2D ToProto() const override;
   virtual std::unique_ptr<Grid2D> ComputeCroppedGrid() const override;
   virtual bool DrawToSubmapTexture(
-      proto::SubmapQuery::Response::SubmapTexture* const texture,
+      proto::SubmapQuery::Response::SubmapTexture *const texture,
       transform::Rigid3d local_pose) const override;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_2D_PROBABILITY_GRID_H_
+#endif // CARTOGRAPHER_MAPPING_2D_PROBABILITY_GRID_H_

@@ -30,64 +30,65 @@ namespace {
 using mapping::proto::SerializedData;
 using ProtoMap = std::unordered_map<int, std::vector<SerializedData>>;
 
-bool ReadPoseGraph(cartographer::io::ProtoStreamReaderInterface* const input,
-                   ProtoMap* proto_map) {
-  auto& pose_graph_vec = (*proto_map)[SerializedData::kPoseGraph];
+bool ReadPoseGraph(cartographer::io::ProtoStreamReaderInterface *const input,
+                   ProtoMap *proto_map) {
+  auto &pose_graph_vec = (*proto_map)[SerializedData::kPoseGraph];
   pose_graph_vec.emplace_back();
   return input->ReadProto(pose_graph_vec.back().mutable_pose_graph());
 }
 
 bool ReadBuilderOptions(
-    cartographer::io::ProtoStreamReaderInterface* const input,
-    ProtoMap* proto_map) {
-  auto& options_vec =
+    cartographer::io::ProtoStreamReaderInterface *const input,
+    ProtoMap *proto_map) {
+  auto &options_vec =
       (*proto_map)[SerializedData::kAllTrajectoryBuilderOptions];
   options_vec.emplace_back();
   return input->ReadProto(
       options_vec.back().mutable_all_trajectory_builder_options());
 }
 
-bool DeserializeNext(cartographer::io::ProtoStreamReaderInterface* const input,
-                     ProtoMap* proto_map) {
+bool DeserializeNext(cartographer::io::ProtoStreamReaderInterface *const input,
+                     ProtoMap *proto_map) {
   mapping::proto::LegacySerializedData legacy_data;
-  if (!input->ReadProto(&legacy_data)) return false;
+  if (!input->ReadProto(&legacy_data))
+    return false;
 
   if (legacy_data.has_submap()) {
-    auto& output_vector = (*proto_map)[SerializedData::kSubmapFieldNumber];
+    auto &output_vector = (*proto_map)[SerializedData::kSubmapFieldNumber];
     output_vector.emplace_back();
     *output_vector.back().mutable_submap() = legacy_data.submap();
   }
   if (legacy_data.has_node()) {
-    auto& output_vector = (*proto_map)[SerializedData::kNodeFieldNumber];
+    auto &output_vector = (*proto_map)[SerializedData::kNodeFieldNumber];
     output_vector.emplace_back();
     *output_vector.back().mutable_node() = legacy_data.node();
   }
   if (legacy_data.has_trajectory_data()) {
-    auto& output_vector =
+    auto &output_vector =
         (*proto_map)[SerializedData::kTrajectoryDataFieldNumber];
     output_vector.emplace_back();
     *output_vector.back().mutable_trajectory_data() =
         legacy_data.trajectory_data();
   }
   if (legacy_data.has_imu_data()) {
-    auto& output_vector = (*proto_map)[SerializedData::kImuDataFieldNumber];
+    auto &output_vector = (*proto_map)[SerializedData::kImuDataFieldNumber];
     output_vector.emplace_back();
     *output_vector.back().mutable_imu_data() = legacy_data.imu_data();
   }
   if (legacy_data.has_odometry_data()) {
-    auto& output_vector = (*proto_map)[SerializedData::kOdometryData];
+    auto &output_vector = (*proto_map)[SerializedData::kOdometryData];
     output_vector.emplace_back();
     *output_vector.back().mutable_odometry_data() = legacy_data.odometry_data();
   }
   if (legacy_data.has_fixed_frame_pose_data()) {
-    auto& output_vector =
+    auto &output_vector =
         (*proto_map)[SerializedData::kFixedFramePoseDataFieldNumber];
     output_vector.emplace_back();
     *output_vector.back().mutable_fixed_frame_pose_data() =
         legacy_data.fixed_frame_pose_data();
   }
   if (legacy_data.has_landmark_data()) {
-    auto& output_vector =
+    auto &output_vector =
         (*proto_map)[SerializedData::kLandmarkDataFieldNumber];
     output_vector.emplace_back();
     *output_vector.back().mutable_landmark_data() = legacy_data.landmark_data();
@@ -95,8 +96,8 @@ bool DeserializeNext(cartographer::io::ProtoStreamReaderInterface* const input,
   return true;
 }
 
-ProtoMap ParseLegacyData(
-    cartographer::io::ProtoStreamReaderInterface* const input) {
+ProtoMap
+ParseLegacyData(cartographer::io::ProtoStreamReaderInterface *const input) {
   ProtoMap proto_map;
   CHECK(ReadPoseGraph(input, &proto_map))
       << "Input stream seems to differ from original stream format. Could "
@@ -119,8 +120,8 @@ mapping::proto::SerializationHeader CreateSerializationHeader() {
 }
 
 void SerializeToVersion1Format(
-    const ProtoMap& deserialized_data,
-    cartographer::io::ProtoStreamWriterInterface* const output) {
+    const ProtoMap &deserialized_data,
+    cartographer::io::ProtoStreamWriterInterface *const output) {
   const std::vector<int> kFieldSerializationOrder = {
       SerializedData::kPoseGraphFieldNumber,
       SerializedData::kAllTrajectoryBuilderOptionsFieldNumber,
@@ -135,19 +136,20 @@ void SerializeToVersion1Format(
   output->WriteProto(CreateSerializationHeader());
   for (auto field_index : kFieldSerializationOrder) {
     const auto proto_vector_it = deserialized_data.find(field_index);
-    if (proto_vector_it == deserialized_data.end()) continue;
-    for (const auto& proto : proto_vector_it->second) {
+    if (proto_vector_it == deserialized_data.end())
+      continue;
+    for (const auto &proto : proto_vector_it->second) {
       output->WriteProto(proto);
     }
   }
 }
-}  // namespace
+} // namespace
 
 void MigrateStreamFormatToVersion1(
-    cartographer::io::ProtoStreamReaderInterface* const input,
-    cartographer::io::ProtoStreamWriterInterface* const output) {
+    cartographer::io::ProtoStreamReaderInterface *const input,
+    cartographer::io::ProtoStreamWriterInterface *const output) {
   SerializeToVersion1Format(ParseLegacyData(input), output);
 }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

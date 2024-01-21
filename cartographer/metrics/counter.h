@@ -24,16 +24,16 @@ namespace cartographer {
 namespace metrics {
 
 class Counter {
- public:
+public:
   // Counter instance that does nothing. Safe for use in static initializers.
-  static Counter* Null();
+  static Counter *Null();
 
   virtual ~Counter() = default;
   virtual void Increment() = 0;
   virtual void Increment(double by_value) = 0;
 };
 
-}  // namespace metrics
-}  // namespace cartographer
+} // namespace metrics
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_METRICS_COUNTER_H_
+#endif // CARTOGRAPHER_METRICS_COUNTER_H_

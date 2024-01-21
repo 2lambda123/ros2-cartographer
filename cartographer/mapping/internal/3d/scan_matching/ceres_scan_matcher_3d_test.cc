@@ -32,12 +32,11 @@ namespace scan_matching {
 namespace {
 
 class CeresScanMatcher3DTest : public ::testing::Test {
- protected:
+protected:
   CeresScanMatcher3DTest()
-      : hybrid_grid_(1.f),
-        expected_pose_(
-            transform::Rigid3d::Translation(Eigen::Vector3d(-1., 0., 0.))) {
-    for (const Eigen::Vector3f& point :
+      : hybrid_grid_(1.f), expected_pose_(transform::Rigid3d::Translation(
+                               Eigen::Vector3d(-1., 0., 0.))) {
+    for (const Eigen::Vector3f &point :
          {Eigen::Vector3f(-3.f, 2.f, 0.f), Eigen::Vector3f(-4.f, 2.f, 0.f),
           Eigen::Vector3f(-5.f, 2.f, 0.f), Eigen::Vector3f(-6.f, 2.f, 0.f),
           Eigen::Vector3f(-6.f, 3.f, 1.f), Eigen::Vector3f(-6.f, 4.f, 2.f),
@@ -63,7 +62,7 @@ class CeresScanMatcher3DTest : public ::testing::Test {
     ceres_scan_matcher_.reset(new CeresScanMatcher3D(options_));
   }
 
-  void TestFromInitialPose(const transform::Rigid3d& initial_pose) {
+  void TestFromInitialPose(const transform::Rigid3d &initial_pose) {
     transform::Rigid3d pose;
 
     ceres::Solver::Summary summary;
@@ -115,7 +114,7 @@ TEST_F(CeresScanMatcher3DTest, FullPoseCorrection) {
                          Eigen::AngleAxisd(0.05, Eigen::Vector3d(1., 0., 0.))));
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

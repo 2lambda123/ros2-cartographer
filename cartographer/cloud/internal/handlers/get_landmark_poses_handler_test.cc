@@ -77,7 +77,7 @@ TEST_F(GetLandmarkPosesHandlerTest, NoLocalSlamUploader) {
       ::testing::Truly(testing::BuildProtoPredicateEquals(&expected_response)));
 }
 
-}  // namespace
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

@@ -23,9 +23,8 @@
 namespace cartographer {
 namespace sensor {
 
-template <typename DataType>
-class Dispatchable : public Data {
- public:
+template <typename DataType> class Dispatchable : public Data {
+public:
   Dispatchable(const std::string &sensor_id, const DataType &data)
       : Data(sensor_id), data_(data) {}
 
@@ -36,17 +35,17 @@ class Dispatchable : public Data {
   }
   const DataType &data() const { return data_; }
 
- private:
+private:
   const DataType data_;
 };
 
 template <typename DataType>
-std::unique_ptr<Dispatchable<DataType>> MakeDispatchable(
-    const std::string &sensor_id, const DataType &data) {
+std::unique_ptr<Dispatchable<DataType>>
+MakeDispatchable(const std::string &sensor_id, const DataType &data) {
   return common::make_unique<Dispatchable<DataType>>(sensor_id, data);
 }
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_INTERNAL_DISPATCHABLE_H_
+#endif // CARTOGRAPHER_SENSOR_INTERNAL_DISPATCHABLE_H_

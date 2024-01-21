@@ -33,12 +33,12 @@ namespace constraints {
 namespace {
 
 class MockCallback {
- public:
-  MOCK_METHOD1(Run, void(const ConstraintBuilder3D::Result&));
+public:
+  MOCK_METHOD1(Run, void(const ConstraintBuilder3D::Result &));
 };
 
 class ConstraintBuilder3DTest : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {
     auto constraint_builder_parameters = test::ResolveLuaParameters(R"text(
     include "pose_graph.lua"
@@ -112,7 +112,7 @@ TEST_F(ConstraintBuilder3DTest, FindsConstraints) {
   }
 }
 
-}  // namespace
-}  // namespace constraints
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace constraints
+} // namespace mapping
+} // namespace cartographer

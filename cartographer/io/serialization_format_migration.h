@@ -27,10 +27,10 @@ namespace io {
 // SerializedData*) to the version 1 stream format (SerializationHeader,
 // SerializedData*).
 void MigrateStreamFormatToVersion1(
-    cartographer::io::ProtoStreamReaderInterface* const input,
-    cartographer::io::ProtoStreamWriterInterface* const output);
+    cartographer::io::ProtoStreamReaderInterface *const input,
+    cartographer::io::ProtoStreamWriterInterface *const output);
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_IO_SERIALIZATION_FORMAT_MIGRATION_H_
+#endif // CARTOGRAPHER_IO_SERIALIZATION_FORMAT_MIGRATION_H_

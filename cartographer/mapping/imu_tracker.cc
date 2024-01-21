@@ -28,8 +28,7 @@ namespace mapping {
 
 ImuTracker::ImuTracker(const double imu_gravity_time_constant,
                        const common::Time time)
-    : imu_gravity_time_constant_(imu_gravity_time_constant),
-      time_(time),
+    : imu_gravity_time_constant_(imu_gravity_time_constant), time_(time),
       last_linear_acceleration_time_(common::Time::min()),
       orientation_(Eigen::Quaterniond::Identity()),
       gravity_vector_(Eigen::Vector3d::UnitZ()),
@@ -47,7 +46,7 @@ void ImuTracker::Advance(const common::Time time) {
 }
 
 void ImuTracker::AddImuLinearAccelerationObservation(
-    const Eigen::Vector3d& imu_linear_acceleration) {
+    const Eigen::Vector3d &imu_linear_acceleration) {
   // Update the 'gravity_vector_' with an exponential moving average using the
   // 'imu_gravity_time_constant'.
   const double delta_t =
@@ -68,9 +67,9 @@ void ImuTracker::AddImuLinearAccelerationObservation(
 }
 
 void ImuTracker::AddImuAngularVelocityObservation(
-    const Eigen::Vector3d& imu_angular_velocity) {
+    const Eigen::Vector3d &imu_angular_velocity) {
   imu_angular_velocity_ = imu_angular_velocity;
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

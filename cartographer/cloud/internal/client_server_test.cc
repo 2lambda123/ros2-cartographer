@@ -45,12 +45,12 @@ namespace {
 
 const SensorId kImuSensorId{SensorId::SensorType::IMU, "imu"};
 const SensorId kRangeSensorId{SensorId::SensorType::RANGE, "range"};
-constexpr double kDuration = 4.;         // Seconds.
-constexpr double kTimeStep = 0.1;        // Seconds.
-constexpr double kTravelDistance = 1.2;  // Meters.
+constexpr double kDuration = 4.;        // Seconds.
+constexpr double kTimeStep = 0.1;       // Seconds.
+constexpr double kTravelDistance = 1.2; // Meters.
 
 class ClientServerTest : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {
     // TODO(cschuet): Due to the hard-coded addresses these tests will become
     // flaky when run in parallel.
@@ -165,7 +165,7 @@ class ClientServerTest : public ::testing::Test {
 
   proto::MapBuilderServerOptions map_builder_server_options_;
   proto::MapBuilderServerOptions uploading_map_builder_server_options_;
-  MockMapBuilder* mock_map_builder_;
+  MockMapBuilder *mock_map_builder_;
   std::unique_ptr<MockPoseGraph> mock_pose_graph_;
   std::unique_ptr<MockTrajectoryBuilder> mock_trajectory_builder_;
   ::cartographer::mapping::proto::TrajectoryBuilderOptions
@@ -230,7 +230,7 @@ TEST_F(ClientServerTest, AddSensorData) {
   InitializeStub();
   int trajectory_id = stub_->AddTrajectoryBuilder(
       {kImuSensorId}, trajectory_builder_options_, nullptr);
-  TrajectoryBuilderInterface* trajectory_stub =
+  TrajectoryBuilderInterface *trajectory_stub =
       stub_->GetTrajectoryBuilder(trajectory_id);
   sensor::ImuData imu_data{common::FromUniversal(42),
                            Eigen::Vector3d(0., 0., 9.8),
@@ -254,14 +254,14 @@ TEST_F(ClientServerTest, AddSensorDataWithMock) {
   EXPECT_EQ(trajectory_id, 3);
   EXPECT_CALL(*mock_map_builder_, GetTrajectoryBuilder(_))
       .WillRepeatedly(::testing::Return(mock_trajectory_builder_.get()));
-  mapping::TrajectoryBuilderInterface* trajectory_stub =
+  mapping::TrajectoryBuilderInterface *trajectory_stub =
       stub_->GetTrajectoryBuilder(trajectory_id);
   sensor::ImuData imu_data{common::FromUniversal(42),
                            Eigen::Vector3d(0., 0., 9.8),
                            Eigen::Vector3d::Zero()};
   EXPECT_CALL(*mock_trajectory_builder_,
               AddSensorData(::testing::StrEq(kImuSensorId.id),
-                            ::testing::Matcher<const sensor::ImuData&>(_)))
+                            ::testing::Matcher<const sensor::ImuData &>(_)))
       .WillOnce(::testing::Return());
   trajectory_stub->AddSensorData(kImuSensorId.id, imu_data);
   EXPECT_CALL(*mock_map_builder_, FinishTrajectory(trajectory_id));
@@ -276,11 +276,11 @@ TEST_F(ClientServerTest, LocalSlam2D) {
   int trajectory_id =
       stub_->AddTrajectoryBuilder({kRangeSensorId}, trajectory_builder_options_,
                                   local_slam_result_callback_);
-  TrajectoryBuilderInterface* trajectory_stub =
+  TrajectoryBuilderInterface *trajectory_stub =
       stub_->GetTrajectoryBuilder(trajectory_id);
   const auto measurements = mapping::test::GenerateFakeRangeMeasurements(
       kTravelDistance, kDuration, kTimeStep);
-  for (const auto& measurement : measurements) {
+  for (const auto &measurement : measurements) {
     trajectory_stub->AddSensorData(kRangeSensorId.id, measurement);
   }
   WaitForLocalSlamResults(measurements.size());
@@ -314,11 +314,11 @@ TEST_F(ClientServerTest, GlobalSlam3D) {
   int trajectory_id = stub_->AddTrajectoryBuilder(
       {kRangeSensorId, kImuSensorId}, trajectory_builder_options_,
       local_slam_result_callback_);
-  TrajectoryBuilderInterface* trajectory_stub =
+  TrajectoryBuilderInterface *trajectory_stub =
       stub_->GetTrajectoryBuilder(trajectory_id);
   const auto measurements = mapping::test::GenerateFakeRangeMeasurements(
       kTravelDistance, kDuration, kTimeStep);
-  for (const auto& measurement : measurements) {
+  for (const auto &measurement : measurements) {
     sensor::ImuData imu_data{
         measurement.time - common::FromSeconds(kTimeStep / 2),
         Eigen::Vector3d(0., 0., 9.8), Eigen::Vector3d::Zero()};
@@ -379,11 +379,11 @@ TEST_F(ClientServerTest, LocalSlam2DWithUploadingServer) {
   int trajectory_id = stub_for_uploading_server_->AddTrajectoryBuilder(
       {kRangeSensorId}, trajectory_builder_options_,
       local_slam_result_callback_);
-  TrajectoryBuilderInterface* trajectory_stub =
+  TrajectoryBuilderInterface *trajectory_stub =
       stub_for_uploading_server_->GetTrajectoryBuilder(trajectory_id);
   const auto measurements = mapping::test::GenerateFakeRangeMeasurements(
       kTravelDistance, kDuration, kTimeStep);
-  for (const auto& measurement : measurements) {
+  for (const auto &measurement : measurements) {
     trajectory_stub->AddSensorData(kRangeSensorId.id, measurement);
   }
   WaitForLocalSlamResults(measurements.size());
@@ -399,6 +399,6 @@ TEST_F(ClientServerTest, LocalSlam2DWithUploadingServer) {
   server_->Shutdown();
 }
 
-}  // namespace
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace
+} // namespace cloud
+} // namespace cartographer

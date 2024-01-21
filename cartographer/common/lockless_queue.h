@@ -31,9 +31,8 @@ namespace common {
 //
 // This lockless queue implementation is adapted from
 // https://github.com/resonance-audio/resonance-audio/blob/master/resonance_audio/utils/lockless_task_queue.h
-template <typename T>
-class LocklessQueue {
- public:
+template <typename T> class LocklessQueue {
+public:
   LocklessQueue() {
     free_list_head_ = nullptr;
     incoming_data_list_head_ = nullptr;
@@ -49,7 +48,7 @@ class LocklessQueue {
 
   // Pushes the data item into the queue.
   void Push(std::unique_ptr<T> t) {
-    Node* const free_node = PopNodeFromFreeList();
+    Node *const free_node = PopNodeFromFreeList();
     CHECK(free_node);
     free_node->data = std::move(t);
     PushNodeToList(&incoming_data_list_head_, free_node);
@@ -60,7 +59,7 @@ class LocklessQueue {
   std::unique_ptr<T> Pop() {
     SwapLists();
     if (data_list_head_ != nullptr) {
-      Node* node = data_list_head_;
+      Node *node = data_list_head_;
       data_list_head_ = data_list_head_->next;
       std::unique_ptr<T> data = std::move(node->data);
       PushNodeToList(&free_list_head_, node);
@@ -69,35 +68,35 @@ class LocklessQueue {
     return nullptr;
   }
 
- private:
+private:
   // Node to model a single-linked list.
   struct Node {
     Node() = default;
 
     // Dummy copy constructor to enable vector::resize allocation.
-    Node(const Node& node) : next() {}
+    Node(const Node &node) : next() {}
 
     // User data.
     std::unique_ptr<T> data;
 
     // Pointer to next node.
-    std::atomic<Node*> next;
+    std::atomic<Node *> next;
   };
 
   // Deallocates all nodes of the list starting with 'head'.
-  void FreeNodes(Node* node) {
+  void FreeNodes(Node *node) {
     while (node != nullptr) {
-      Node* next_node_ptr = node->next;
+      Node *next_node_ptr = node->next;
       delete node;
       node = next_node_ptr;
     }
   }
 
   // Pushes a node to the front of a list.
-  void PushNodeToList(std::atomic<Node*>* list_head, Node* node) {
+  void PushNodeToList(std::atomic<Node *> *list_head, Node *node) {
     DCHECK(list_head);
     DCHECK(node);
-    Node* list_head_ptr;
+    Node *list_head_ptr;
     do {
       list_head_ptr = list_head->load();
       node->next = list_head_ptr;
@@ -108,9 +107,9 @@ class LocklessQueue {
 
   // Pops a node from the front of the free node list. If the list is empty
   // constructs a new node instance.
-  Node* PopNodeFromFreeList() {
-    Node* list_head_ptr;
-    Node* list_head_next_ptr;
+  Node *PopNodeFromFreeList() {
+    Node *list_head_ptr;
+    Node *list_head_next_ptr;
     do {
       list_head_ptr = free_list_head_.load();
       if (list_head_ptr == nullptr) {
@@ -126,20 +125,20 @@ class LocklessQueue {
   // Swaps the incoming data list for an empty list and appends all items
   // to 'data_list_tail_'.
   void SwapLists() {
-    Node* node_itr = incoming_data_list_head_.exchange(nullptr);
+    Node *node_itr = incoming_data_list_head_.exchange(nullptr);
     if (node_itr == nullptr) {
       // There is no data on the incoming list.
       return;
     }
     // The first node of the incoming data list will become the tail of the
     // data list.
-    Node* const data_list_tail = node_itr;
+    Node *const data_list_tail = node_itr;
 
     // Reverses the list order. After this operation 'prev_node_itr' points to
     // head of the new data list items.
-    Node* prev_node_itr = nullptr;
+    Node *prev_node_itr = nullptr;
     while (node_itr != nullptr) {
-      Node* const next_node_ptr = node_itr->next;
+      Node *const next_node_ptr = node_itr->next;
       node_itr->next = prev_node_itr;
       prev_node_itr = node_itr;
       node_itr = next_node_ptr;
@@ -156,19 +155,19 @@ class LocklessQueue {
   }
 
   // Pointer to head node of free list.
-  std::atomic<Node*> free_list_head_;
+  std::atomic<Node *> free_list_head_;
 
   // Pointer to head node of incoming data list, which is in FILO order.
-  std::atomic<Node*> incoming_data_list_head_;
+  std::atomic<Node *> incoming_data_list_head_;
 
   // Pointer to head node of data list.
-  Node* data_list_head_;
+  Node *data_list_head_;
 
   // Pointer to tail node of data list.
-  Node* data_list_tail_;
+  Node *data_list_tail_;
 };
 
-}  // namespace common
-}  // namespace cartographer
+} // namespace common
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_COMMON_LOCKLESS_QUEUE_H_
+#endif // CARTOGRAPHER_COMMON_LOCKLESS_QUEUE_H_

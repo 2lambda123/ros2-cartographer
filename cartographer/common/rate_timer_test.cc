@@ -57,6 +57,6 @@ TEST(RateTimerTest, ComputeWallTimeRateRatio) {
   EXPECT_NEAR(2., rate_timer.ComputeWallTimeRateRatio(), 1e-3);
 }
 
-}  // namespace
-}  // namespace common
-}  // namespace cartographer
+} // namespace
+} // namespace common
+} // namespace cartographer

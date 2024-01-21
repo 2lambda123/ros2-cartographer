@@ -40,10 +40,10 @@ sensor::TimedPointCloudData CreateFakeRangeData(int from, int to) {
   return result;
 }
 
-bool ArePointTimestampsSorted(const sensor::TimedPointCloudOriginData& data) {
+bool ArePointTimestampsSorted(const sensor::TimedPointCloudOriginData &data) {
   std::vector<float> timestamps;
   timestamps.reserve(data.ranges.size());
-  for (const auto& range : data.ranges) {
+  for (const auto &range : data.ranges) {
     timestamps.push_back(range.point_time[3]);
   }
   return std::is_sorted(timestamps.begin(), timestamps.end());
@@ -137,9 +137,9 @@ TEST(RangeDataCollatorTest, TwoSensors) {
   auto output_3 =
       collator.AddRangeData(sensor_0, CreateFakeRangeData(600, 700));
   EXPECT_EQ(common::ToUniversal(output_3.time), 500);
-  EXPECT_EQ(
-      output_1.ranges.size() + output_2.ranges.size() + output_3.ranges.size(),
-      3 * kNumSamples);
+  EXPECT_EQ(output_1.ranges.size() + output_2.ranges.size() +
+                output_3.ranges.size(),
+            3 * kNumSamples);
   EXPECT_EQ(output_3.ranges.back().point_time[3], 0.f);
   EXPECT_TRUE(ArePointTimestampsSorted(output_3));
 }
@@ -165,6 +165,6 @@ TEST(RangeDataCollatorTest, ThreeSensors) {
   EXPECT_TRUE(ArePointTimestampsSorted(output_3));
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

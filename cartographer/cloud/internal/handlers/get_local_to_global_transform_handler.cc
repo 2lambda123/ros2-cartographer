@@ -27,7 +27,7 @@ namespace cloud {
 namespace handlers {
 
 void GetLocalToGlobalTransformHandler::OnRequest(
-    const proto::GetLocalToGlobalTransformRequest& request) {
+    const proto::GetLocalToGlobalTransformRequest &request) {
   auto response =
       common::make_unique<proto::GetLocalToGlobalTransformResponse>();
   auto local_to_global =
@@ -39,6 +39,6 @@ void GetLocalToGlobalTransformHandler::OnRequest(
   Send(std::move(response));
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

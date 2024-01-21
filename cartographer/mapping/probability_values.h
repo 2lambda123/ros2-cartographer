@@ -43,7 +43,7 @@ inline uint16 BoundedFloatToValue(const float float_value,
   return value;
 }
 
-}  // namespace
+} // namespace
 
 inline float Odds(float probability) {
   return probability / (1.f - probability);
@@ -92,8 +92,8 @@ inline uint16 ProbabilityToValue(const float probability) {
   return BoundedFloatToValue(probability, kMinProbability, kMaxProbability);
 }
 
-extern const std::vector<float>* const kValueToProbability;
-extern const std::vector<float>* const kValueToCorrespondenceCost;
+extern const std::vector<float> *const kValueToProbability;
+extern const std::vector<float> *const kValueToCorrespondenceCost;
 
 // Converts a uint16 (which may or may not have the update marker set) to a
 // probability in the range [kMinProbability, kMaxProbability].
@@ -108,8 +108,8 @@ inline float ValueToCorrespondenceCost(const uint16 value) {
   return (*kValueToCorrespondenceCost)[value];
 }
 
-inline uint16 ProbabilityValueToCorrespondenceCostValue(
-    uint16 probability_value) {
+inline uint16
+ProbabilityValueToCorrespondenceCostValue(uint16 probability_value) {
   if (probability_value == kUnknownProbabilityValue) {
     return kUnknownCorrespondenceValue;
   }
@@ -120,12 +120,13 @@ inline uint16 ProbabilityValueToCorrespondenceCostValue(
   }
   uint16 result = CorrespondenceCostToValue(
       ProbabilityToCorrespondenceCost(ValueToProbability(probability_value)));
-  if (update_carry) result += kUpdateMarker;
+  if (update_carry)
+    result += kUpdateMarker;
   return result;
 }
 
-inline uint16 CorrespondenceCostValueToProbabilityValue(
-    uint16 correspondence_cost_value) {
+inline uint16
+CorrespondenceCostValueToProbabilityValue(uint16 correspondence_cost_value) {
   if (correspondence_cost_value == kUnknownCorrespondenceValue)
     return kUnknownProbabilityValue;
   bool update_carry = false;
@@ -135,14 +136,15 @@ inline uint16 CorrespondenceCostValueToProbabilityValue(
   }
   uint16 result = ProbabilityToValue(CorrespondenceCostToProbability(
       ValueToCorrespondenceCost(correspondence_cost_value)));
-  if (update_carry) result += kUpdateMarker;
+  if (update_carry)
+    result += kUpdateMarker;
   return result;
 }
 
 std::vector<uint16> ComputeLookupTableToApplyOdds(float odds);
 std::vector<uint16> ComputeLookupTableToApplyCorrespondenceCostOdds(float odds);
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_PROBABILITY_VALUES_H_
+#endif // CARTOGRAPHER_MAPPING_PROBABILITY_VALUES_H_

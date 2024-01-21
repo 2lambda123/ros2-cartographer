@@ -29,7 +29,7 @@ namespace {
 using ::testing::Contains;
 
 class RangeDataTest : public ::testing::Test {
- protected:
+protected:
   RangeDataTest() : origin_(Eigen::Vector3f(1, 1, 1)) {
     returns_.emplace_back(0, 1, 2);
     returns_.emplace_back(4, 5, 6);
@@ -41,6 +41,6 @@ class RangeDataTest : public ::testing::Test {
   std::vector<Eigen::Vector3f> misses_;
 };
 
-}  // namespace
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace
+} // namespace sensor
+} // namespace cartographer

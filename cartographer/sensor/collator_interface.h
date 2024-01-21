@@ -29,21 +29,21 @@ namespace cartographer {
 namespace sensor {
 
 class CollatorInterface {
- public:
+public:
   using Callback =
-      std::function<void(const std::string&, std::unique_ptr<Data>)>;
+      std::function<void(const std::string &, std::unique_ptr<Data>)>;
 
   CollatorInterface() {}
   virtual ~CollatorInterface() {}
-  CollatorInterface(const CollatorInterface&) = delete;
-  CollatorInterface& operator=(const CollatorInterface&) = delete;
+  CollatorInterface(const CollatorInterface &) = delete;
+  CollatorInterface &operator=(const CollatorInterface &) = delete;
 
   // Adds a trajectory to produce sorted sensor output for. Calls 'callback'
   // for each collated sensor data.
-  virtual void AddTrajectory(
-      int trajectory_id,
-      const std::unordered_set<std::string>& expected_sensor_ids,
-      const Callback& callback) = 0;
+  virtual void
+  AddTrajectory(int trajectory_id,
+                const std::unordered_set<std::string> &expected_sensor_ids,
+                const Callback &callback) = 0;
 
   // Marks 'trajectory_id' as finished.
   virtual void FinishTrajectory(int trajectory_id) = 0;
@@ -64,7 +64,7 @@ class CollatorInterface {
   virtual common::optional<int> GetBlockingTrajectoryId() const = 0;
 };
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_COLLATOR_INTERFACE_H_
+#endif // CARTOGRAPHER_SENSOR_COLLATOR_INTERFACE_H_

@@ -24,7 +24,7 @@ namespace cartographer {
 namespace cloud {
 
 proto::MapBuilderServerOptions CreateMapBuilderServerOptions(
-    common::LuaParameterDictionary* lua_parameter_dictionary) {
+    common::LuaParameterDictionary *lua_parameter_dictionary) {
   proto::MapBuilderServerOptions map_builder_server_options;
   map_builder_server_options.set_server_address(
       lua_parameter_dictionary->GetString("server_address"));
@@ -44,9 +44,9 @@ proto::MapBuilderServerOptions CreateMapBuilderServerOptions(
   return map_builder_server_options;
 }
 
-proto::MapBuilderServerOptions LoadMapBuilderServerOptions(
-    const std::string& configuration_directory,
-    const std::string& configuration_basename) {
+proto::MapBuilderServerOptions
+LoadMapBuilderServerOptions(const std::string &configuration_directory,
+                            const std::string &configuration_basename) {
   auto file_resolver = common::make_unique<common::ConfigurationFileResolver>(
       std::vector<std::string>{configuration_directory});
   const std::string code =
@@ -56,5 +56,5 @@ proto::MapBuilderServerOptions LoadMapBuilderServerOptions(
   return CreateMapBuilderServerOptions(&lua_parameter_dictionary);
 }
 
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace cloud
+} // namespace cartographer

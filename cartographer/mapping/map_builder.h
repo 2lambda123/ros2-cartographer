@@ -35,7 +35,7 @@ proto::MapBuilderOptions CreateMapBuilderOptions(
 // Wires up the complete SLAM stack with TrajectoryBuilders (for local submaps)
 // and a PoseGraph for loop closure.
 class MapBuilder : public MapBuilderInterface {
- public:
+public:
   explicit MapBuilder(const proto::MapBuilderOptions &options);
   ~MapBuilder() override {}
 
@@ -69,17 +69,17 @@ class MapBuilder : public MapBuilderInterface {
     return trajectory_builders_.size();
   }
 
-  mapping::TrajectoryBuilderInterface *GetTrajectoryBuilder(
-      int trajectory_id) const override {
+  mapping::TrajectoryBuilderInterface *
+  GetTrajectoryBuilder(int trajectory_id) const override {
     return trajectory_builders_.at(trajectory_id).get();
   }
 
-  const std::vector<proto::TrajectoryBuilderOptionsWithSensorIds>
-      &GetAllTrajectoryBuilderOptions() const override {
+  const std::vector<proto::TrajectoryBuilderOptionsWithSensorIds> &
+  GetAllTrajectoryBuilderOptions() const override {
     return all_trajectory_builder_options_;
   }
 
- private:
+private:
   const proto::MapBuilderOptions options_;
   common::ThreadPool thread_pool_;
 
@@ -92,7 +92,7 @@ class MapBuilder : public MapBuilderInterface {
       all_trajectory_builder_options_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_MAP_BUILDER_H_
+#endif // CARTOGRAPHER_MAPPING_MAP_BUILDER_H_

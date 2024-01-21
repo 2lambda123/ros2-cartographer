@@ -34,7 +34,7 @@ namespace {
 // 'output_file'.
 void WriteBinaryPlyHeader(const bool has_color, const bool has_intensities,
                           const int64 num_points,
-                          FileWriter* const file_writer) {
+                          FileWriter *const file_writer) {
   const std::string color_header = !has_color ? ""
                                               : "property uchar red\n"
                                                 "property uchar green\n"
@@ -55,8 +55,8 @@ void WriteBinaryPlyHeader(const bool has_color, const bool has_intensities,
   CHECK(file_writer->WriteHeader(out.data(), out.size()));
 }
 
-void WriteBinaryPlyPointCoordinate(const Eigen::Vector3f& point,
-                                   FileWriter* const file_writer) {
+void WriteBinaryPlyPointCoordinate(const Eigen::Vector3f &point,
+                                   FileWriter *const file_writer) {
   // TODO(sirver): This ignores endianness.
   char buffer[12];
   memcpy(buffer, &point[0], sizeof(float));
@@ -66,34 +66,32 @@ void WriteBinaryPlyPointCoordinate(const Eigen::Vector3f& point,
 }
 
 void WriteBinaryIntensity(const float intensity,
-                          FileWriter* const file_writer) {
+                          FileWriter *const file_writer) {
   // TODO(sirver): This ignores endianness.
-  CHECK(file_writer->Write(reinterpret_cast<const char*>(&intensity),
+  CHECK(file_writer->Write(reinterpret_cast<const char *>(&intensity),
                            sizeof(float)));
 }
 
-void WriteBinaryPlyPointColor(const Uint8Color& color,
-                              FileWriter* const file_writer) {
-  CHECK(file_writer->Write(reinterpret_cast<const char*>(color.data()),
+void WriteBinaryPlyPointColor(const Uint8Color &color,
+                              FileWriter *const file_writer) {
+  CHECK(file_writer->Write(reinterpret_cast<const char *>(color.data()),
                            color.size()));
 }
 
-}  // namespace
+} // namespace
 
 std::unique_ptr<PlyWritingPointsProcessor>
 PlyWritingPointsProcessor::FromDictionary(
-    const FileWriterFactory& file_writer_factory,
-    common::LuaParameterDictionary* const dictionary,
-    PointsProcessor* const next) {
+    const FileWriterFactory &file_writer_factory,
+    common::LuaParameterDictionary *const dictionary,
+    PointsProcessor *const next) {
   return common::make_unique<PlyWritingPointsProcessor>(
       file_writer_factory(dictionary->GetString("filename")), next);
 }
 
 PlyWritingPointsProcessor::PlyWritingPointsProcessor(
-    std::unique_ptr<FileWriter> file_writer, PointsProcessor* const next)
-    : next_(next),
-      num_points_(0),
-      has_colors_(false),
+    std::unique_ptr<FileWriter> file_writer, PointsProcessor *const next)
+    : next_(next), num_points_(0), has_colors_(false),
       file_(std::move(file_writer)) {}
 
 PointsProcessor::FlushResult PlyWritingPointsProcessor::Flush() {
@@ -101,12 +99,12 @@ PointsProcessor::FlushResult PlyWritingPointsProcessor::Flush() {
   CHECK(file_->Close()) << "Closing PLY file_writer failed.";
 
   switch (next_->Flush()) {
-    case FlushResult::kFinished:
-      return FlushResult::kFinished;
+  case FlushResult::kFinished:
+    return FlushResult::kFinished;
 
-    case FlushResult::kRestartStream:
-      LOG(FATAL) << "PLY generation must be configured to occur after any "
-                    "stages that require multiple passes.";
+  case FlushResult::kRestartStream:
+    LOG(FATAL) << "PLY generation must be configured to occur after any "
+                  "stages that require multiple passes.";
   }
   LOG(FATAL);
 }
@@ -148,5 +146,5 @@ void PlyWritingPointsProcessor::Process(std::unique_ptr<PointsBatch> batch) {
   next_->Process(std::move(batch));
 }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

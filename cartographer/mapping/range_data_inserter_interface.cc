@@ -21,7 +21,7 @@ namespace cartographer {
 namespace mapping {
 
 proto::RangeDataInserterOptions CreateRangeDataInserterOptions(
-    common::LuaParameterDictionary* const parameter_dictionary) {
+    common::LuaParameterDictionary *const parameter_dictionary) {
   proto::RangeDataInserterOptions options;
   const std::string range_data_inserter_type_string =
       parameter_dictionary->GetString("range_data_inserter_type");
@@ -39,5 +39,5 @@ proto::RangeDataInserterOptions CreateRangeDataInserterOptions(
               .get());
   return options;
 }
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

@@ -27,7 +27,7 @@ namespace cloud {
 namespace handlers {
 
 void FinishTrajectoryHandler::OnRequest(
-    const proto::FinishTrajectoryRequest& request) {
+    const proto::FinishTrajectoryRequest &request) {
   GetContext<MapBuilderContextInterface>()->map_builder().FinishTrajectory(
       request.trajectory_id());
   GetUnsynchronizedContext<MapBuilderContextInterface>()
@@ -41,6 +41,6 @@ void FinishTrajectoryHandler::OnRequest(
   Send(common::make_unique<google::protobuf::Empty>());
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

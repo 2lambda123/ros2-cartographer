@@ -79,14 +79,14 @@ std::vector<std::vector<int>> ConnectedComponents::Components() {
   // Map from cluster exemplar -> growing cluster.
   std::unordered_map<int, std::vector<int>> map;
   common::MutexLocker locker(&lock_);
-  for (const auto& trajectory_id_entry : forest_) {
+  for (const auto &trajectory_id_entry : forest_) {
     map[FindSet(trajectory_id_entry.first)].push_back(
         trajectory_id_entry.first);
   }
 
   std::vector<std::vector<int>> result;
   result.reserve(map.size());
-  for (auto& pair : map) {
+  for (auto &pair : map) {
     result.emplace_back(std::move(pair.second));
   }
   return result;
@@ -96,7 +96,7 @@ std::vector<int> ConnectedComponents::GetComponent(const int trajectory_id) {
   common::MutexLocker locker(&lock_);
   const int set_id = FindSet(trajectory_id);
   std::vector<int> trajectory_ids;
-  for (const auto& entry : forest_) {
+  for (const auto &entry : forest_) {
     if (FindSet(entry.first) == set_id) {
       trajectory_ids.push_back(entry.first);
     }
@@ -112,15 +112,15 @@ int ConnectedComponents::ConnectionCount(const int trajectory_id_a,
   return it != connection_map_.end() ? it->second : 0;
 }
 
-proto::ConnectedComponents ToProto(
-    std::vector<std::vector<int>> connected_components) {
+proto::ConnectedComponents
+ToProto(std::vector<std::vector<int>> connected_components) {
   proto::ConnectedComponents proto;
-  for (auto& connected_component : connected_components) {
+  for (auto &connected_component : connected_components) {
     std::sort(connected_component.begin(), connected_component.end());
   }
   std::sort(connected_components.begin(), connected_components.end());
-  for (const auto& connected_component : connected_components) {
-    auto* proto_connected_component = proto.add_connected_component();
+  for (const auto &connected_component : connected_components) {
+    auto *proto_connected_component = proto.add_connected_component();
     for (const int trajectory_id : connected_component) {
       proto_connected_component->add_trajectory_id(trajectory_id);
     }
@@ -128,5 +128,5 @@ proto::ConnectedComponents ToProto(
   return proto;
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

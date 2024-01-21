@@ -27,9 +27,9 @@ namespace cloud {
 namespace handlers {
 namespace {
 
-std::unique_ptr<proto::ReceiveLocalSlamResultsResponse> GenerateResponse(
-    std::unique_ptr<MapBuilderContextInterface::LocalSlamResult>
-        local_slam_result) {
+std::unique_ptr<proto::ReceiveLocalSlamResultsResponse>
+GenerateResponse(std::unique_ptr<MapBuilderContextInterface::LocalSlamResult>
+                     local_slam_result) {
   auto response = common::make_unique<proto::ReceiveLocalSlamResultsResponse>();
   response->set_trajectory_id(local_slam_result->trajectory_id);
   response->set_timestamp(common::ToUniversal(local_slam_result->time));
@@ -46,10 +46,10 @@ std::unique_ptr<proto::ReceiveLocalSlamResultsResponse> GenerateResponse(
   return response;
 }
 
-}  // namespace
+} // namespace
 
 void ReceiveLocalSlamResultsHandler::OnRequest(
-    const proto::ReceiveLocalSlamResultsRequest& request) {
+    const proto::ReceiveLocalSlamResultsRequest &request) {
   auto writer = GetWriter();
   MapBuilderContextInterface::LocalSlamSubscriptionId subscription_id =
       GetUnsynchronizedContext<MapBuilderContextInterface>()
@@ -85,6 +85,6 @@ void ReceiveLocalSlamResultsHandler::OnFinish() {
   }
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

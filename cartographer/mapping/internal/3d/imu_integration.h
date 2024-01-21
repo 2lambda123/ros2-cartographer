@@ -30,20 +30,19 @@
 namespace cartographer {
 namespace mapping {
 
-template <typename T>
-struct IntegrateImuResult {
+template <typename T> struct IntegrateImuResult {
   Eigen::Matrix<T, 3, 1> delta_velocity;
   Eigen::Quaternion<T> delta_rotation;
 };
 
 template <typename T, typename RangeType, typename IteratorType>
 IntegrateImuResult<T> IntegrateImu(
-    const RangeType& imu_data,
-    const Eigen::Transform<T, 3, Eigen::Affine>&
-        linear_acceleration_calibration,
-    const Eigen::Transform<T, 3, Eigen::Affine>& angular_velocity_calibration,
+    const RangeType &imu_data,
+    const Eigen::Transform<T, 3, Eigen::Affine>
+        &linear_acceleration_calibration,
+    const Eigen::Transform<T, 3, Eigen::Affine> &angular_velocity_calibration,
     const common::Time start_time, const common::Time end_time,
-    IteratorType* const it) {
+    IteratorType *const it) {
   CHECK_LE(start_time, end_time);
   CHECK(*it != imu_data.end());
   CHECK_LE((*it)->time, start_time);
@@ -83,16 +82,15 @@ IntegrateImuResult<T> IntegrateImu(
 
 // Returns velocity delta in map frame.
 template <typename RangeType, typename IteratorType>
-IntegrateImuResult<double> IntegrateImu(const RangeType& imu_data,
-                                        const common::Time start_time,
-                                        const common::Time end_time,
-                                        IteratorType* const it) {
+IntegrateImuResult<double>
+IntegrateImu(const RangeType &imu_data, const common::Time start_time,
+             const common::Time end_time, IteratorType *const it) {
   return IntegrateImu<double, RangeType, IteratorType>(
       imu_data, Eigen::Affine3d::Identity(), Eigen::Affine3d::Identity(),
       start_time, end_time, it);
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_3D_IMU_INTEGRATION_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_3D_IMU_INTEGRATION_H_

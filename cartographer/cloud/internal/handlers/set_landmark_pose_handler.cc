@@ -27,7 +27,7 @@ namespace cloud {
 namespace handlers {
 
 void SetLandmarkPoseHandler::OnRequest(
-    const proto::SetLandmarkPoseRequest& request) {
+    const proto::SetLandmarkPoseRequest &request) {
   GetContext<MapBuilderContextInterface>()
       ->map_builder()
       .pose_graph()
@@ -37,6 +37,6 @@ void SetLandmarkPoseHandler::OnRequest(
   Send(common::make_unique<google::protobuf::Empty>());
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

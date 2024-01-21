@@ -35,17 +35,17 @@ namespace scan_matching {
 namespace {
 
 class RealTimeCorrelativeScanMatcherTest : public ::testing::Test {
- protected:
+protected:
   RealTimeCorrelativeScanMatcherTest()
       : probability_grid_(
             MapLimits(0.05, Eigen::Vector2d(0.05, 0.25), CellLimits(6, 6))) {
     {
-      auto parameter_dictionary = common::MakeDictionary(
-          "return { "
-          "insert_free_space = true, "
-          "hit_probability = 0.7, "
-          "miss_probability = 0.4, "
-          "}");
+      auto parameter_dictionary =
+          common::MakeDictionary("return { "
+                                 "insert_free_space = true, "
+                                 "hit_probability = 0.7, "
+                                 "miss_probability = 0.4, "
+                                 "}");
       range_data_inserter_ =
           common::make_unique<ProbabilityGridRangeDataInserter2D>(
               CreateProbabilityGridRangeDataInserterOptions2D(
@@ -63,13 +63,13 @@ class RealTimeCorrelativeScanMatcherTest : public ::testing::Test {
         &probability_grid_);
     probability_grid_.FinishUpdate();
     {
-      auto parameter_dictionary = common::MakeDictionary(
-          "return {"
-          "linear_search_window = 0.6, "
-          "angular_search_window = 0.16, "
-          "translation_delta_cost_weight = 0., "
-          "rotation_delta_cost_weight = 0., "
-          "}");
+      auto parameter_dictionary =
+          common::MakeDictionary("return {"
+                                 "linear_search_window = 0.6, "
+                                 "angular_search_window = 0.16, "
+                                 "translation_delta_cost_weight = 0., "
+                                 "rotation_delta_cost_weight = 0., "
+                                 "}");
       real_time_correlative_scan_matcher_ =
           common::make_unique<RealTimeCorrelativeScanMatcher2D>(
               CreateRealTimeCorrelativeScanMatcherOptions(
@@ -121,7 +121,7 @@ TEST_F(RealTimeCorrelativeScanMatcherTest,
   EXPECT_GT(0.7, candidates[0].score);
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

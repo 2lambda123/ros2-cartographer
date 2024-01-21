@@ -37,7 +37,7 @@ namespace mapping {
 namespace scan_matching {
 
 proto::CeresScanMatcherOptions3D CreateCeresScanMatcherOptions3D(
-    common::LuaParameterDictionary* const parameter_dictionary) {
+    common::LuaParameterDictionary *const parameter_dictionary) {
   proto::CeresScanMatcherOptions3D options;
   for (int i = 0;; ++i) {
     const std::string lua_identifier =
@@ -61,20 +61,19 @@ proto::CeresScanMatcherOptions3D CreateCeresScanMatcherOptions3D(
 }
 
 CeresScanMatcher3D::CeresScanMatcher3D(
-    const proto::CeresScanMatcherOptions3D& options)
-    : options_(options),
-      ceres_solver_options_(
-          common::CreateCeresSolverOptions(options.ceres_solver_options())) {
+    const proto::CeresScanMatcherOptions3D &options)
+    : options_(options), ceres_solver_options_(common::CreateCeresSolverOptions(
+                             options.ceres_solver_options())) {
   ceres_solver_options_.linear_solver_type = ceres::DENSE_QR;
 }
 
 void CeresScanMatcher3D::Match(
-    const Eigen::Vector3d& target_translation,
-    const transform::Rigid3d& initial_pose_estimate,
-    const std::vector<PointCloudAndHybridGridPointers>&
-        point_clouds_and_hybrid_grids,
-    transform::Rigid3d* const pose_estimate,
-    ceres::Solver::Summary* const summary) {
+    const Eigen::Vector3d &target_translation,
+    const transform::Rigid3d &initial_pose_estimate,
+    const std::vector<PointCloudAndHybridGridPointers>
+        &point_clouds_and_hybrid_grids,
+    transform::Rigid3d *const pose_estimate,
+    ceres::Solver::Summary *const summary) {
   ceres::Problem problem;
   optimization::CeresPose ceres_pose(
       initial_pose_estimate, nullptr /* translation_parameterization */,
@@ -90,9 +89,9 @@ void CeresScanMatcher3D::Match(
            point_clouds_and_hybrid_grids.size());
   for (size_t i = 0; i != point_clouds_and_hybrid_grids.size(); ++i) {
     CHECK_GT(options_.occupied_space_weight(i), 0.);
-    const sensor::PointCloud& point_cloud =
+    const sensor::PointCloud &point_cloud =
         *point_clouds_and_hybrid_grids[i].first;
-    const HybridGrid& hybrid_grid = *point_clouds_and_hybrid_grids[i].second;
+    const HybridGrid &hybrid_grid = *point_clouds_and_hybrid_grids[i].second;
     problem.AddResidualBlock(
         OccupiedSpaceCostFunction3D::CreateAutoDiffCostFunction(
             options_.occupied_space_weight(i) /
@@ -117,6 +116,6 @@ void CeresScanMatcher3D::Match(
   *pose_estimate = ceres_pose.ToRigid();
 }
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

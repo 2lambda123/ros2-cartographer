@@ -26,9 +26,9 @@ namespace mapping {
 namespace optimization {
 
 template <typename T>
-static std::array<T, 3> ComputeUnscaledError(
-    const transform::Rigid2d& relative_pose, const T* const start,
-    const T* const end) {
+static std::array<T, 3>
+ComputeUnscaledError(const transform::Rigid2d &relative_pose,
+                     const T *const start, const T *const end) {
   const T cos_theta_i = cos(start[2]);
   const T sin_theta_i = sin(start[2]);
   const T delta_x = end[0] - start[0];
@@ -43,22 +43,22 @@ static std::array<T, 3> ComputeUnscaledError(
 }
 
 template <typename T>
-std::array<T, 3> ScaleError(const std::array<T, 3>& error,
+std::array<T, 3> ScaleError(const std::array<T, 3> &error,
                             double translation_weight, double rotation_weight) {
   // clang-format off
-  return {{
-      error[0] * translation_weight,
-      error[1] * translation_weight,
-      error[2] * rotation_weight
-  }};
+    return {{
+            error[0] * translation_weight,
+            error[1] * translation_weight,
+            error[2] * rotation_weight
+        }};
   // clang-format on
 }
 
 template <typename T>
 static std::array<T, 6> ComputeUnscaledError(
-    const transform::Rigid3d& relative_pose, const T* const start_rotation,
-    const T* const start_translation, const T* const end_rotation,
-    const T* const end_translation) {
+    const transform::Rigid3d &relative_pose, const T *const start_rotation,
+    const T *const start_translation, const T *const end_rotation,
+    const T *const end_translation) {
   const Eigen::Quaternion<T> R_i_inverse(start_rotation[0], -start_rotation[1],
                                          -start_rotation[2],
                                          -start_rotation[3]);
@@ -86,24 +86,24 @@ static std::array<T, 6> ComputeUnscaledError(
 }
 
 template <typename T>
-std::array<T, 6> ScaleError(const std::array<T, 6>& error,
+std::array<T, 6> ScaleError(const std::array<T, 6> &error,
                             double translation_weight, double rotation_weight) {
   // clang-format off
-  return {{
-      error[0] * translation_weight,
-      error[1] * translation_weight,
-      error[2] * translation_weight,
-      error[3] * rotation_weight,
-      error[4] * rotation_weight,
-      error[5] * rotation_weight
-  }};
+    return {{
+            error[0] * translation_weight,
+            error[1] * translation_weight,
+            error[2] * translation_weight,
+            error[3] * rotation_weight,
+            error[4] * rotation_weight,
+            error[5] * rotation_weight
+        }};
   // clang-format on
 }
 
 //  Eigen implementation of slerp is not compatible with Ceres on all supported
 //  platforms. Our own implementation is used instead.
 template <typename T>
-std::array<T, 4> SlerpQuaternions(const T* const start, const T* const end,
+std::array<T, 4> SlerpQuaternions(const T *const start, const T *const end,
                                   double factor) {
   // Angle 'theta' is the half-angle "between" quaternions. It can be computed
   // as the arccosine of their dot product.
@@ -132,10 +132,10 @@ std::array<T, 4> SlerpQuaternions(const T* const start, const T* const end,
 
 template <typename T>
 std::tuple<std::array<T, 4> /* rotation */, std::array<T, 3> /* translation */>
-InterpolateNodes3D(const T* const prev_node_rotation,
-                   const T* const prev_node_translation,
-                   const T* const next_node_rotation,
-                   const T* const next_node_translation,
+InterpolateNodes3D(const T *const prev_node_rotation,
+                   const T *const prev_node_translation,
+                   const T *const next_node_rotation,
+                   const T *const next_node_translation,
                    const double interpolation_parameter) {
   return std::make_tuple(
       SlerpQuaternions(prev_node_rotation, next_node_rotation,
@@ -154,10 +154,10 @@ InterpolateNodes3D(const T* const prev_node_rotation,
 
 template <typename T>
 std::tuple<std::array<T, 4> /* rotation */, std::array<T, 3> /* translation */>
-InterpolateNodes2D(const T* const prev_node_pose,
-                   const Eigen::Quaterniond& prev_node_gravity_alignment,
-                   const T* const next_node_pose,
-                   const Eigen::Quaterniond& next_node_gravity_alignment,
+InterpolateNodes2D(const T *const prev_node_pose,
+                   const Eigen::Quaterniond &prev_node_gravity_alignment,
+                   const T *const next_node_pose,
+                   const Eigen::Quaterniond &next_node_gravity_alignment,
                    const double interpolation_parameter) {
   // The following is equivalent to (Embed3D(prev_node_pose) *
   // Rigid3d::Rotation(prev_node_gravity_alignment)).rotation().
@@ -190,8 +190,8 @@ InterpolateNodes2D(const T* const prev_node_pose,
            T(0)}});
 }
 
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_COST_FUNCTIONS_COST_HELPERS_IMPL_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_COST_FUNCTIONS_COST_HELPERS_IMPL_H_

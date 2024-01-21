@@ -31,7 +31,7 @@ Task::State Task::GetState() {
   return state_;
 }
 
-void Task::SetWorkItem(const WorkItem& work_item) {
+void Task::SetWorkItem(const WorkItem &work_item) {
   MutexLocker locker(&mutex_);
   CHECK_EQ(state_, NEW);
   work_item_ = work_item;
@@ -51,7 +51,7 @@ void Task::AddDependency(std::weak_ptr<Task> dependency) {
   }
 }
 
-void Task::SetThreadPool(ThreadPoolInterface* thread_pool) {
+void Task::SetThreadPool(ThreadPoolInterface *thread_pool) {
   MutexLocker locker(&mutex_);
   CHECK_EQ(state_, NEW);
   state_ = DISPATCHED;
@@ -63,7 +63,7 @@ void Task::SetThreadPool(ThreadPoolInterface* thread_pool) {
   }
 }
 
-void Task::AddDependentTask(Task* dependent_task) {
+void Task::AddDependentTask(Task *dependent_task) {
   MutexLocker locker(&mutex_);
   if (state_ == COMPLETED) {
     dependent_task->OnDependenyCompleted();
@@ -98,10 +98,10 @@ void Task::Execute() {
 
   MutexLocker locker(&mutex_);
   state_ = COMPLETED;
-  for (Task* dependent_task : dependent_tasks_) {
+  for (Task *dependent_task : dependent_tasks_) {
     dependent_task->OnDependenyCompleted();
   }
 }
 
-}  // namespace common
-}  // namespace cartographer
+} // namespace common
+} // namespace cartographer

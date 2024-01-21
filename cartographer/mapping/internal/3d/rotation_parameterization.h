@@ -26,7 +26,7 @@ namespace mapping {
 
 struct YawOnlyQuaternionPlus {
   template <typename T>
-  bool operator()(const T* x, const T* delta, T* x_plus_delta) const {
+  bool operator()(const T *x, const T *delta, T *x_plus_delta) const {
     const T clamped_delta = common::Clamp(delta[0], T(-0.5), T(0.5));
     T q_delta[4];
     q_delta[0] = ceres::sqrt(1. - clamped_delta * clamped_delta);
@@ -40,7 +40,7 @@ struct YawOnlyQuaternionPlus {
 
 struct ConstantYawQuaternionPlus {
   template <typename T>
-  bool operator()(const T* x, const T* delta, T* x_plus_delta) const {
+  bool operator()(const T *x, const T *delta, T *x_plus_delta) const {
     const T delta_norm =
         ceres::sqrt(common::Pow2(delta[0]) + common::Pow2(delta[1]));
     const T sin_delta_over_delta =
@@ -61,7 +61,7 @@ struct ConstantYawQuaternionPlus {
   }
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_3D_ROTATION_PARAMETERIZATION_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_3D_ROTATION_PARAMETERIZATION_H_

@@ -43,6 +43,6 @@ TEST(SubmapsTest, ToFromProto) {
   EXPECT_NEAR(expected.low_resolution_hybrid_grid().resolution(), 0.25, 1e-6);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

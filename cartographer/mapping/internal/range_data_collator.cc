@@ -26,8 +26,8 @@ namespace cartographer {
 namespace mapping {
 
 sensor::TimedPointCloudOriginData RangeDataCollator::AddRangeData(
-    const std::string& sensor_id,
-    const sensor::TimedPointCloudData& timed_point_cloud_data) {
+    const std::string &sensor_id,
+    const sensor::TimedPointCloudData &timed_point_cloud_data) {
   CHECK_NE(expected_sensor_ids_.count(sensor_id), 0);
   // TODO(gaschler): These two cases can probably be one.
   if (id_to_pending_data_.count(sensor_id) != 0) {
@@ -46,7 +46,7 @@ sensor::TimedPointCloudOriginData RangeDataCollator::AddRangeData(
   current_start_ = current_end_;
   // We have messages from all sensors, move forward to oldest.
   common::Time oldest_timestamp = common::Time::max();
-  for (const auto& pair : id_to_pending_data_) {
+  for (const auto &pair : id_to_pending_data_) {
     oldest_timestamp = std::min(oldest_timestamp, pair.second.time);
   }
   current_end_ = oldest_timestamp;
@@ -58,8 +58,8 @@ sensor::TimedPointCloudOriginData RangeDataCollator::CropAndMerge() {
   bool warned_for_dropped_points = false;
   for (auto it = id_to_pending_data_.begin();
        it != id_to_pending_data_.end();) {
-    sensor::TimedPointCloudData& data = it->second;
-    sensor::TimedPointCloud& ranges = it->second.ranges;
+    sensor::TimedPointCloudData &data = it->second;
+    sensor::TimedPointCloud &ranges = it->second.ranges;
 
     auto overlap_begin = ranges.begin();
     while (overlap_begin < ranges.end() &&
@@ -108,12 +108,12 @@ sensor::TimedPointCloudOriginData RangeDataCollator::CropAndMerge() {
   }
 
   std::sort(result.ranges.begin(), result.ranges.end(),
-            [](const sensor::TimedPointCloudOriginData::RangeMeasurement& a,
-               const sensor::TimedPointCloudOriginData::RangeMeasurement& b) {
+            [](const sensor::TimedPointCloudOriginData::RangeMeasurement &a,
+               const sensor::TimedPointCloudOriginData::RangeMeasurement &b) {
               return a.point_time[3] < b.point_time[3];
             });
   return result;
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

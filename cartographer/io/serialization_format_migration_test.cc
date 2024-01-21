@@ -24,8 +24,8 @@
 #include "cartographer/mapping/proto/pose_graph.pb.h"
 #include "cartographer/mapping/proto/serialization.pb.h"
 #include "cartographer/mapping/proto/trajectory_builder_options.pb.h"
-#include "gmock/gmock.h"
 #include "google/protobuf/text_format.h"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace cartographer {
@@ -37,10 +37,10 @@ using ::testing::Eq;
 using ::testing::SizeIs;
 
 class MigrationTest : public ::testing::Test {
- protected:
+protected:
   void SetUp() {
     writer_.reset(new ForwardingProtoStreamWriter(
-        [this](const google::protobuf::Message* proto) -> bool {
+        [this](const google::protobuf::Message *proto) -> bool {
           std::string msg_string;
           TextFormat::PrintToString(*proto, &msg_string);
           this->output_messages_.push_back(msg_string);
@@ -115,6 +115,6 @@ TEST_F(MigrationTest, SerializedDataOrderIsCorrect) {
   EXPECT_TRUE(serialized[8].has_landmark_data());
 }
 
-}  // namespace
-}  // namespace io
-}  // namespace cartographer
+} // namespace
+} // namespace io
+} // namespace cartographer

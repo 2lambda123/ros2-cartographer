@@ -22,16 +22,16 @@ namespace cloud {
 
 template <class SubmapType>
 MapBuilderContext<SubmapType>::MapBuilderContext(
-    MapBuilderServer* map_builder_server)
+    MapBuilderServer *map_builder_server)
     : map_builder_server_(map_builder_server) {}
 
 template <class SubmapType>
-mapping::MapBuilderInterface& MapBuilderContext<SubmapType>::map_builder() {
+mapping::MapBuilderInterface &MapBuilderContext<SubmapType>::map_builder() {
   return *map_builder_server_->map_builder_;
 }
 
 template <class SubmapType>
-common::BlockingQueue<std::unique_ptr<MapBuilderContextInterface::Data>>&
+common::BlockingQueue<std::unique_ptr<MapBuilderContextInterface::Data>> &
 MapBuilderContext<SubmapType>::sensor_data_queue() {
   return map_builder_server_->incoming_data_queue_;
 }
@@ -39,7 +39,7 @@ MapBuilderContext<SubmapType>::sensor_data_queue() {
 template <class SubmapType>
 mapping::TrajectoryBuilderInterface::LocalSlamResultCallback
 MapBuilderContext<SubmapType>::GetLocalSlamResultCallbackForSubscriptions() {
-  MapBuilderServer* map_builder_server = map_builder_server_;
+  MapBuilderServer *map_builder_server = map_builder_server_;
   return [map_builder_server](
              int trajectory_id, common::Time time,
              transform::Rigid3d local_pose, sensor::RangeData range_data,
@@ -54,7 +54,7 @@ MapBuilderContext<SubmapType>::GetLocalSlamResultCallbackForSubscriptions() {
 
 template <class SubmapType>
 void MapBuilderContext<SubmapType>::AddSensorDataToTrajectory(
-    const Data& sensor_data) {
+    const Data &sensor_data) {
   sensor_data.data->AddToTrajectoryBuilder(
       map_builder_server_->map_builder_->GetTrajectoryBuilder(
           sensor_data.trajectory_id));
@@ -70,7 +70,7 @@ MapBuilderContext<SubmapType>::SubscribeLocalSlamResults(
 
 template <class SubmapType>
 void MapBuilderContext<SubmapType>::UnsubscribeLocalSlamResults(
-    const LocalSlamSubscriptionId& subscription_id) {
+    const LocalSlamSubscriptionId &subscription_id) {
   map_builder_server_->UnsubscribeLocalSlamResults(subscription_id);
 }
 
@@ -92,7 +92,7 @@ void MapBuilderContext<SubmapType>::NotifyFinishTrajectory(int trajectory_id) {
 }
 
 template <class SubmapType>
-LocalTrajectoryUploaderInterface*
+LocalTrajectoryUploaderInterface *
 MapBuilderContext<SubmapType>::local_trajectory_uploader() {
   return map_builder_server_->local_trajectory_uploader_.get();
 }
@@ -106,14 +106,14 @@ void MapBuilderContext<SubmapType>::EnqueueSensorData(
 
 template <>
 void MapBuilderContext<mapping::Submap2D>::EnqueueLocalSlamResultData(
-    int trajectory_id, const std::string& sensor_id,
-    const mapping::proto::LocalSlamResultData& local_slam_result_data);
+    int trajectory_id, const std::string &sensor_id,
+    const mapping::proto::LocalSlamResultData &local_slam_result_data);
 template <>
 void MapBuilderContext<mapping::Submap3D>::EnqueueLocalSlamResultData(
-    int trajectory_id, const std::string& sensor_id,
-    const mapping::proto::LocalSlamResultData& local_slam_result_data);
+    int trajectory_id, const std::string &sensor_id,
+    const mapping::proto::LocalSlamResultData &local_slam_result_data);
 
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_INTERNAL_CLOUD_MAP_BUILDER_CONTEXT_IMPL_H
+#endif // CARTOGRAPHER_INTERNAL_CLOUD_MAP_BUILDER_CONTEXT_IMPL_H

@@ -18,19 +18,17 @@ namespace io {
 
 HybridGridPointsProcessor::HybridGridPointsProcessor(
     const double voxel_size,
-    const mapping::proto::RangeDataInserterOptions3D&
-        range_data_inserter_options,
-    std::unique_ptr<FileWriter> file_writer, PointsProcessor* const next)
-    : next_(next),
-      range_data_inserter_(range_data_inserter_options),
-      hybrid_grid_(voxel_size),
-      file_writer_(std::move(file_writer)) {}
+    const mapping::proto::RangeDataInserterOptions3D
+        &range_data_inserter_options,
+    std::unique_ptr<FileWriter> file_writer, PointsProcessor *const next)
+    : next_(next), range_data_inserter_(range_data_inserter_options),
+      hybrid_grid_(voxel_size), file_writer_(std::move(file_writer)) {}
 
 std::unique_ptr<HybridGridPointsProcessor>
 HybridGridPointsProcessor::FromDictionary(
-    const FileWriterFactory& file_writer_factory,
-    common::LuaParameterDictionary* const dictionary,
-    PointsProcessor* const next) {
+    const FileWriterFactory &file_writer_factory,
+    common::LuaParameterDictionary *const dictionary,
+    PointsProcessor *const next) {
   return common::make_unique<HybridGridPointsProcessor>(
       dictionary->GetDouble("voxel_size"),
       mapping::CreateRangeDataInserterOptions3D(
@@ -52,12 +50,12 @@ PointsProcessor::FlushResult HybridGridPointsProcessor::Flush() {
   CHECK(file_writer_->Close());
 
   switch (next_->Flush()) {
-    case FlushResult::kRestartStream:
-      LOG(FATAL) << "Hybrid grid generation must be configured to occur after "
-                    "any stages that require multiple passes.";
+  case FlushResult::kRestartStream:
+    LOG(FATAL) << "Hybrid grid generation must be configured to occur after "
+                  "any stages that require multiple passes.";
 
-    case FlushResult::kFinished:
-      return FlushResult::kFinished;
+  case FlushResult::kFinished:
+    return FlushResult::kFinished;
   }
   LOG(FATAL) << "Failed to receive FlushResult::kFinished";
   // The following unreachable return statement is needed to avoid a GCC bug
@@ -65,5 +63,5 @@ PointsProcessor::FlushResult HybridGridPointsProcessor::Flush() {
   return FlushResult::kFinished;
 }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

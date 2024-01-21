@@ -45,7 +45,7 @@ TEST(PrecomputationGridTest, CorrectValues) {
   PrecomputationGrid2D precomputation_grid_dummy(
       probability_grid, probability_grid.limits().cell_limits(), 1,
       &reusable_intermediate_grid);
-  for (const Eigen::Array2i& xy_index :
+  for (const Eigen::Array2i &xy_index :
        XYIndexRangeIterator(Eigen::Array2i(50, 50), Eigen::Array2i(249, 249))) {
     probability_grid.SetProbability(
         xy_index, precomputation_grid_dummy.ToScore(distribution(prng)));
@@ -56,7 +56,7 @@ TEST(PrecomputationGridTest, CorrectValues) {
     PrecomputationGrid2D precomputation_grid(
         probability_grid, probability_grid.limits().cell_limits(), width,
         &reusable_intermediate_grid);
-    for (const Eigen::Array2i& xy_index :
+    for (const Eigen::Array2i &xy_index :
          XYIndexRangeIterator(probability_grid.limits().cell_limits())) {
       float max_score = -std::numeric_limits<float>::infinity();
       for (int y = 0; y != width; ++y) {
@@ -83,7 +83,7 @@ TEST(PrecomputationGridTest, TinyProbabilityGrid) {
   PrecomputationGrid2D precomputation_grid_dummy(
       probability_grid, probability_grid.limits().cell_limits(), 1,
       &reusable_intermediate_grid);
-  for (const Eigen::Array2i& xy_index :
+  for (const Eigen::Array2i &xy_index :
        XYIndexRangeIterator(probability_grid.limits().cell_limits())) {
     probability_grid.SetProbability(
         xy_index, precomputation_grid_dummy.ToScore(distribution(prng)));
@@ -94,7 +94,7 @@ TEST(PrecomputationGridTest, TinyProbabilityGrid) {
     PrecomputationGrid2D precomputation_grid(
         probability_grid, probability_grid.limits().cell_limits(), width,
         &reusable_intermediate_grid);
-    for (const Eigen::Array2i& xy_index :
+    for (const Eigen::Array2i &xy_index :
          XYIndexRangeIterator(probability_grid.limits().cell_limits())) {
       float max_score = -std::numeric_limits<float>::infinity();
       for (int y = 0; y != width; ++y) {
@@ -237,7 +237,7 @@ TEST(FastCorrelativeScanMatcherTest, FullSubmapMatching) {
   }
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

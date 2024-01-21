@@ -27,7 +27,7 @@ namespace mapping {
 namespace testing {
 
 class MockPoseGraph : public mapping::PoseGraphInterface {
- public:
+public:
   MockPoseGraph() = default;
   ~MockPoseGraph() override = default;
 
@@ -46,7 +46,7 @@ class MockPoseGraph : public mapping::PoseGraphInterface {
   MOCK_CONST_METHOD0(GetLandmarkPoses,
                      std::map<std::string, transform::Rigid3d>());
   MOCK_METHOD2(SetLandmarkPose,
-               void(const std::string&, const transform::Rigid3d&));
+               void(const std::string &, const transform::Rigid3d &));
   MOCK_CONST_METHOD1(IsTrajectoryFinished, bool(int));
   MOCK_CONST_METHOD1(IsTrajectoryFrozen, bool(int));
   MOCK_CONST_METHOD0(
@@ -58,8 +58,8 @@ class MockPoseGraph : public mapping::PoseGraphInterface {
                void(GlobalSlamOptimizationCallback callback));
 };
 
-}  // namespace testing
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace testing
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_TESTING_MOCK_POSE_GRAPH_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_TESTING_MOCK_POSE_GRAPH_H_

@@ -26,13 +26,13 @@ namespace scan_matching {
 
 SearchParameters::SearchParameters(const double linear_search_window,
                                    const double angular_search_window,
-                                   const sensor::PointCloud& point_cloud,
+                                   const sensor::PointCloud &point_cloud,
                                    const double resolution)
     : resolution(resolution) {
   // We set this value to something on the order of resolution to make sure that
   // the std::acos() below is defined.
   float max_scan_range = 3.f * resolution;
-  for (const Eigen::Vector3f& point : point_cloud) {
+  for (const Eigen::Vector3f &point : point_cloud) {
     const float range = point.head<2>().norm();
     max_scan_range = std::max(range, max_scan_range);
   }
@@ -60,8 +60,7 @@ SearchParameters::SearchParameters(const int num_linear_perturbations,
                                    const double resolution)
     : num_angular_perturbations(num_angular_perturbations),
       angular_perturbation_step_size(angular_perturbation_step_size),
-      resolution(resolution),
-      num_scans(2 * num_angular_perturbations + 1) {
+      resolution(resolution), num_scans(2 * num_angular_perturbations + 1) {
   linear_bounds.reserve(num_scans);
   for (int i = 0; i != num_scans; ++i) {
     linear_bounds.push_back(
@@ -70,14 +69,14 @@ SearchParameters::SearchParameters(const int num_linear_perturbations,
   }
 }
 
-void SearchParameters::ShrinkToFit(const std::vector<DiscreteScan2D>& scans,
-                                   const CellLimits& cell_limits) {
+void SearchParameters::ShrinkToFit(const std::vector<DiscreteScan2D> &scans,
+                                   const CellLimits &cell_limits) {
   CHECK_EQ(scans.size(), num_scans);
   CHECK_EQ(linear_bounds.size(), num_scans);
   for (int i = 0; i != num_scans; ++i) {
     Eigen::Array2i min_bound = Eigen::Array2i::Zero();
     Eigen::Array2i max_bound = Eigen::Array2i::Zero();
-    for (const Eigen::Array2i& xy_index : scans[i]) {
+    for (const Eigen::Array2i &xy_index : scans[i]) {
       min_bound = min_bound.min(-xy_index);
       max_bound = max_bound.max(Eigen::Array2i(cell_limits.num_x_cells - 1,
                                                cell_limits.num_y_cells - 1) -
@@ -90,9 +89,9 @@ void SearchParameters::ShrinkToFit(const std::vector<DiscreteScan2D>& scans,
   }
 }
 
-std::vector<sensor::PointCloud> GenerateRotatedScans(
-    const sensor::PointCloud& point_cloud,
-    const SearchParameters& search_parameters) {
+std::vector<sensor::PointCloud>
+GenerateRotatedScans(const sensor::PointCloud &point_cloud,
+                     const SearchParameters &search_parameters) {
   std::vector<sensor::PointCloud> rotated_scans;
   rotated_scans.reserve(search_parameters.num_scans);
 
@@ -108,15 +107,16 @@ std::vector<sensor::PointCloud> GenerateRotatedScans(
   return rotated_scans;
 }
 
-std::vector<DiscreteScan2D> DiscretizeScans(
-    const MapLimits& map_limits, const std::vector<sensor::PointCloud>& scans,
-    const Eigen::Translation2f& initial_translation) {
+std::vector<DiscreteScan2D>
+DiscretizeScans(const MapLimits &map_limits,
+                const std::vector<sensor::PointCloud> &scans,
+                const Eigen::Translation2f &initial_translation) {
   std::vector<DiscreteScan2D> discrete_scans;
   discrete_scans.reserve(scans.size());
-  for (const sensor::PointCloud& scan : scans) {
+  for (const sensor::PointCloud &scan : scans) {
     discrete_scans.emplace_back();
     discrete_scans.back().reserve(scan.size());
-    for (const Eigen::Vector3f& point : scan) {
+    for (const Eigen::Vector3f &point : scan) {
       const Eigen::Vector2f translated_point =
           Eigen::Affine2f(initial_translation) * point.head<2>();
       discrete_scans.back().push_back(
@@ -126,6 +126,6 @@ std::vector<DiscreteScan2D> DiscretizeScans(
   return discrete_scans;
 }
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

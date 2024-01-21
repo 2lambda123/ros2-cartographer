@@ -38,10 +38,10 @@ struct PixelData {
 // Filters 'range_data', retaining only the returns that have no more than
 // 'max_range' distance from the origin. Removes misses and reflectivity
 // information.
-sensor::RangeData FilterRangeDataByMaxRange(const sensor::RangeData& range_data,
+sensor::RangeData FilterRangeDataByMaxRange(const sensor::RangeData &range_data,
                                             const float max_range) {
   sensor::RangeData result{range_data.origin, {}, {}};
-  for (const Eigen::Vector3f& hit : range_data.returns) {
+  for (const Eigen::Vector3f &hit : range_data.returns) {
     if ((hit - range_data.origin).norm() <= max_range) {
       result.returns.push_back(hit);
     }
@@ -50,11 +50,11 @@ sensor::RangeData FilterRangeDataByMaxRange(const sensor::RangeData& range_data,
 }
 
 std::vector<PixelData> AccumulatePixelData(
-    const int width, const int height, const Eigen::Array2i& min_index,
-    const Eigen::Array2i& max_index,
-    const std::vector<Eigen::Array4i>& voxel_indices_and_probabilities) {
+    const int width, const int height, const Eigen::Array2i &min_index,
+    const Eigen::Array2i &max_index,
+    const std::vector<Eigen::Array4i> &voxel_indices_and_probabilities) {
   std::vector<PixelData> accumulated_pixel_data(width * height);
-  for (const Eigen::Array4i& voxel_index_and_probability :
+  for (const Eigen::Array4i &voxel_index_and_probability :
        voxel_indices_and_probabilities) {
     const Eigen::Array2i pixel_index = voxel_index_and_probability.head<2>();
     if ((pixel_index < min_index).any() || (pixel_index > max_index).any()) {
@@ -63,7 +63,7 @@ std::vector<PixelData> AccumulatePixelData(
     }
     const int x = max_index.x() - pixel_index[0];
     const int y = max_index.y() - pixel_index[1];
-    PixelData& pixel = accumulated_pixel_data[x * width + y];
+    PixelData &pixel = accumulated_pixel_data[x * width + y];
     ++pixel.count;
     pixel.min_z = std::min(pixel.min_z, voxel_index_and_probability[2]);
     pixel.max_z = std::max(pixel.max_z, voxel_index_and_probability[2]);
@@ -78,9 +78,10 @@ std::vector<PixelData> AccumulatePixelData(
 // The first three entries of each returned value are a cell_index and the
 // last is the corresponding probability value. We batch them together like
 // this to only have one vector and have better cache locality.
-std::vector<Eigen::Array4i> ExtractVoxelData(
-    const HybridGrid& hybrid_grid, const transform::Rigid3f& transform,
-    Eigen::Array2i* min_index, Eigen::Array2i* max_index) {
+std::vector<Eigen::Array4i>
+ExtractVoxelData(const HybridGrid &hybrid_grid,
+                 const transform::Rigid3f &transform, Eigen::Array2i *min_index,
+                 Eigen::Array2i *max_index) {
   std::vector<Eigen::Array4i> voxel_indices_and_probabilities;
   const float resolution_inverse = 1.f / hybrid_grid.resolution();
 
@@ -112,20 +113,20 @@ std::vector<Eigen::Array4i> ExtractVoxelData(
 
 // Builds texture data containing interleaved value and alpha for the
 // visualization from 'accumulated_pixel_data'.
-std::string ComputePixelValues(
-    const std::vector<PixelData>& accumulated_pixel_data) {
+std::string
+ComputePixelValues(const std::vector<PixelData> &accumulated_pixel_data) {
   std::string cell_data;
   cell_data.reserve(2 * accumulated_pixel_data.size());
   constexpr float kMinZDifference = 3.f;
   constexpr float kFreeSpaceWeight = 0.15f;
-  for (const PixelData& pixel : accumulated_pixel_data) {
+  for (const PixelData &pixel : accumulated_pixel_data) {
     // TODO(whess): Take into account submap rotation.
     // TODO(whess): Document the approach and make it more independent from the
     // chosen resolution.
     const float z_difference = pixel.count > 0 ? pixel.max_z - pixel.min_z : 0;
     if (z_difference < kMinZDifference) {
-      cell_data.push_back(0);  // value
-      cell_data.push_back(0);  // alpha
+      cell_data.push_back(0); // value
+      cell_data.push_back(0); // alpha
       continue;
     }
     const float free_space = std::max(z_difference - pixel.count, 0.f);
@@ -138,15 +139,15 @@ std::string ComputePixelValues(
     const int delta = 128 - ProbabilityToLogOddsInteger(average_probability);
     const uint8 alpha = delta > 0 ? 0 : -delta;
     const uint8 value = delta > 0 ? delta : 0;
-    cell_data.push_back(value);                         // value
-    cell_data.push_back((value || alpha) ? alpha : 1);  // alpha
+    cell_data.push_back(value);                        // value
+    cell_data.push_back((value || alpha) ? alpha : 1); // alpha
   }
   return cell_data;
 }
 
 void AddToTextureProto(
-    const HybridGrid& hybrid_grid, const transform::Rigid3d& global_submap_pose,
-    proto::SubmapQuery::Response::SubmapTexture* const texture) {
+    const HybridGrid &hybrid_grid, const transform::Rigid3d &global_submap_pose,
+    proto::SubmapQuery::Response::SubmapTexture *const texture) {
   // Generate an X-ray view through the 'hybrid_grid', aligned to the
   // xy-plane in the global map frame.
   const float resolution = hybrid_grid.resolution();
@@ -176,10 +177,10 @@ void AddToTextureProto(
           global_submap_pose.translation().z())));
 }
 
-}  // namespace
+} // namespace
 
-proto::SubmapsOptions3D CreateSubmapsOptions3D(
-    common::LuaParameterDictionary* parameter_dictionary) {
+proto::SubmapsOptions3D
+CreateSubmapsOptions3D(common::LuaParameterDictionary *parameter_dictionary) {
   proto::SubmapsOptions3D options;
   options.set_high_resolution(
       parameter_dictionary->GetDouble("high_resolution"));
@@ -196,14 +197,14 @@ proto::SubmapsOptions3D CreateSubmapsOptions3D(
 }
 
 Submap3D::Submap3D(const float high_resolution, const float low_resolution,
-                   const transform::Rigid3d& local_submap_pose)
+                   const transform::Rigid3d &local_submap_pose)
     : Submap(local_submap_pose),
       high_resolution_hybrid_grid_(
           common::make_unique<HybridGrid>(high_resolution)),
       low_resolution_hybrid_grid_(
           common::make_unique<HybridGrid>(low_resolution)) {}
 
-Submap3D::Submap3D(const proto::Submap3D& proto)
+Submap3D::Submap3D(const proto::Submap3D &proto)
     : Submap(transform::ToRigid3(proto.local_pose())),
       high_resolution_hybrid_grid_(
           common::make_unique<HybridGrid>(proto.high_resolution_hybrid_grid())),
@@ -213,9 +214,9 @@ Submap3D::Submap3D(const proto::Submap3D& proto)
   set_finished(proto.finished());
 }
 
-void Submap3D::ToProto(proto::Submap* const proto,
+void Submap3D::ToProto(proto::Submap *const proto,
                        bool include_probability_grid_data) const {
-  auto* const submap_3d = proto->mutable_submap_3d();
+  auto *const submap_3d = proto->mutable_submap_3d();
   *submap_3d->mutable_local_pose() = transform::ToProto(local_pose());
   submap_3d->set_num_range_data(num_range_data());
   submap_3d->set_finished(finished());
@@ -227,9 +228,9 @@ void Submap3D::ToProto(proto::Submap* const proto,
   }
 }
 
-void Submap3D::UpdateFromProto(const proto::Submap& proto) {
+void Submap3D::UpdateFromProto(const proto::Submap &proto) {
   CHECK(proto.has_submap_3d());
-  const auto& submap_3d = proto.submap_3d();
+  const auto &submap_3d = proto.submap_3d();
   set_num_range_data(submap_3d.num_range_data());
   set_finished(submap_3d.finished());
   if (submap_3d.has_high_resolution_hybrid_grid()) {
@@ -249,8 +250,8 @@ void Submap3D::UpdateFromProto(const proto::Submap& proto) {
 }
 
 void Submap3D::ToResponseProto(
-    const transform::Rigid3d& global_submap_pose,
-    proto::SubmapQuery::Response* const response) const {
+    const transform::Rigid3d &global_submap_pose,
+    proto::SubmapQuery::Response *const response) const {
   response->set_submap_version(num_range_data());
 
   AddToTextureProto(*high_resolution_hybrid_grid_, global_submap_pose,
@@ -259,8 +260,8 @@ void Submap3D::ToResponseProto(
                     response->add_textures());
 }
 
-void Submap3D::InsertRangeData(const sensor::RangeData& range_data,
-                               const RangeDataInserter3D& range_data_inserter,
+void Submap3D::InsertRangeData(const sensor::RangeData &range_data,
+                               const RangeDataInserter3D &range_data_inserter,
                                const int high_resolution_max_range) {
   CHECK(!finished());
   const sensor::RangeData transformed_range_data = sensor::TransformRangeData(
@@ -279,7 +280,7 @@ void Submap3D::Finish() {
   set_finished(true);
 }
 
-ActiveSubmaps3D::ActiveSubmaps3D(const proto::SubmapsOptions3D& options)
+ActiveSubmaps3D::ActiveSubmaps3D(const proto::SubmapsOptions3D &options)
     : options_(options),
       range_data_inserter_(options.range_data_inserter_options()) {
   // We always want to have at least one submap which we can return and will
@@ -297,9 +298,9 @@ std::vector<std::shared_ptr<Submap3D>> ActiveSubmaps3D::submaps() const {
 int ActiveSubmaps3D::matching_index() const { return matching_submap_index_; }
 
 void ActiveSubmaps3D::InsertRangeData(
-    const sensor::RangeData& range_data,
-    const Eigen::Quaterniond& gravity_alignment) {
-  for (auto& submap : submaps_) {
+    const sensor::RangeData &range_data,
+    const Eigen::Quaterniond &gravity_alignment) {
+  for (auto &submap : submaps_) {
     submap->InsertRangeData(range_data, range_data_inserter_,
                             options_.high_resolution_max_range());
   }
@@ -309,7 +310,7 @@ void ActiveSubmaps3D::InsertRangeData(
   }
 }
 
-void ActiveSubmaps3D::AddSubmap(const transform::Rigid3d& local_submap_pose) {
+void ActiveSubmaps3D::AddSubmap(const transform::Rigid3d &local_submap_pose) {
   if (submaps_.size() > 1) {
     submaps_.front()->Finish();
     ++matching_submap_index_;
@@ -321,5 +322,5 @@ void ActiveSubmaps3D::AddSubmap(const transform::Rigid3d& local_submap_pose) {
   LOG(INFO) << "Added submap " << matching_submap_index_ + submaps_.size();
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

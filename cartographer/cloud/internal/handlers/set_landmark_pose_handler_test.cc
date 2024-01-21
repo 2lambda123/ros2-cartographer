@@ -57,7 +57,7 @@ TEST_F(SetLandmarkPoseHandlerTest, SetLandmarkPose) {
   test_server_->SendWrite(request);
 }
 
-}  // namespace
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

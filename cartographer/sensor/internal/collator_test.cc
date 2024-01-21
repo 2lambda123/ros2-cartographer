@@ -68,7 +68,7 @@ TEST(Collator, Ordering) {
   collator.AddTrajectory(
       kTrajectoryId,
       std::unordered_set<std::string>(kSensorId.begin(), kSensorId.end()),
-      [&received, kTrajectoryId](const std::string& sensor_id,
+      [&received, kTrajectoryId](const std::string &sensor_id,
                                  std::unique_ptr<Data> data) {
         received.push_back(CollatorOutput(kTrajectoryId, data->GetSensorId(),
                                           data->GetTime()));
@@ -135,7 +135,7 @@ TEST(Collator, OrderingMultipleTrajectories) {
   collator.AddTrajectory(
       kTrajectoryId[0],
       std::unordered_set<std::string>(kSensorId.begin(), kSensorId.end()),
-      [&received, kTrajectoryId](const std::string& sensor_id,
+      [&received, kTrajectoryId](const std::string &sensor_id,
                                  std::unique_ptr<Data> data) {
         received.push_back(CollatorOutput(kTrajectoryId[0], data->GetSensorId(),
                                           data->GetTime()));
@@ -143,7 +143,7 @@ TEST(Collator, OrderingMultipleTrajectories) {
   collator.AddTrajectory(
       kTrajectoryId[1],
       std::unordered_set<std::string>(kSensorId.begin(), kSensorId.end()),
-      [&received, kTrajectoryId](const std::string& sensor_id,
+      [&received, kTrajectoryId](const std::string &sensor_id,
                                  std::unique_ptr<Data> data) {
         received.push_back(CollatorOutput(kTrajectoryId[1], data->GetSensorId(),
                                           data->GetTime()));
@@ -178,6 +178,6 @@ TEST(Collator, OrderingMultipleTrajectories) {
   }
 }
 
-}  // namespace
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace
+} // namespace sensor
+} // namespace cartographer

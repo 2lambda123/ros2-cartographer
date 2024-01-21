@@ -56,14 +56,15 @@ TEST(LandmarkCostFunctionTest, SmokeTest) {
   const std::array<double, 3> next_node_pose{{0., 2., 0.}};
   const std::array<double, 4> landmark_rotation{{1., 0., 0., 0.}};
   const std::array<double, 3> landmark_translation{{1., 2., 1.}};
-  const std::array<const double*, 4> parameter_blocks{
+  const std::array<const double *, 4> parameter_blocks{
       {prev_node_pose.data(), next_node_pose.data(), landmark_rotation.data(),
        landmark_translation.data()}};
 
   std::array<double, 6> residuals;
   std::array<std::array<double, 13>, 6> jacobians;
-  std::array<double*, 6> jacobians_ptrs;
-  for (int i = 0; i < 6; ++i) jacobians_ptrs[i] = jacobians[i].data();
+  std::array<double *, 6> jacobians_ptrs;
+  for (int i = 0; i < 6; ++i)
+    jacobians_ptrs[i] = jacobians[i].data();
 
   cost_function->Evaluate(parameter_blocks.data(), residuals.data(),
                           jacobians_ptrs.data());
@@ -71,7 +72,7 @@ TEST(LandmarkCostFunctionTest, SmokeTest) {
                                      DoubleEq(0.), DoubleEq(0.), DoubleEq(0.)));
 }
 
-}  // namespace
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer

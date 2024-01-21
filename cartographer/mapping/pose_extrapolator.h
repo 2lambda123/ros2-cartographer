@@ -33,37 +33,38 @@ namespace mapping {
 // Uses the velocities to extrapolate motion. Uses IMU and/or odometry data if
 // available to improve the extrapolation.
 class PoseExtrapolator {
- public:
+public:
   explicit PoseExtrapolator(common::Duration pose_queue_duration,
                             double imu_gravity_time_constant);
 
-  PoseExtrapolator(const PoseExtrapolator&) = delete;
-  PoseExtrapolator& operator=(const PoseExtrapolator&) = delete;
+  PoseExtrapolator(const PoseExtrapolator &) = delete;
+  PoseExtrapolator &operator=(const PoseExtrapolator &) = delete;
 
-  static std::unique_ptr<PoseExtrapolator> InitializeWithImu(
-      common::Duration pose_queue_duration, double imu_gravity_time_constant,
-      const sensor::ImuData& imu_data);
+  static std::unique_ptr<PoseExtrapolator>
+  InitializeWithImu(common::Duration pose_queue_duration,
+                    double imu_gravity_time_constant,
+                    const sensor::ImuData &imu_data);
 
   // Returns the time of the last added pose or Time::min() if no pose was added
   // yet.
   common::Time GetLastPoseTime() const;
   common::Time GetLastExtrapolatedTime() const;
 
-  void AddPose(common::Time time, const transform::Rigid3d& pose);
-  void AddImuData(const sensor::ImuData& imu_data);
-  void AddOdometryData(const sensor::OdometryData& odometry_data);
+  void AddPose(common::Time time, const transform::Rigid3d &pose);
+  void AddImuData(const sensor::ImuData &imu_data);
+  void AddOdometryData(const sensor::OdometryData &odometry_data);
   transform::Rigid3d ExtrapolatePose(common::Time time);
 
   // Gravity alignment estimate.
   Eigen::Quaterniond EstimateGravityOrientation(common::Time time);
 
- private:
+private:
   void UpdateVelocitiesFromPoses();
   void TrimImuData();
   void TrimOdometryData();
-  void AdvanceImuTracker(common::Time time, ImuTracker* imu_tracker) const;
+  void AdvanceImuTracker(common::Time time, ImuTracker *imu_tracker) const;
   Eigen::Quaterniond ExtrapolateRotation(common::Time time,
-                                         ImuTracker* imu_tracker) const;
+                                         ImuTracker *imu_tracker) const;
   Eigen::Vector3d ExtrapolateTranslation(common::Time time);
 
   const common::Duration pose_queue_duration_;
@@ -87,7 +88,7 @@ class PoseExtrapolator {
   Eigen::Vector3d angular_velocity_from_odometry_ = Eigen::Vector3d::Zero();
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_POSE_EXTRAPOLATOR_H_
+#endif // CARTOGRAPHER_MAPPING_POSE_EXTRAPOLATOR_H_

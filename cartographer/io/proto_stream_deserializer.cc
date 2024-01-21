@@ -23,28 +23,28 @@
 namespace cartographer {
 namespace io {
 namespace {
-mapping::proto::SerializationHeader ReadHeaderOrDie(
-    ProtoStreamReaderInterface* const reader) {
+mapping::proto::SerializationHeader
+ReadHeaderOrDie(ProtoStreamReaderInterface *const reader) {
   mapping::proto::SerializationHeader header;
   CHECK(reader->ReadProto(&header)) << "Failed to read SerializationHeader.";
   return header;
 }
 
-bool IsVersionSupported(const mapping::proto::SerializationHeader& header) {
+bool IsVersionSupported(const mapping::proto::SerializationHeader &header) {
   return header.format_version() == kMappingStateSerializationFormatVersion;
 }
 
-}  // namespace
+} // namespace
 
-mapping::proto::PoseGraph DeserializePoseGraphFromFile(
-    const std::string& file_name) {
+mapping::proto::PoseGraph
+DeserializePoseGraphFromFile(const std::string &file_name) {
   ProtoStreamReader reader(file_name);
   ProtoStreamDeserializer deserializer(&reader);
   return deserializer.pose_graph();
 }
 
 ProtoStreamDeserializer::ProtoStreamDeserializer(
-    ProtoStreamReaderInterface* const reader)
+    ProtoStreamReaderInterface *const reader)
     : reader_(reader), header_(ReadHeaderOrDie(reader)) {
   CHECK(IsVersionSupported(header_)) << "Unsupported serialization format \""
                                      << header_.format_version() << "\"";
@@ -70,9 +70,9 @@ ProtoStreamDeserializer::ProtoStreamDeserializer(
 }
 
 bool ProtoStreamDeserializer::ReadNextSerializedData(
-    mapping::proto::SerializedData* data) {
+    mapping::proto::SerializedData *data) {
   return reader_->ReadProto(data);
 }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

@@ -30,19 +30,20 @@ namespace io {
 namespace {
 
 void DrawTrajectoriesIntoImage(
-    const mapping::ProbabilityGrid& probability_grid,
-    const Eigen::Array2i& offset,
-    const std::vector<mapping::proto::Trajectory>& trajectories,
-    cairo_surface_t* cairo_surface) {
+    const mapping::ProbabilityGrid &probability_grid,
+    const Eigen::Array2i &offset,
+    const std::vector<mapping::proto::Trajectory> &trajectories,
+    cairo_surface_t *cairo_surface) {
   for (size_t i = 0; i < trajectories.size(); ++i) {
-    DrawTrajectory(trajectories[i], GetColor(i),
-                   [&probability_grid,
-                    &offset](const transform::Rigid3d& pose) -> Eigen::Array2i {
-                     return probability_grid.limits().GetCellIndex(
-                                pose.cast<float>().translation().head<2>()) -
-                            offset;
-                   },
-                   cairo_surface);
+    DrawTrajectory(
+        trajectories[i], GetColor(i),
+        [&probability_grid,
+         &offset](const transform::Rigid3d &pose) -> Eigen::Array2i {
+          return probability_grid.limits().GetCellIndex(
+                     pose.cast<float>().translation().head<2>()) -
+                 offset;
+        },
+        cairo_surface);
   }
 }
 
@@ -53,29 +54,27 @@ uint8 ProbabilityToColor(float probability_from_grid) {
              (mapping::kMaxProbability - mapping::kMinProbability)));
 }
 
-}  // namespace
+} // namespace
 
 ProbabilityGridPointsProcessor::ProbabilityGridPointsProcessor(
     const double resolution,
-    const mapping::proto::ProbabilityGridRangeDataInserterOptions2D&
-        probability_grid_range_data_inserter_options,
-    const DrawTrajectories& draw_trajectories,
+    const mapping::proto::ProbabilityGridRangeDataInserterOptions2D
+        &probability_grid_range_data_inserter_options,
+    const DrawTrajectories &draw_trajectories,
     std::unique_ptr<FileWriter> file_writer,
-    const std::vector<mapping::proto::Trajectory>& trajectories,
-    PointsProcessor* const next)
-    : draw_trajectories_(draw_trajectories),
-      trajectories_(trajectories),
-      file_writer_(std::move(file_writer)),
-      next_(next),
+    const std::vector<mapping::proto::Trajectory> &trajectories,
+    PointsProcessor *const next)
+    : draw_trajectories_(draw_trajectories), trajectories_(trajectories),
+      file_writer_(std::move(file_writer)), next_(next),
       range_data_inserter_(probability_grid_range_data_inserter_options),
       probability_grid_(CreateProbabilityGrid(resolution)) {}
 
 std::unique_ptr<ProbabilityGridPointsProcessor>
 ProbabilityGridPointsProcessor::FromDictionary(
-    const std::vector<mapping::proto::Trajectory>& trajectories,
-    const FileWriterFactory& file_writer_factory,
-    common::LuaParameterDictionary* const dictionary,
-    PointsProcessor* const next) {
+    const std::vector<mapping::proto::Trajectory> &trajectories,
+    const FileWriterFactory &file_writer_factory,
+    common::LuaParameterDictionary *const dictionary,
+    PointsProcessor *const next) {
   const auto draw_trajectories = (!dictionary->HasKey("draw_trajectories") ||
                                   dictionary->GetBool("draw_trajectories"))
                                      ? DrawTrajectories::kYes
@@ -111,12 +110,12 @@ PointsProcessor::FlushResult ProbabilityGridPointsProcessor::Flush() {
   }
 
   switch (next_->Flush()) {
-    case FlushResult::kRestartStream:
-      LOG(FATAL) << "ProbabilityGrid generation must be configured to occur "
-                    "after any stages that require multiple passes.";
+  case FlushResult::kRestartStream:
+    LOG(FATAL) << "ProbabilityGrid generation must be configured to occur "
+                  "after any stages that require multiple passes.";
 
-    case FlushResult::kFinished:
-      return FlushResult::kFinished;
+  case FlushResult::kFinished:
+    return FlushResult::kFinished;
   }
   LOG(FATAL);
   // The following unreachable return statement is needed to avoid a GCC bug
@@ -124,8 +123,9 @@ PointsProcessor::FlushResult ProbabilityGridPointsProcessor::Flush() {
   return FlushResult::kFinished;
 }
 
-std::unique_ptr<Image> DrawProbabilityGrid(
-    const mapping::ProbabilityGrid& probability_grid, Eigen::Array2i* offset) {
+std::unique_ptr<Image>
+DrawProbabilityGrid(const mapping::ProbabilityGrid &probability_grid,
+                    Eigen::Array2i *offset) {
   mapping::CellLimits cell_limits;
   probability_grid.ComputeCroppedLimits(offset, &cell_limits);
   if (cell_limits.num_x_cells == 0 || cell_limits.num_y_cells == 0) {
@@ -134,7 +134,7 @@ std::unique_ptr<Image> DrawProbabilityGrid(
   }
   auto image = common::make_unique<Image>(cell_limits.num_x_cells,
                                           cell_limits.num_y_cells);
-  for (const Eigen::Array2i& xy_index :
+  for (const Eigen::Array2i &xy_index :
        mapping::XYIndexRangeIterator(cell_limits)) {
     const Eigen::Array2i index = xy_index + *offset;
     constexpr uint8 kUnknownValue = 128;
@@ -157,5 +157,5 @@ mapping::ProbabilityGrid CreateProbabilityGrid(const double resolution) {
                                              kInitialProbabilityGridSize)));
 }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

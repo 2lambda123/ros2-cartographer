@@ -32,20 +32,20 @@ namespace mapping {
 
 std::unique_ptr<TrajectoryBuilderInterface> CreateGlobalTrajectoryBuilder2D(
     std::unique_ptr<LocalTrajectoryBuilder2D> local_trajectory_builder,
-    const int trajectory_id, mapping::PoseGraph2D* const pose_graph,
-    const TrajectoryBuilderInterface::LocalSlamResultCallback&
-        local_slam_result_callback);
+    const int trajectory_id, mapping::PoseGraph2D *const pose_graph,
+    const TrajectoryBuilderInterface::LocalSlamResultCallback
+        &local_slam_result_callback);
 
 std::unique_ptr<TrajectoryBuilderInterface> CreateGlobalTrajectoryBuilder3D(
     std::unique_ptr<LocalTrajectoryBuilder3D> local_trajectory_builder,
-    const int trajectory_id, mapping::PoseGraph3D* const pose_graph,
-    const TrajectoryBuilderInterface::LocalSlamResultCallback&
-        local_slam_result_callback);
+    const int trajectory_id, mapping::PoseGraph3D *const pose_graph,
+    const TrajectoryBuilderInterface::LocalSlamResultCallback
+        &local_slam_result_callback);
 
 void GlobalTrajectoryBuilderRegisterMetrics(
-    metrics::FamilyFactory* family_factory);
+    metrics::FamilyFactory *family_factory);
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_GLOBAL_TRAJECTORY_BUILDER_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_GLOBAL_TRAJECTORY_BUILDER_H_

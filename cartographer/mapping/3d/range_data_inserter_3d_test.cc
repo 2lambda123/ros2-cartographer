@@ -27,14 +27,14 @@ namespace mapping {
 namespace {
 
 class RangeDataInserter3DTest : public ::testing::Test {
- protected:
+protected:
   RangeDataInserter3DTest() : hybrid_grid_(1.f) {
-    auto parameter_dictionary = common::MakeDictionary(
-        "return { "
-        "hit_probability = 0.7, "
-        "miss_probability = 0.4, "
-        "num_free_space_voxels = 1000, "
-        "}");
+    auto parameter_dictionary =
+        common::MakeDictionary("return { "
+                               "hit_probability = 0.7, "
+                               "miss_probability = 0.4, "
+                               "num_free_space_voxels = 1000, "
+                               "}");
     options_ = CreateRangeDataInserterOptions3D(parameter_dictionary.get());
     range_data_inserter_.reset(new RangeDataInserter3D(options_));
   }
@@ -57,9 +57,9 @@ class RangeDataInserter3DTest : public ::testing::Test {
         hybrid_grid_.GetCellIndex(Eigen::Vector3f(x, y, z)));
   }
 
-  const proto::RangeDataInserterOptions3D& options() const { return options_; }
+  const proto::RangeDataInserterOptions3D &options() const { return options_; }
 
- private:
+private:
   HybridGrid hybrid_grid_;
   std::unique_ptr<RangeDataInserter3D> range_data_inserter_;
   proto::RangeDataInserterOptions3D options_;
@@ -102,6 +102,6 @@ TEST_F(RangeDataInserter3DTest, ProbabilityProgression) {
   EXPECT_NEAR(kMinProbability, GetProbability(0.f, 0.f, -3.f), 1e-3);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

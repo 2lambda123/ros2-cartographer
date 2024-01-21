@@ -32,7 +32,7 @@ namespace optimization {
 namespace {
 
 class OptimizationProblem3DTest : public ::testing::Test {
- protected:
+protected:
   OptimizationProblem3DTest()
       : optimization_problem_(CreateOptions()), rng_(45387) {}
 
@@ -95,8 +95,8 @@ class OptimizationProblem3DTest : public ::testing::Test {
   std::mt19937 rng_;
 };
 
-transform::Rigid3d AddNoise(const transform::Rigid3d& transform,
-                            const transform::Rigid3d& noise) {
+transform::Rigid3d AddNoise(const transform::Rigid3d &transform,
+                            const transform::Rigid3d &noise) {
   const Eigen::Quaterniond noisy_rotation(noise.rotation() *
                                           transform.rotation());
   return transform::Rigid3d(transform.translation() + noise.translation(),
@@ -121,7 +121,7 @@ TEST_F(OptimizationProblem3DTest, ReducesNoise) {
   }
 
   common::Time now = common::FromUniversal(0);
-  for (const NoisyNode& node : test_data) {
+  for (const NoisyNode &node : test_data) {
     const transform::Rigid3d pose =
         AddNoise(node.ground_truth_pose, node.noise);
     optimization_problem_.AddImuData(
@@ -157,7 +157,7 @@ TEST_F(OptimizationProblem3DTest, ReducesNoise) {
 
   double translation_error_before = 0.;
   double rotation_error_before = 0.;
-  const auto& node_data = optimization_problem_.node_data();
+  const auto &node_data = optimization_problem_.node_data();
   for (int j = 0; j != kNumNodes; ++j) {
     translation_error_before +=
         (test_data[j].ground_truth_pose.translation() -
@@ -190,7 +190,7 @@ TEST_F(OptimizationProblem3DTest, ReducesNoise) {
   EXPECT_GT(0.8 * rotation_error_before, rotation_error_after);
 }
 
-}  // namespace
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer

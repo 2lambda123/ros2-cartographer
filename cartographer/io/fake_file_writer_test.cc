@@ -24,7 +24,7 @@ namespace cartographer {
 namespace io {
 namespace {
 
-std::string toString(const std::vector<char>& data) {
+std::string toString(const std::vector<char> &data) {
   return std::string(data.data(), data.size());
 }
 
@@ -62,7 +62,7 @@ TEST(FakeFileWriter, Write) {
   const std::vector<std::string> data_stream = {"data 1", "data 2"};
   FakeFileWriter writer("file", content);
 
-  for (const auto& data : data_stream) {
+  for (const auto &data : data_stream) {
     EXPECT_TRUE(writer.Write(data.c_str(), data.size()));
   }
 
@@ -80,7 +80,7 @@ TEST(FakeFileWriter, HeaderAndWrite) {
   EXPECT_TRUE(writer.WriteHeader(header.c_str(), header.size()));
   EXPECT_EQ("dummy header", toString(*content));
 
-  for (const auto& data : data_stream) {
+  for (const auto &data : data_stream) {
     EXPECT_TRUE(writer.Write(data.c_str(), data.size()));
   }
 
@@ -124,6 +124,6 @@ TEST(FakeFileWriter, HeaderAndWriteTerminatedString) {
   EXPECT_EQ(expected_output, *content);
 }
 
-}  // namespace
-}  // namespace io
-}  // namespace cartographer
+} // namespace
+} // namespace io
+} // namespace cartographer

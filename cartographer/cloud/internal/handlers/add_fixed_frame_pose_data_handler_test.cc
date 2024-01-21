@@ -86,7 +86,7 @@ TEST_F(AddFixedFramePoseDataHandlerTest, WithMockLocalSlamUploader) {
   test_server_->SendFinish();
 }
 
-}  // namespace
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

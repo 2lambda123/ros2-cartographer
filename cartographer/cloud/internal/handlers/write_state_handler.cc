@@ -26,10 +26,10 @@ namespace cartographer {
 namespace cloud {
 namespace handlers {
 
-void WriteStateHandler::OnRequest(const google::protobuf::Empty& request) {
+void WriteStateHandler::OnRequest(const google::protobuf::Empty &request) {
   auto writer = GetWriter();
   io::ForwardingProtoStreamWriter proto_stream_writer(
-      [writer](const google::protobuf::Message* proto) {
+      [writer](const google::protobuf::Message *proto) {
         if (!proto) {
           writer.WritesDone();
           return true;
@@ -53,6 +53,6 @@ void WriteStateHandler::OnRequest(const google::protobuf::Empty& request) {
   proto_stream_writer.Close();
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

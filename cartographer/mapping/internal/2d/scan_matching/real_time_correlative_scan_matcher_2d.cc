@@ -34,12 +34,12 @@ namespace mapping {
 namespace scan_matching {
 
 RealTimeCorrelativeScanMatcher2D::RealTimeCorrelativeScanMatcher2D(
-    const proto::RealTimeCorrelativeScanMatcherOptions& options)
+    const proto::RealTimeCorrelativeScanMatcherOptions &options)
     : options_(options) {}
 
 std::vector<Candidate2D>
 RealTimeCorrelativeScanMatcher2D::GenerateExhaustiveSearchCandidates(
-    const SearchParameters& search_parameters) const {
+    const SearchParameters &search_parameters) const {
   int num_candidates = 0;
   for (int scan_index = 0; scan_index != search_parameters.num_scans;
        ++scan_index) {
@@ -72,10 +72,10 @@ RealTimeCorrelativeScanMatcher2D::GenerateExhaustiveSearchCandidates(
 }
 
 double RealTimeCorrelativeScanMatcher2D::Match(
-    const transform::Rigid2d& initial_pose_estimate,
-    const sensor::PointCloud& point_cloud,
-    const ProbabilityGrid& probability_grid,
-    transform::Rigid2d* pose_estimate) const {
+    const transform::Rigid2d &initial_pose_estimate,
+    const sensor::PointCloud &point_cloud,
+    const ProbabilityGrid &probability_grid,
+    transform::Rigid2d *pose_estimate) const {
   CHECK_NOTNULL(pose_estimate);
 
   const Eigen::Rotation2Dd initial_rotation = initial_pose_estimate.rotation();
@@ -98,7 +98,7 @@ double RealTimeCorrelativeScanMatcher2D::Match(
   ScoreCandidates(probability_grid, discrete_scans, search_parameters,
                   &candidates);
 
-  const Candidate2D& best_candidate =
+  const Candidate2D &best_candidate =
       *std::max_element(candidates.begin(), candidates.end());
   *pose_estimate = transform::Rigid2d(
       {initial_pose_estimate.translation().x() + best_candidate.x,
@@ -108,13 +108,13 @@ double RealTimeCorrelativeScanMatcher2D::Match(
 }
 
 void RealTimeCorrelativeScanMatcher2D::ScoreCandidates(
-    const ProbabilityGrid& probability_grid,
-    const std::vector<DiscreteScan2D>& discrete_scans,
-    const SearchParameters& search_parameters,
-    std::vector<Candidate2D>* const candidates) const {
-  for (Candidate2D& candidate : *candidates) {
+    const ProbabilityGrid &probability_grid,
+    const std::vector<DiscreteScan2D> &discrete_scans,
+    const SearchParameters &search_parameters,
+    std::vector<Candidate2D> *const candidates) const {
+  for (Candidate2D &candidate : *candidates) {
     candidate.score = 0.f;
-    for (const Eigen::Array2i& xy_index :
+    for (const Eigen::Array2i &xy_index :
          discrete_scans[candidate.scan_index]) {
       const Eigen::Array2i proposed_xy_index(
           xy_index.x() + candidate.x_index_offset,
@@ -134,6 +134,6 @@ void RealTimeCorrelativeScanMatcher2D::ScoreCandidates(
   }
 }
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

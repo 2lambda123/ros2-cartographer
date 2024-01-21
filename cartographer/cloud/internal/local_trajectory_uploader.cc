@@ -39,7 +39,7 @@ constexpr int kConnectionTimeoutInSecond = 10;
 const common::Duration kPopTimeout = common::FromMilliseconds(100);
 
 class LocalTrajectoryUploader : public LocalTrajectoryUploaderInterface {
- public:
+public:
   LocalTrajectoryUploader(const std::string &uplink_server_address,
                           int batch_size, bool enable_ssl_encryption);
   ~LocalTrajectoryUploader();
@@ -62,7 +62,7 @@ class LocalTrajectoryUploader : public LocalTrajectoryUploaderInterface {
                     "local_slam_result_" + std::to_string(local_trajectory_id)};
   }
 
- private:
+private:
   void ProcessSendQueue();
   void TranslateTrajectoryId(proto::SensorMetadata *sensor_metadata);
 
@@ -183,14 +183,14 @@ void LocalTrajectoryUploader::EnqueueSensorData(
   send_queue_.Push(std::move(sensor_data));
 }
 
-}  // namespace
+} // namespace
 
-std::unique_ptr<LocalTrajectoryUploaderInterface> CreateLocalTrajectoryUploader(
-    const std::string &uplink_server_address, int batch_size,
-    bool enable_ssl_encryption) {
+std::unique_ptr<LocalTrajectoryUploaderInterface>
+CreateLocalTrajectoryUploader(const std::string &uplink_server_address,
+                              int batch_size, bool enable_ssl_encryption) {
   return make_unique<LocalTrajectoryUploader>(uplink_server_address, batch_size,
                                               enable_ssl_encryption);
 }
 
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace cloud
+} // namespace cartographer

@@ -37,11 +37,11 @@ using ::testing::Field;
 using ::testing::IsEmpty;
 
 class OverlappingSubmapsTrimmer2DTest : public ::testing::Test {
- protected:
+protected:
   // Creates a submap with num_cells x num_cells grid.
-  void AddSquareSubmap(const Rigid2d& global_to_submap_frame,
-                       const Rigid2d& local_to_submap_frame,
-                       const Eigen::Vector2d& submap_corner, int submap_index,
+  void AddSquareSubmap(const Rigid2d &global_to_submap_frame,
+                       const Rigid2d &local_to_submap_frame,
+                       const Eigen::Vector2d &submap_corner, int submap_index,
                        int num_cells, bool is_finished) {
     proto::Submap2D submap_2d;
     submap_2d.set_num_range_data(1);
@@ -49,18 +49,18 @@ class OverlappingSubmapsTrimmer2DTest : public ::testing::Test {
     *submap_2d.mutable_local_pose() =
         transform::ToProto(transform::Embed3D(local_to_submap_frame));
 
-    auto* grid = submap_2d.mutable_grid();
+    auto *grid = submap_2d.mutable_grid();
     for (int i = 0; i < num_cells * num_cells; ++i) {
       grid->add_cells(1);
     }
 
-    auto* map_limits = grid->mutable_limits();
+    auto *map_limits = grid->mutable_limits();
     map_limits->set_resolution(1.0);
     *map_limits->mutable_max() = transform::ToProto(submap_corner);
     map_limits->mutable_cell_limits()->set_num_x_cells(num_cells);
     map_limits->mutable_cell_limits()->set_num_y_cells(num_cells);
 
-    auto* know_cells_box = grid->mutable_known_cells_box();
+    auto *know_cells_box = grid->mutable_known_cells_box();
     know_cells_box->set_min_x(0);
     know_cells_box->set_min_y(0);
     know_cells_box->set_max_x(num_cells - 1);
@@ -94,7 +94,7 @@ class OverlappingSubmapsTrimmer2DTest : public ::testing::Test {
   testing::FakeTrimmable fake_pose_graph_;
 };
 
-::testing::Matcher<const SubmapId&> EqualsSubmapId(const SubmapId& expected) {
+::testing::Matcher<const SubmapId &> EqualsSubmapId(const SubmapId &expected) {
   return ::testing::AllOf(
       Field(&SubmapId::trajectory_id, expected.trajectory_id),
       Field(&SubmapId::submap_index, expected.submap_index));
@@ -273,6 +273,6 @@ TEST_F(OverlappingSubmapsTrimmer2DTest, TestTransformations) {
               ElementsAre(EqualsSubmapId({0, 0})));
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

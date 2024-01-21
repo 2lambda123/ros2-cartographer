@@ -38,6 +38,6 @@ TEST(PureLocalizationTrimmerTest, MarksSubmapsAsExpected) {
   EXPECT_EQ((SubmapId{kTrajectoryId, 1}), trimmed_submaps[1]);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

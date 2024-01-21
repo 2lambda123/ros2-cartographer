@@ -33,7 +33,7 @@ namespace cartographer {
 namespace mapping {
 
 proto::SubmapsOptions2D CreateSubmapsOptions2D(
-    common::LuaParameterDictionary* const parameter_dictionary) {
+    common::LuaParameterDictionary *const parameter_dictionary) {
   proto::SubmapsOptions2D options;
   options.set_num_range_data(
       parameter_dictionary->GetNonNegativeInt("num_range_data"));
@@ -44,10 +44,10 @@ proto::SubmapsOptions2D CreateSubmapsOptions2D(
           parameter_dictionary->GetDictionary("range_data_inserter").get());
 
   bool valid_range_data_inserter_grid_combination = false;
-  const proto::GridOptions2D_GridType& grid_type =
+  const proto::GridOptions2D_GridType &grid_type =
       options.grid_options_2d().grid_type();
-  const proto::RangeDataInserterOptions_RangeDataInserterType&
-      range_data_inserter_type =
+  const proto::RangeDataInserterOptions_RangeDataInserterType
+      &range_data_inserter_type =
           options.range_data_inserter_options().range_data_inserter_type();
   if (grid_type == proto::GridOptions2D::PROBABILITY_GRID &&
       range_data_inserter_type ==
@@ -61,13 +61,13 @@ proto::SubmapsOptions2D CreateSubmapsOptions2D(
   return options;
 }
 
-Submap2D::Submap2D(const Eigen::Vector2f& origin, std::unique_ptr<Grid2D> grid)
+Submap2D::Submap2D(const Eigen::Vector2f &origin, std::unique_ptr<Grid2D> grid)
     : Submap(transform::Rigid3d::Translation(
           Eigen::Vector3d(origin.x(), origin.y(), 0.))) {
   grid_ = std::move(grid);
 }
 
-Submap2D::Submap2D(const proto::Submap2D& proto)
+Submap2D::Submap2D(const proto::Submap2D &proto)
     : Submap(transform::ToRigid3(proto.local_pose())) {
   if (proto.has_grid()) {
     CHECK(proto.grid().has_probability_grid_2d());
@@ -77,9 +77,9 @@ Submap2D::Submap2D(const proto::Submap2D& proto)
   set_finished(proto.finished());
 }
 
-void Submap2D::ToProto(proto::Submap* const proto,
+void Submap2D::ToProto(proto::Submap *const proto,
                        bool include_probability_grid_data) const {
-  auto* const submap_2d = proto->mutable_submap_2d();
+  auto *const submap_2d = proto->mutable_submap_2d();
   *submap_2d->mutable_local_pose() = transform::ToProto(local_pose());
   submap_2d->set_num_range_data(num_range_data());
   submap_2d->set_finished(finished());
@@ -89,9 +89,9 @@ void Submap2D::ToProto(proto::Submap* const proto,
   }
 }
 
-void Submap2D::UpdateFromProto(const proto::Submap& proto) {
+void Submap2D::UpdateFromProto(const proto::Submap &proto) {
   CHECK(proto.has_submap_2d());
-  const auto& submap_2d = proto.submap_2d();
+  const auto &submap_2d = proto.submap_2d();
   set_num_range_data(submap_2d.num_range_data());
   set_finished(submap_2d.finished());
   if (proto.submap_2d().has_grid()) {
@@ -101,18 +101,19 @@ void Submap2D::UpdateFromProto(const proto::Submap& proto) {
 }
 
 void Submap2D::ToResponseProto(
-    const transform::Rigid3d&,
-    proto::SubmapQuery::Response* const response) const {
-  if (!grid_) return;
+    const transform::Rigid3d &,
+    proto::SubmapQuery::Response *const response) const {
+  if (!grid_)
+    return;
   response->set_submap_version(num_range_data());
-  proto::SubmapQuery::Response::SubmapTexture* const texture =
+  proto::SubmapQuery::Response::SubmapTexture *const texture =
       response->add_textures();
   grid()->DrawToSubmapTexture(texture, local_pose());
 }
 
 void Submap2D::InsertRangeData(
-    const sensor::RangeData& range_data,
-    const RangeDataInserterInterface* range_data_inserter) {
+    const sensor::RangeData &range_data,
+    const RangeDataInserterInterface *range_data_inserter) {
   CHECK(grid_);
   CHECK(!finished());
   range_data_inserter->Insert(range_data, grid_.get());
@@ -126,7 +127,7 @@ void Submap2D::Finish() {
   set_finished(true);
 }
 
-ActiveSubmaps2D::ActiveSubmaps2D(const proto::SubmapsOptions2D& options)
+ActiveSubmaps2D::ActiveSubmaps2D(const proto::SubmapsOptions2D &options)
     : options_(options),
       range_data_inserter_(std::move(CreateRangeDataInserter())) {
   // We always want to have at least one likelihood field which we can return,
@@ -140,8 +141,8 @@ std::vector<std::shared_ptr<Submap2D>> ActiveSubmaps2D::submaps() const {
 
 int ActiveSubmaps2D::matching_index() const { return matching_submap_index_; }
 
-void ActiveSubmaps2D::InsertRangeData(const sensor::RangeData& range_data) {
-  for (auto& submap : submaps_) {
+void ActiveSubmaps2D::InsertRangeData(const sensor::RangeData &range_data) {
+  for (auto &submap : submaps_) {
     submap->InsertRangeData(range_data, range_data_inserter_.get());
   }
   if (submaps_.back()->num_range_data() == options_.num_range_data()) {
@@ -156,8 +157,8 @@ ActiveSubmaps2D::CreateRangeDataInserter() {
           .probability_grid_range_data_inserter_options_2d());
 }
 
-std::unique_ptr<GridInterface> ActiveSubmaps2D::CreateGrid(
-    const Eigen::Vector2f& origin) {
+std::unique_ptr<GridInterface>
+ActiveSubmaps2D::CreateGrid(const Eigen::Vector2f &origin) {
   constexpr int kInitialSubmapSize = 100;
   float resolution = options_.grid_options_2d().resolution();
   return common::make_unique<ProbabilityGrid>(
@@ -168,13 +169,13 @@ std::unique_ptr<GridInterface> ActiveSubmaps2D::CreateGrid(
 }
 
 void ActiveSubmaps2D::FinishSubmap() {
-  Submap2D* submap = submaps_.front().get();
+  Submap2D *submap = submaps_.front().get();
   submap->Finish();
   ++matching_submap_index_;
   submaps_.erase(submaps_.begin());
 }
 
-void ActiveSubmaps2D::AddSubmap(const Eigen::Vector2f& origin) {
+void ActiveSubmaps2D::AddSubmap(const Eigen::Vector2f &origin) {
   if (submaps_.size() > 1) {
     // This will crop the finished Submap before inserting a new Submap to
     // reduce peak memory usage a bit.
@@ -183,9 +184,9 @@ void ActiveSubmaps2D::AddSubmap(const Eigen::Vector2f& origin) {
 
   submaps_.push_back(common::make_unique<Submap2D>(
       origin, std::unique_ptr<Grid2D>(
-                  static_cast<Grid2D*>(CreateGrid(origin).release()))));
+                  static_cast<Grid2D *>(CreateGrid(origin).release()))));
   LOG(INFO) << "Added submap " << matching_submap_index_ + submaps_.size();
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

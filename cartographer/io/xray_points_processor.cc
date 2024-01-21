@@ -48,12 +48,12 @@ float Mix(const float a, const float b, const float t) {
 }
 
 // Convert 'mat' into a pleasing-to-look-at image.
-Image IntoImage(const PixelDataMatrix& mat) {
+Image IntoImage(const PixelDataMatrix &mat) {
   Image image(mat.cols(), mat.rows());
   float max = std::numeric_limits<float>::min();
   for (int y = 0; y < mat.rows(); ++y) {
     for (int x = 0; x < mat.cols(); ++x) {
-      const PixelData& cell = mat(y, x);
+      const PixelData &cell = mat(y, x);
       if (cell.num_occupied_cells_in_column == 0.) {
         continue;
       }
@@ -63,7 +63,7 @@ Image IntoImage(const PixelDataMatrix& mat) {
 
   for (int y = 0; y < mat.rows(); ++y) {
     for (int x = 0; x < mat.cols(); ++x) {
-      const PixelData& cell = mat(y, x);
+      const PixelData &cell = mat(y, x);
       if (cell.num_occupied_cells_in_column == 0.) {
         image.SetPixel(x, y, {{255, 255, 255}});
         continue;
@@ -83,9 +83,9 @@ Image IntoImage(const PixelDataMatrix& mat) {
   return image;
 }
 
-bool ContainedIn(const common::Time& time,
-                 const std::vector<mapping::Timespan>& timespans) {
-  for (const mapping::Timespan& timespan : timespans) {
+bool ContainedIn(const common::Time &time,
+                 const std::vector<mapping::Timespan> &timespans) {
+  for (const mapping::Timespan &timespan : timespans) {
     if (timespan.start <= time && time <= timespan.end) {
       return true;
     }
@@ -93,22 +93,18 @@ bool ContainedIn(const common::Time& time,
   return false;
 }
 
-}  // namespace
+} // namespace
 
 XRayPointsProcessor::XRayPointsProcessor(
-    const double voxel_size, const transform::Rigid3f& transform,
-    const std::vector<mapping::Floor>& floors,
-    const DrawTrajectories& draw_trajectories,
-    const std::string& output_filename,
-    const std::vector<mapping::proto::Trajectory>& trajectories,
-    FileWriterFactory file_writer_factory, PointsProcessor* const next)
-    : draw_trajectories_(draw_trajectories),
-      trajectories_(trajectories),
-      file_writer_factory_(file_writer_factory),
-      next_(next),
-      floors_(floors),
-      output_filename_(output_filename),
-      transform_(transform) {
+    const double voxel_size, const transform::Rigid3f &transform,
+    const std::vector<mapping::Floor> &floors,
+    const DrawTrajectories &draw_trajectories,
+    const std::string &output_filename,
+    const std::vector<mapping::proto::Trajectory> &trajectories,
+    FileWriterFactory file_writer_factory, PointsProcessor *const next)
+    : draw_trajectories_(draw_trajectories), trajectories_(trajectories),
+      file_writer_factory_(file_writer_factory), next_(next), floors_(floors),
+      output_filename_(output_filename), transform_(transform) {
   for (size_t i = 0; i < (floors_.empty() ? 1 : floors.size()); ++i) {
     aggregations_.emplace_back(
         Aggregation{mapping::HybridGridBase<bool>(voxel_size), {}});
@@ -116,10 +112,10 @@ XRayPointsProcessor::XRayPointsProcessor(
 }
 
 std::unique_ptr<XRayPointsProcessor> XRayPointsProcessor::FromDictionary(
-    const std::vector<mapping::proto::Trajectory>& trajectories,
+    const std::vector<mapping::proto::Trajectory> &trajectories,
     FileWriterFactory file_writer_factory,
-    common::LuaParameterDictionary* const dictionary,
-    PointsProcessor* const next) {
+    common::LuaParameterDictionary *const dictionary,
+    PointsProcessor *const next) {
   std::vector<mapping::Floor> floors;
   const bool separate_floor = dictionary->HasKey("separate_floors") &&
                               dictionary->GetBool("separate_floors");
@@ -141,8 +137,8 @@ std::unique_ptr<XRayPointsProcessor> XRayPointsProcessor::FromDictionary(
       trajectories, file_writer_factory, next);
 }
 
-void XRayPointsProcessor::WriteVoxels(const Aggregation& aggregation,
-                                      FileWriter* const file_writer) {
+void XRayPointsProcessor::WriteVoxels(const Aggregation &aggregation,
+                                      FileWriter *const file_writer) {
   if (bounding_box_.isEmpty()) {
     LOG(WARNING) << "Not writing output: bounding box is empty.";
     return;
@@ -150,7 +146,7 @@ void XRayPointsProcessor::WriteVoxels(const Aggregation& aggregation,
 
   // Returns the (x, y) pixel of the given 'index'.
   const auto voxel_index_to_pixel =
-      [this](const Eigen::Array3i& index) -> Eigen::Array2i {
+      [this](const Eigen::Array3i &index) -> Eigen::Array2i {
     // We flip the y axis, since matrices rows are counted from the top.
     return Eigen::Array2i(bounding_box_.max()[1] - index[1],
                           bounding_box_.max()[2] - index[2]);
@@ -165,8 +161,8 @@ void XRayPointsProcessor::WriteVoxels(const Aggregation& aggregation,
        !it.Done(); it.Next()) {
     const Eigen::Array3i cell_index = it.GetCellIndex();
     const Eigen::Array2i pixel = voxel_index_to_pixel(cell_index);
-    PixelData& pixel_data = pixel_data_matrix(pixel.y(), pixel.x());
-    const auto& column_data = aggregation.column_data.at(
+    PixelData &pixel_data = pixel_data_matrix(pixel.y(), pixel.x());
+    const auto &column_data = aggregation.column_data.at(
         std::make_pair(cell_index[1], cell_index[2]));
     pixel_data.mean_r = column_data.sum_r / column_data.count;
     pixel_data.mean_g = column_data.sum_g / column_data.count;
@@ -180,7 +176,7 @@ void XRayPointsProcessor::WriteVoxels(const Aggregation& aggregation,
       DrawTrajectory(
           trajectories_[i], GetColor(i),
           [&voxel_index_to_pixel, &aggregation,
-           this](const transform::Rigid3d& pose) -> Eigen::Array2i {
+           this](const transform::Rigid3d &pose) -> Eigen::Array2i {
             return voxel_index_to_pixel(aggregation.voxels.GetCellIndex(
                 (transform_ * pose.cast<float>()).translation()));
           },
@@ -192,8 +188,8 @@ void XRayPointsProcessor::WriteVoxels(const Aggregation& aggregation,
   CHECK(file_writer->Close());
 }
 
-void XRayPointsProcessor::Insert(const PointsBatch& batch,
-                                 Aggregation* const aggregation) {
+void XRayPointsProcessor::Insert(const PointsBatch &batch,
+                                 Aggregation *const aggregation) {
   constexpr FloatColor kDefaultColor = {{0.f, 0.f, 0.f}};
   for (size_t i = 0; i < batch.points.size(); ++i) {
     const Eigen::Vector3f camera_point = transform_ * batch.points[i];
@@ -201,9 +197,9 @@ void XRayPointsProcessor::Insert(const PointsBatch& batch,
         aggregation->voxels.GetCellIndex(camera_point);
     *aggregation->voxels.mutable_value(cell_index) = true;
     bounding_box_.extend(cell_index.matrix());
-    ColumnData& column_data =
+    ColumnData &column_data =
         aggregation->column_data[std::make_pair(cell_index[1], cell_index[2])];
-    const auto& color =
+    const auto &color =
         batch.colors.empty() ? kDefaultColor : batch.colors.at(i);
     column_data.sum_r += color[0];
     column_data.sum_g += color[1];
@@ -242,15 +238,15 @@ PointsProcessor::FlushResult XRayPointsProcessor::Flush() {
   }
 
   switch (next_->Flush()) {
-    case FlushResult::kRestartStream:
-      LOG(FATAL) << "X-Ray generation must be configured to occur after any "
-                    "stages that require multiple passes.";
+  case FlushResult::kRestartStream:
+    LOG(FATAL) << "X-Ray generation must be configured to occur after any "
+                  "stages that require multiple passes.";
 
-    case FlushResult::kFinished:
-      return FlushResult::kFinished;
+  case FlushResult::kFinished:
+    return FlushResult::kFinished;
   }
   LOG(FATAL);
 }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

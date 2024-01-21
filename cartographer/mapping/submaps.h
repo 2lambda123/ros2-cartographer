@@ -57,19 +57,19 @@ inline uint8 ProbabilityToLogOddsInteger(const float probability) {
 // 'finished_probability_grid' to be used for loop closing once the map no
 // longer changes.
 class Submap {
- public:
-  Submap(const transform::Rigid3d& local_submap_pose)
+public:
+  Submap(const transform::Rigid3d &local_submap_pose)
       : local_pose_(local_submap_pose) {}
   virtual ~Submap() {}
 
-  virtual void ToProto(proto::Submap* proto,
+  virtual void ToProto(proto::Submap *proto,
                        bool include_probability_grid_data) const = 0;
-  virtual void UpdateFromProto(const proto::Submap& proto) = 0;
+  virtual void UpdateFromProto(const proto::Submap &proto) = 0;
 
   // Fills data into the 'response'.
-  virtual void ToResponseProto(
-      const transform::Rigid3d& global_submap_pose,
-      proto::SubmapQuery::Response* response) const = 0;
+  virtual void
+  ToResponseProto(const transform::Rigid3d &global_submap_pose,
+                  proto::SubmapQuery::Response *response) const = 0;
 
   // Pose of this submap in the local map frame.
   transform::Rigid3d local_pose() const { return local_pose_; }
@@ -84,13 +84,13 @@ class Submap {
   bool finished() const { return finished_; }
   void set_finished(bool finished) { finished_ = finished; }
 
- private:
+private:
   const transform::Rigid3d local_pose_;
   int num_range_data_ = 0;
   bool finished_ = false;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_SUBMAPS_H_
+#endif // CARTOGRAPHER_MAPPING_SUBMAPS_H_

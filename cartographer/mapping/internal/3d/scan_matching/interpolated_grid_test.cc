@@ -26,10 +26,10 @@ namespace scan_matching {
 namespace {
 
 class InterpolatedGridTest : public ::testing::Test {
- protected:
+protected:
   InterpolatedGridTest()
       : hybrid_grid_(0.1f), interpolated_grid_(hybrid_grid_) {
-    for (const Eigen::Vector3f& point :
+    for (const Eigen::Vector3f &point :
          {Eigen::Vector3f(-3.f, 2.f, 0.f), Eigen::Vector3f(-4.f, 2.f, 0.f),
           Eigen::Vector3f(-5.f, 2.f, 0.f), Eigen::Vector3f(-6.f, 2.f, 0.f),
           Eigen::Vector3f(-6.f, 3.f, 1.f), Eigen::Vector3f(-6.f, 4.f, 2.f),
@@ -83,7 +83,7 @@ TEST_F(InterpolatedGridTest, MonotonicBehaviorBetweenGridPointsInX) {
   }
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

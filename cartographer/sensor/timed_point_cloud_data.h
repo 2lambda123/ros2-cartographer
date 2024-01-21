@@ -41,13 +41,13 @@ struct TimedPointCloudOriginData {
 };
 
 // Converts 'timed_point_cloud_data' to a proto::TimedPointCloudData.
-proto::TimedPointCloudData ToProto(
-    const TimedPointCloudData& timed_point_cloud_data);
+proto::TimedPointCloudData
+ToProto(const TimedPointCloudData &timed_point_cloud_data);
 
 // Converts 'proto' to TimedPointCloudData.
-TimedPointCloudData FromProto(const proto::TimedPointCloudData& proto);
+TimedPointCloudData FromProto(const proto::TimedPointCloudData &proto);
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_TIMED_POINT_CLOUD_DATA_H_
+#endif // CARTOGRAPHER_SENSOR_TIMED_POINT_CLOUD_DATA_H_

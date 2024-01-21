@@ -32,12 +32,12 @@ DEFINE_HANDLER_SIGNATURE(
 
 class GetTrajectoryNodePosesHandler
     : public async_grpc::RpcHandler<GetTrajectoryNodePosesSignature> {
- public:
-  void OnRequest(const google::protobuf::Empty& request) override;
+public:
+  void OnRequest(const google::protobuf::Empty &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_TRAJECTORY_NODE_POSES_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_GET_TRAJECTORY_NODE_POSES_HANDLER_H

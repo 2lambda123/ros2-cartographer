@@ -36,8 +36,8 @@ DEFINE_string(configuration_basename, "",
 namespace cartographer {
 namespace cloud {
 
-void Run(const std::string& configuration_directory,
-         const std::string& configuration_basename) {
+void Run(const std::string &configuration_directory,
+         const std::string &configuration_basename) {
 #if USE_PROMETHEUS
   metrics::prometheus::FamilyFactory registry;
   ::cartographer::metrics::RegisterAllMetrics(&registry);
@@ -63,10 +63,10 @@ void Run(const std::string& configuration_directory,
   map_builder_server->WaitForShutdown();
 }
 
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace cloud
+} // namespace cartographer
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   google::InitGoogleLogging(argv[0]);
   FLAGS_logtostderr = true;
   google::SetUsageMessage(

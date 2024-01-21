@@ -55,7 +55,7 @@ PoseGraphStub::GetAllSubmapPoses() const {
   CHECK(client.Write(request));
   mapping::MapById<mapping::SubmapId, mapping::PoseGraphInterface::SubmapPose>
       submap_poses;
-  for (const auto& submap_pose : client.response().submap_poses()) {
+  for (const auto &submap_pose : client.response().submap_poses()) {
     submap_poses.Insert(
         mapping::SubmapId{submap_pose.submap_id().trajectory_id(),
                           submap_pose.submap_id().submap_index()},
@@ -66,8 +66,8 @@ PoseGraphStub::GetAllSubmapPoses() const {
   return submap_poses;
 }
 
-transform::Rigid3d PoseGraphStub::GetLocalToGlobalTransform(
-    int trajectory_id) const {
+transform::Rigid3d
+PoseGraphStub::GetLocalToGlobalTransform(int trajectory_id) const {
   proto::GetLocalToGlobalTransformRequest request;
   request.set_trajectory_id(trajectory_id);
   async_grpc::Client<handlers::GetLocalToGlobalTransformSignature> client(
@@ -88,7 +88,7 @@ PoseGraphStub::GetTrajectoryNodePoses() const {
       client_channel_);
   CHECK(client.Write(request));
   mapping::MapById<mapping::NodeId, mapping::TrajectoryNodePose> node_poses;
-  for (const auto& node_pose : client.response().node_poses()) {
+  for (const auto &node_pose : client.response().node_poses()) {
     common::optional<mapping::TrajectoryNodePose::ConstantPoseData>
         constant_pose_data;
     if (node_pose.has_constant_pose_data()) {
@@ -105,22 +105,22 @@ PoseGraphStub::GetTrajectoryNodePoses() const {
   return node_poses;
 }
 
-std::map<std::string, transform::Rigid3d> PoseGraphStub::GetLandmarkPoses()
-    const {
+std::map<std::string, transform::Rigid3d>
+PoseGraphStub::GetLandmarkPoses() const {
   google::protobuf::Empty request;
   async_grpc::Client<handlers::GetLandmarkPosesSignature> client(
       client_channel_);
   CHECK(client.Write(request));
   std::map<std::string, transform::Rigid3d> landmark_poses;
-  for (const auto& landmark_pose : client.response().landmark_poses()) {
+  for (const auto &landmark_pose : client.response().landmark_poses()) {
     landmark_poses[landmark_pose.landmark_id()] =
         transform::ToRigid3(landmark_pose.global_pose());
   }
   return landmark_poses;
 }
 
-void PoseGraphStub::SetLandmarkPose(const std::string& landmark_id,
-                                    const transform::Rigid3d& global_pose) {
+void PoseGraphStub::SetLandmarkPose(const std::string &landmark_id,
+                                    const transform::Rigid3d &global_pose) {
   proto::SetLandmarkPoseRequest request;
   request.mutable_landmark_pose()->set_landmark_id(landmark_id);
   *request.mutable_landmark_pose()->mutable_global_pose() =
@@ -170,5 +170,5 @@ void PoseGraphStub::SetGlobalSlamOptimizationCallback(
   LOG(FATAL) << "Not implemented";
 }
 
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace cloud
+} // namespace cartographer

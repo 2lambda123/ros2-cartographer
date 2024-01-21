@@ -65,7 +65,7 @@ TEST(RotationalScanMatcher3DTest, InterpolatesAsExpected) {
   }
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

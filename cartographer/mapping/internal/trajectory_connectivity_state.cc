@@ -64,11 +64,12 @@ std::vector<std::vector<int>> TrajectoryConnectivityState::Components() const {
   return connected_components_.Components();
 }
 
-common::Time TrajectoryConnectivityState::LastConnectionTime(
-    const int trajectory_id_a, const int trajectory_id_b) {
+common::Time
+TrajectoryConnectivityState::LastConnectionTime(const int trajectory_id_a,
+                                                const int trajectory_id_b) {
   const auto sorted_pair = std::minmax(trajectory_id_a, trajectory_id_b);
   return last_connection_time_map_[sorted_pair];
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

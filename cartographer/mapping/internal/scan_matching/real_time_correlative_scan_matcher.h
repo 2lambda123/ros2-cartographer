@@ -27,10 +27,10 @@ namespace scan_matching {
 
 proto::RealTimeCorrelativeScanMatcherOptions
 CreateRealTimeCorrelativeScanMatcherOptions(
-    common::LuaParameterDictionary* const parameter_dictionary);
+    common::LuaParameterDictionary *const parameter_dictionary);
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_SCAN_MATCHING_REAL_TIME_CORRELATIVE_SCAN_MATCHER_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_SCAN_MATCHING_REAL_TIME_CORRELATIVE_SCAN_MATCHER_H_

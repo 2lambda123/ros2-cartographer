@@ -30,7 +30,7 @@ namespace mapping {
 
 proto::ProbabilityGridRangeDataInserterOptions2D
 CreateProbabilityGridRangeDataInserterOptions2D(
-    common::LuaParameterDictionary* parameter_dictionary) {
+    common::LuaParameterDictionary *parameter_dictionary) {
   proto::ProbabilityGridRangeDataInserterOptions2D options;
   options.set_hit_probability(
       parameter_dictionary->GetDouble("hit_probability"));
@@ -46,7 +46,7 @@ CreateProbabilityGridRangeDataInserterOptions2D(
 }
 
 ProbabilityGridRangeDataInserter2D::ProbabilityGridRangeDataInserter2D(
-    const proto::ProbabilityGridRangeDataInserterOptions2D& options)
+    const proto::ProbabilityGridRangeDataInserterOptions2D &options)
     : options_(options),
       hit_table_(ComputeLookupTableToApplyCorrespondenceCostOdds(
           Odds(options.hit_probability()))),
@@ -54,8 +54,9 @@ ProbabilityGridRangeDataInserter2D::ProbabilityGridRangeDataInserter2D(
           Odds(options.miss_probability()))) {}
 
 void ProbabilityGridRangeDataInserter2D::Insert(
-    const sensor::RangeData& range_data, GridInterface* const grid) const {
-  ProbabilityGrid* const probability_grid = static_cast<ProbabilityGrid*>(grid);
+    const sensor::RangeData &range_data, GridInterface *const grid) const {
+  ProbabilityGrid *const probability_grid =
+      static_cast<ProbabilityGrid *>(grid);
   // By not finishing the update after hits are inserted, we give hits priority
   // (i.e. no hits will be ignored because of a miss in the same cell).
   CastRays(range_data, hit_table_, miss_table_, options_.insert_free_space(),
@@ -63,5 +64,5 @@ void ProbabilityGridRangeDataInserter2D::Insert(
   probability_grid->FinishUpdate();
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

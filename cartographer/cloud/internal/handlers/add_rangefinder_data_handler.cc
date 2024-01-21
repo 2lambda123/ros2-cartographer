@@ -44,6 +44,6 @@ void AddRangefinderDataHandler::OnReadsDone() {
   Send(common::make_unique<google::protobuf::Empty>());
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

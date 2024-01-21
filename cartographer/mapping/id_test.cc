@@ -34,17 +34,16 @@ common::Time CreateTime(const int milliseconds) {
 }
 
 class Data {
- public:
+public:
   explicit Data(int milliseconds) : time_(CreateTime(milliseconds)) {}
 
-  const common::Time& time() const { return time_; }
+  const common::Time &time() const { return time_; }
 
- private:
+private:
   const common::Time time_;
 };
 
-template <typename IdType>
-static MapById<IdType, int> CreateTestMapById() {
+template <typename IdType> static MapById<IdType, int> CreateTestMapById() {
   MapById<IdType, int> map_by_id;
   map_by_id.Append(7, 2);
   map_by_id.Append(42, 3);
@@ -75,7 +74,7 @@ TEST(IdTest, MapByIdIterator) {
       {NodeId{7, 0}, 2},
       {NodeId{42, 0}, 3},
   };
-  for (const auto& id_data : map_by_id) {
+  for (const auto &id_data : map_by_id) {
     ASSERT_FALSE(expected_id_data.empty());
     EXPECT_EQ(expected_id_data.front().first, id_data.id);
     EXPECT_EQ(expected_id_data.front().second, id_data.data);
@@ -90,7 +89,7 @@ TEST(IdTest, MapByIdTrajectoryRange) {
       {NodeId{0, 0}, 0},
       {NodeId{0, 1}, 1},
   };
-  for (const auto& entry : map_by_id.trajectory(0)) {
+  for (const auto &entry : map_by_id.trajectory(0)) {
     ASSERT_FALSE(expected_data.empty());
     EXPECT_EQ(expected_data.front().first, entry.id);
     EXPECT_EQ(expected_data.front().second, entry.data);
@@ -119,7 +118,7 @@ TEST(IdTest, MapByIdIterateByTrajectories) {
       {NodeId{42, 0}, 3},
   };
   for (int trajectory_id : map_by_id.trajectory_ids()) {
-    for (const auto& entry : map_by_id.trajectory(trajectory_id)) {
+    for (const auto &entry : map_by_id.trajectory(trajectory_id)) {
       ASSERT_FALSE(expected_id_data.empty());
       EXPECT_EQ(expected_id_data.front().first, entry.id);
       EXPECT_EQ(expected_id_data.front().second, entry.data);
@@ -215,7 +214,7 @@ TEST(IdTest, LowerBoundFuzz) {
     auto ground_truth = std::lower_bound(
         map_by_id.BeginOfTrajectory(kTrajectoryId),
         map_by_id.EndOfTrajectory(kTrajectoryId), CreateTime(t0),
-        [](MapById<SubmapId, Data>::IdDataReference a, const common::Time& t) {
+        [](MapById<SubmapId, Data>::IdDataReference a, const common::Time &t) {
           return a.data.time() < t;
         });
 
@@ -253,11 +252,11 @@ TEST(IdTest, LowerBoundFuzzWithStruct) {
         map_by_id.BeginOfTrajectory(kTrajectoryId),
         map_by_id.EndOfTrajectory(kTrajectoryId), CreateTime(t0),
         [](MapById<SubmapId, DataStruct>::IdDataReference a,
-           const common::Time& t) { return a.data.time < t; });
+           const common::Time &t) { return a.data.time < t; });
 
     CHECK(ground_truth == it);
   }
 }
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

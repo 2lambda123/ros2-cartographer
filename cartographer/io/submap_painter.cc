@@ -23,18 +23,18 @@ namespace cartographer {
 namespace io {
 namespace {
 
-Eigen::Affine3d ToEigen(const ::cartographer::transform::Rigid3d& rigid3) {
+Eigen::Affine3d ToEigen(const ::cartographer::transform::Rigid3d &rigid3) {
   return Eigen::Translation3d(rigid3.translation()) * rigid3.rotation();
 }
 
 void CairoPaintSubmapSlices(
     const double scale,
-    const std::map<::cartographer::mapping::SubmapId, SubmapSlice>& submaps,
-    cairo_t* cr, std::function<void(const SubmapSlice&)> draw_callback) {
+    const std::map<::cartographer::mapping::SubmapId, SubmapSlice> &submaps,
+    cairo_t *cr, std::function<void(const SubmapSlice &)> draw_callback) {
   cairo_scale(cr, scale, scale);
 
-  for (auto& pair : submaps) {
-    const auto& submap_slice = pair.second;
+  for (auto &pair : submaps) {
+    const auto &submap_slice = pair.second;
     if (submap_slice.surface == nullptr) {
       return;
     }
@@ -57,10 +57,10 @@ void CairoPaintSubmapSlices(
   }
 }
 
-}  // namespace
+} // namespace
 
 PaintSubmapSlicesResult PaintSubmapSlices(
-    const std::map<::cartographer::mapping::SubmapId, SubmapSlice>& submaps,
+    const std::map<::cartographer::mapping::SubmapId, SubmapSlice> &submaps,
     const double resolution) {
   Eigen::AlignedBox2f bounding_box;
   {
@@ -74,7 +74,7 @@ PaintSubmapSlicesResult PaintSubmapSlices(
 
     CairoPaintSubmapSlices(
         1. / resolution, submaps, cr.get(),
-        [&update_bounding_box](const SubmapSlice& submap_slice) {
+        [&update_bounding_box](const SubmapSlice &submap_slice) {
           update_bounding_box(0, 0);
           update_bounding_box(submap_slice.width, 0);
           update_bounding_box(0, submap_slice.height);
@@ -97,7 +97,7 @@ PaintSubmapSlicesResult PaintSubmapSlices(
     cairo_paint(cr.get());
     cairo_translate(cr.get(), origin.x(), origin.y());
     CairoPaintSubmapSlices(1. / resolution, submaps, cr.get(),
-                           [&cr](const SubmapSlice& submap_slice) {
+                           [&cr](const SubmapSlice &submap_slice) {
                              cairo_set_source_surface(
                                  cr.get(), submap_slice.surface.get(), 0., 0.);
                              cairo_paint(cr.get());
@@ -108,9 +108,9 @@ PaintSubmapSlicesResult PaintSubmapSlices(
 }
 
 void FillSubmapSlice(
-    const ::cartographer::transform::Rigid3d& global_submap_pose,
-    const ::cartographer::mapping::proto::Submap& proto,
-    SubmapSlice* const submap_slice) {
+    const ::cartographer::transform::Rigid3d &global_submap_pose,
+    const ::cartographer::mapping::proto::Submap &proto,
+    SubmapSlice *const submap_slice) {
   ::cartographer::mapping::proto::SubmapQuery::Response response;
   ::cartographer::transform::Rigid3d local_pose;
   if (proto.has_submap_3d()) {
@@ -124,7 +124,7 @@ void FillSubmapSlice(
   }
   submap_slice->pose = global_submap_pose;
 
-  auto& texture_proto = response.textures(0);
+  auto &texture_proto = response.textures(0);
   const SubmapTexture::Pixels pixels = UnpackTextureData(
       texture_proto.cells(), texture_proto.width(), texture_proto.height());
   submap_slice->width = texture_proto.width();
@@ -137,7 +137,7 @@ void FillSubmapSlice(
                   texture_proto.height(), &submap_slice->cairo_data);
 }
 
-SubmapTexture::Pixels UnpackTextureData(const std::string& compressed_cells,
+SubmapTexture::Pixels UnpackTextureData(const std::string &compressed_cells,
                                         const int width, const int height) {
   SubmapTexture::Pixels pixels;
   std::string cells;
@@ -155,10 +155,10 @@ SubmapTexture::Pixels UnpackTextureData(const std::string& compressed_cells,
   return pixels;
 }
 
-UniqueCairoSurfacePtr DrawTexture(const std::vector<char>& intensity,
-                                  const std::vector<char>& alpha,
+UniqueCairoSurfacePtr DrawTexture(const std::vector<char> &intensity,
+                                  const std::vector<char> &alpha,
                                   const int width, const int height,
-                                  std::vector<uint32_t>* const cairo_data) {
+                                  std::vector<uint32_t> *const cairo_data) {
   CHECK(cairo_data->empty());
 
   // Properly dealing with a non-common stride would make this code much more
@@ -177,12 +177,12 @@ UniqueCairoSurfacePtr DrawTexture(const std::vector<char>& intensity,
   }
 
   auto surface = MakeUniqueCairoSurfacePtr(cairo_image_surface_create_for_data(
-      reinterpret_cast<unsigned char*>(cairo_data->data()), kCairoFormat, width,
-      height, expected_stride));
+      reinterpret_cast<unsigned char *>(cairo_data->data()), kCairoFormat,
+      width, height, expected_stride));
   CHECK_EQ(cairo_surface_status(surface.get()), CAIRO_STATUS_SUCCESS)
       << cairo_status_to_string(cairo_surface_status(surface.get()));
   return surface;
 }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

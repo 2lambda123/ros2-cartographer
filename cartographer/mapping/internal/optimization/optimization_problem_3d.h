@@ -54,72 +54,73 @@ struct SubmapSpec3D {
 class OptimizationProblem3D
     : public OptimizationProblemInterface<NodeSpec3D, SubmapSpec3D,
                                           transform::Rigid3d> {
- public:
+public:
   explicit OptimizationProblem3D(
-      const optimization::proto::OptimizationProblemOptions& options);
+      const optimization::proto::OptimizationProblemOptions &options);
   ~OptimizationProblem3D();
 
-  OptimizationProblem3D(const OptimizationProblem3D&) = delete;
-  OptimizationProblem3D& operator=(const OptimizationProblem3D&) = delete;
+  OptimizationProblem3D(const OptimizationProblem3D &) = delete;
+  OptimizationProblem3D &operator=(const OptimizationProblem3D &) = delete;
 
-  void AddImuData(int trajectory_id, const sensor::ImuData& imu_data) override;
+  void AddImuData(int trajectory_id, const sensor::ImuData &imu_data) override;
   void AddOdometryData(int trajectory_id,
-                       const sensor::OdometryData& odometry_data) override;
+                       const sensor::OdometryData &odometry_data) override;
   void AddTrajectoryNode(int trajectory_id,
-                         const NodeSpec3D& node_data) override;
-  void InsertTrajectoryNode(const NodeId& node_id,
-                            const NodeSpec3D& node_data) override;
-  void TrimTrajectoryNode(const NodeId& node_id) override;
+                         const NodeSpec3D &node_data) override;
+  void InsertTrajectoryNode(const NodeId &node_id,
+                            const NodeSpec3D &node_data) override;
+  void TrimTrajectoryNode(const NodeId &node_id) override;
   void AddSubmap(int trajectory_id,
-                 const transform::Rigid3d& global_submap_pose) override;
-  void InsertSubmap(const SubmapId& submap_id,
-                    const transform::Rigid3d& global_submap_pose) override;
-  void TrimSubmap(const SubmapId& submap_id) override;
+                 const transform::Rigid3d &global_submap_pose) override;
+  void InsertSubmap(const SubmapId &submap_id,
+                    const transform::Rigid3d &global_submap_pose) override;
+  void TrimSubmap(const SubmapId &submap_id) override;
   void SetMaxNumIterations(int32 max_num_iterations) override;
 
-  void Solve(
-      const std::vector<Constraint>& constraints,
-      const std::set<int>& frozen_trajectories,
-      const std::map<std::string, LandmarkNode>& landmark_nodes) override;
+  void
+  Solve(const std::vector<Constraint> &constraints,
+        const std::set<int> &frozen_trajectories,
+        const std::map<std::string, LandmarkNode> &landmark_nodes) override;
 
-  const MapById<NodeId, NodeSpec3D>& node_data() const override {
+  const MapById<NodeId, NodeSpec3D> &node_data() const override {
     return node_data_;
   }
-  const MapById<SubmapId, SubmapSpec3D>& submap_data() const override {
+  const MapById<SubmapId, SubmapSpec3D> &submap_data() const override {
     return submap_data_;
   }
-  const std::map<std::string, transform::Rigid3d>& landmark_data()
-      const override {
+  const std::map<std::string, transform::Rigid3d> &
+  landmark_data() const override {
     return landmark_data_;
   }
-  const sensor::MapByTime<sensor::ImuData>& imu_data() const override {
+  const sensor::MapByTime<sensor::ImuData> &imu_data() const override {
     return imu_data_;
   }
-  const sensor::MapByTime<sensor::OdometryData>& odometry_data()
-      const override {
+  const sensor::MapByTime<sensor::OdometryData> &
+  odometry_data() const override {
     return odometry_data_;
   }
 
   void AddFixedFramePoseData(
       int trajectory_id,
-      const sensor::FixedFramePoseData& fixed_frame_pose_data);
-  void SetTrajectoryData(
-      int trajectory_id,
-      const PoseGraphInterface::TrajectoryData& trajectory_data);
-  const sensor::MapByTime<sensor::FixedFramePoseData>& fixed_frame_pose_data()
-      const {
+      const sensor::FixedFramePoseData &fixed_frame_pose_data);
+  void
+  SetTrajectoryData(int trajectory_id,
+                    const PoseGraphInterface::TrajectoryData &trajectory_data);
+  const sensor::MapByTime<sensor::FixedFramePoseData> &
+  fixed_frame_pose_data() const {
     return fixed_frame_pose_data_;
   }
-  const std::map<int, PoseGraphInterface::TrajectoryData>& trajectory_data()
-      const {
+  const std::map<int, PoseGraphInterface::TrajectoryData> &
+  trajectory_data() const {
     return trajectory_data_;
   }
 
- private:
+private:
   // Computes the relative pose between two nodes based on odometry data.
-  std::unique_ptr<transform::Rigid3d> CalculateOdometryBetweenNodes(
-      int trajectory_id, const NodeSpec3D& first_node_data,
-      const NodeSpec3D& second_node_data) const;
+  std::unique_ptr<transform::Rigid3d>
+  CalculateOdometryBetweenNodes(int trajectory_id,
+                                const NodeSpec3D &first_node_data,
+                                const NodeSpec3D &second_node_data) const;
 
   optimization::proto::OptimizationProblemOptions options_;
   MapById<NodeId, NodeSpec3D> node_data_;
@@ -131,8 +132,8 @@ class OptimizationProblem3D
   std::map<int, PoseGraphInterface::TrajectoryData> trajectory_data_;
 };
 
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_OPTIMIZATION_PROBLEM_3D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_OPTIMIZATION_PROBLEM_3D_H_

@@ -29,7 +29,7 @@ constexpr double kPrecision = 1e-8;
 constexpr int kSteps = 10;
 
 class ImuTrackerTest : public ::testing::Test {
- protected:
+protected:
   void SetUp() override {
     imu_tracker_ = common::make_unique<ImuTracker>(kGravityTimeConstant, time_);
     angular_velocity_ = Eigen::Vector3d(0, 0, 0);
@@ -90,6 +90,6 @@ TEST_F(ImuTrackerTest, LearnGravityVector) {
               kPrecision);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

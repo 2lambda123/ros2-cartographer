@@ -72,10 +72,10 @@ struct TrajectoryNode {
   transform::Rigid3d global_pose;
 };
 
-proto::TrajectoryNodeData ToProto(const TrajectoryNode::Data& constant_data);
-TrajectoryNode::Data FromProto(const proto::TrajectoryNodeData& proto);
+proto::TrajectoryNodeData ToProto(const TrajectoryNode::Data &constant_data);
+TrajectoryNode::Data FromProto(const proto::TrajectoryNodeData &proto);
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_TRAJECTORY_NODE_H_
+#endif // CARTOGRAPHER_MAPPING_TRAJECTORY_NODE_H_

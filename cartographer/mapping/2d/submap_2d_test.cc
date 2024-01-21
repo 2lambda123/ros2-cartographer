@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-#include "cartographer/mapping/2d/submap_2d.h"
 #include "cartographer/mapping/2d/probability_grid.h"
+#include "cartographer/mapping/2d/submap_2d.h"
 
 #include <map>
 #include <memory>
@@ -58,7 +58,7 @@ TEST(Submap2DTest, TheRightNumberOfRangeDataAreInserted) {
     submaps.InsertRangeData({Eigen::Vector3f::Zero(), {}, {}});
     // Except for the first, maps should only be returned after enough range
     // data.
-    for (const auto& submap : submaps.submaps()) {
+    for (const auto &submap : submaps.submaps()) {
       all_submaps.insert(submap);
     }
     if (submaps.matching_index() != 0) {
@@ -66,7 +66,7 @@ TEST(Submap2DTest, TheRightNumberOfRangeDataAreInserted) {
     }
   }
   int correct_num_range_data = 0;
-  for (const auto& submap : all_submaps) {
+  for (const auto &submap : all_submaps) {
     if (submap->num_range_data() == kNumRangeData * 2) {
       ++correct_num_range_data;
     }
@@ -99,6 +99,6 @@ TEST(Submap2DTest, ToFromProto) {
             actual.grid()->limits().cell_limits().num_x_cells);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

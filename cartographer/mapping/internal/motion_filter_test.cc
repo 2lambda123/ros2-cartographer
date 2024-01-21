@@ -24,14 +24,14 @@ namespace mapping {
 namespace {
 
 class MotionFilterTest : public ::testing::Test {
- protected:
+protected:
   MotionFilterTest() {
-    auto parameter_dictionary = common::MakeDictionary(
-        "return {"
-        "max_time_seconds = 0.5, "
-        "max_distance_meters = 0.2, "
-        "max_angle_radians = 2., "
-        "}");
+    auto parameter_dictionary =
+        common::MakeDictionary("return {"
+                               "max_time_seconds = 0.5, "
+                               "max_distance_meters = 0.2, "
+                               "max_angle_radians = 2., "
+                               "}");
     options_ = CreateMotionFilterOptions(parameter_dictionary.get());
   }
 
@@ -104,6 +104,6 @@ TEST_F(MotionFilterTest, RotationalMotion) {
                                       transform::Rigid3d::Identity()));
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

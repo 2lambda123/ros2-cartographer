@@ -30,16 +30,16 @@ namespace mapping {
 namespace {
 
 class RangeDataInserterTest2D : public ::testing::Test {
- protected:
+protected:
   RangeDataInserterTest2D()
       : probability_grid_(
             MapLimits(1., Eigen::Vector2d(1., 5.), CellLimits(5, 5))) {
-    auto parameter_dictionary = common::MakeDictionary(
-        "return { "
-        "insert_free_space = true, "
-        "hit_probability = 0.7, "
-        "miss_probability = 0.4, "
-        "}");
+    auto parameter_dictionary =
+        common::MakeDictionary("return { "
+                               "insert_free_space = true, "
+                               "hit_probability = 0.7, "
+                               "miss_probability = 0.4, "
+                               "}");
     options_ = CreateProbabilityGridRangeDataInserterOptions2D(
         parameter_dictionary.get());
     range_data_inserter_ =
@@ -69,7 +69,7 @@ TEST_F(RangeDataInserterTest2D, InsertPointCloud) {
   EXPECT_NEAR(1., probability_grid_.limits().max().x(), 1e-9);
   EXPECT_NEAR(5., probability_grid_.limits().max().y(), 1e-9);
 
-  const CellLimits& cell_limits = probability_grid_.limits().cell_limits();
+  const CellLimits &cell_limits = probability_grid_.limits().cell_limits();
   EXPECT_EQ(5, cell_limits.num_x_cells);
   EXPECT_EQ(5, cell_limits.num_y_cells);
 
@@ -87,17 +87,17 @@ TEST_F(RangeDataInserterTest2D, InsertPointCloud) {
       Eigen::Array2i cell_index(row, column);
       EXPECT_TRUE(probability_grid_.limits().Contains(cell_index));
       switch (expected_states[column][row]) {
-        case State::UNKNOWN:
-          EXPECT_FALSE(probability_grid_.IsKnown(cell_index));
-          break;
-        case State::MISS:
-          EXPECT_NEAR(options_.miss_probability(),
-                      probability_grid_.GetProbability(cell_index), 1e-4);
-          break;
-        case State::HIT:
-          EXPECT_NEAR(options_.hit_probability(),
-                      probability_grid_.GetProbability(cell_index), 1e-4);
-          break;
+      case State::UNKNOWN:
+        EXPECT_FALSE(probability_grid_.IsKnown(cell_index));
+        break;
+      case State::MISS:
+        EXPECT_NEAR(options_.miss_probability(),
+                    probability_grid_.GetProbability(cell_index), 1e-4);
+        break;
+      case State::HIT:
+        EXPECT_NEAR(options_.hit_probability(),
+                    probability_grid_.GetProbability(cell_index), 1e-4);
+        break;
       }
     }
   }
@@ -131,6 +131,6 @@ TEST_F(RangeDataInserterTest2D, ProbabilityProgression) {
       1e-3);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

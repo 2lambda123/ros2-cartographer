@@ -43,5 +43,5 @@ std::string FixedRatioSampler::DebugString() {
          std::to_string(100. * num_samples_ / num_pulses_) + "%)";
 }
 
-}  // namespace common
-}  // namespace cartographer
+} // namespace common
+} // namespace cartographer

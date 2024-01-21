@@ -168,6 +168,6 @@ TEST(ProbabilityValuesTest, EqualityLookupTableToApplyOdds) {
   }
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

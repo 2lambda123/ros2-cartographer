@@ -28,41 +28,41 @@ namespace cartographer {
 namespace cloud {
 
 class MapBuilderStub : public mapping::MapBuilderInterface {
- public:
-  MapBuilderStub(const std::string& server_address);
+public:
+  MapBuilderStub(const std::string &server_address);
 
-  MapBuilderStub(const MapBuilderStub&) = delete;
-  MapBuilderStub& operator=(const MapBuilderStub&) = delete;
+  MapBuilderStub(const MapBuilderStub &) = delete;
+  MapBuilderStub &operator=(const MapBuilderStub &) = delete;
 
   int AddTrajectoryBuilder(
-      const std::set<SensorId>& expected_sensor_ids,
-      const mapping::proto::TrajectoryBuilderOptions& trajectory_options,
+      const std::set<SensorId> &expected_sensor_ids,
+      const mapping::proto::TrajectoryBuilderOptions &trajectory_options,
       LocalSlamResultCallback local_slam_result_callback) override;
   int AddTrajectoryForDeserialization(
-      const mapping::proto::TrajectoryBuilderOptionsWithSensorIds&
-          options_with_sensor_ids_proto) override;
-  mapping::TrajectoryBuilderInterface* GetTrajectoryBuilder(
-      int trajectory_id) const override;
+      const mapping::proto::TrajectoryBuilderOptionsWithSensorIds
+          &options_with_sensor_ids_proto) override;
+  mapping::TrajectoryBuilderInterface *
+  GetTrajectoryBuilder(int trajectory_id) const override;
   void FinishTrajectory(int trajectory_id) override;
-  std::string SubmapToProto(
-      const mapping::SubmapId& submap_id,
-      mapping::proto::SubmapQuery::Response* response) override;
-  void SerializeState(io::ProtoStreamWriterInterface* writer) override;
-  void LoadState(io::ProtoStreamReaderInterface* reader,
+  std::string
+  SubmapToProto(const mapping::SubmapId &submap_id,
+                mapping::proto::SubmapQuery::Response *response) override;
+  void SerializeState(io::ProtoStreamWriterInterface *writer) override;
+  void LoadState(io::ProtoStreamReaderInterface *reader,
                  bool load_frozen_state) override;
   int num_trajectory_builders() const override;
-  mapping::PoseGraphInterface* pose_graph() override;
-  const std::vector<mapping::proto::TrajectoryBuilderOptionsWithSensorIds>&
+  mapping::PoseGraphInterface *pose_graph() override;
+  const std::vector<mapping::proto::TrajectoryBuilderOptionsWithSensorIds> &
   GetAllTrajectoryBuilderOptions() const override;
 
- private:
+private:
   std::shared_ptr<::grpc::Channel> client_channel_;
   std::unique_ptr<mapping::PoseGraphInterface> pose_graph_stub_;
   std::map<int, std::unique_ptr<mapping::TrajectoryBuilderInterface>>
       trajectory_builder_stubs_;
 };
 
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_CLIENT_MAP_BUILDER_STUB_H_
+#endif // CARTOGRAPHER_CLOUD_CLIENT_MAP_BUILDER_STUB_H_

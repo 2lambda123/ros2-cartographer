@@ -29,50 +29,49 @@ namespace io {
 
 class ForwardingProtoStreamWriter
     : public cartographer::io::ProtoStreamWriterInterface {
- public:
+public:
   // A callback that is invoked anytime 'WriteProto()' is called on the
   // 'ForwardingProtoStreamWriter'. When 'Close()' is called on the
   // 'ForwardingProtoStreamWriter' the callback is invoked with a 'nullptr'.
   using WriterCallback =
-      std::function<bool(const google::protobuf::Message* proto)>;
+      std::function<bool(const google::protobuf::Message *proto)>;
 
   explicit ForwardingProtoStreamWriter(WriterCallback writer_callback)
       : writer_callback_(writer_callback) {}
   ~ForwardingProtoStreamWriter() = default;
 
-  void WriteProto(const google::protobuf::Message& proto) override;
+  void WriteProto(const google::protobuf::Message &proto) override;
   bool Close() override;
 
- private:
+private:
   WriterCallback writer_callback_;
 };
 
 class InMemoryProtoStreamReader
     : public cartographer::io::ProtoStreamReaderInterface {
- public:
+public:
   explicit InMemoryProtoStreamReader(
-      std::queue<std::unique_ptr<google::protobuf::Message>>&& state_chunks)
+      std::queue<std::unique_ptr<google::protobuf::Message>> &&state_chunks)
       : state_chunks_(std::move(state_chunks)) {}
   InMemoryProtoStreamReader() = default;
   ~InMemoryProtoStreamReader() = default;
 
-  InMemoryProtoStreamReader(const InMemoryProtoStreamReader&) = delete;
-  InMemoryProtoStreamReader& operator=(const InMemoryProtoStreamReader&) =
-      delete;
+  InMemoryProtoStreamReader(const InMemoryProtoStreamReader &) = delete;
+  InMemoryProtoStreamReader &
+  operator=(const InMemoryProtoStreamReader &) = delete;
 
-  template <typename MessageType>
-  void AddProto(const MessageType& proto) {
+  template <typename MessageType> void AddProto(const MessageType &proto) {
     state_chunks_.push(common::make_unique<MessageType>(proto));
   }
 
-  bool ReadProto(google::protobuf::Message* proto) override;
+  bool ReadProto(google::protobuf::Message *proto) override;
   bool eof() const override { return state_chunks_.empty(); }
 
- private:
+private:
   std::queue<std::unique_ptr<google::protobuf::Message>> state_chunks_;
 };
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_IO_INTERNAL_IN_MEMORY_PROTO_STREAM_H_
+#endif // CARTOGRAPHER_IO_INTERNAL_IN_MEMORY_PROTO_STREAM_H_

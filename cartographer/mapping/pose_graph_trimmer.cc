@@ -27,7 +27,7 @@ PureLocalizationTrimmer::PureLocalizationTrimmer(const int trajectory_id,
   CHECK_GE(num_submaps_to_keep, 3);
 }
 
-void PureLocalizationTrimmer::Trim(Trimmable* const pose_graph) {
+void PureLocalizationTrimmer::Trim(Trimmable *const pose_graph) {
   if (pose_graph->IsFinished(trajectory_id_)) {
     num_submaps_to_keep_ = 0;
   }
@@ -44,5 +44,5 @@ void PureLocalizationTrimmer::Trim(Trimmable* const pose_graph) {
 
 bool PureLocalizationTrimmer::IsFinished() { return finished_; }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

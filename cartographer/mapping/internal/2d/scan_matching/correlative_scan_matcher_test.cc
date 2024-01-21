@@ -96,7 +96,7 @@ TEST(DiscretizeScans, DiscretizeScans) {
   EXPECT_TRUE((Eigen::Array2i(4, 3) == discrete_scans[0][6]).all());
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

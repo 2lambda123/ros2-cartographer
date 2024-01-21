@@ -25,17 +25,15 @@ namespace io {
 
 std::unique_ptr<OutlierRemovingPointsProcessor>
 OutlierRemovingPointsProcessor::FromDictionary(
-    common::LuaParameterDictionary* const dictionary,
-    PointsProcessor* const next) {
+    common::LuaParameterDictionary *const dictionary,
+    PointsProcessor *const next) {
   return common::make_unique<OutlierRemovingPointsProcessor>(
       dictionary->GetDouble("voxel_size"), next);
 }
 
 OutlierRemovingPointsProcessor::OutlierRemovingPointsProcessor(
-    const double voxel_size, PointsProcessor* next)
-    : voxel_size_(voxel_size),
-      next_(next),
-      state_(State::kPhase1),
+    const double voxel_size, PointsProcessor *next)
+    : voxel_size_(voxel_size), next_(next), state_(State::kPhase1),
       voxels_(voxel_size_) {
   LOG(INFO) << "Marking hits...";
 }
@@ -43,50 +41,50 @@ OutlierRemovingPointsProcessor::OutlierRemovingPointsProcessor(
 void OutlierRemovingPointsProcessor::Process(
     std::unique_ptr<PointsBatch> batch) {
   switch (state_) {
-    case State::kPhase1:
-      ProcessInPhaseOne(*batch);
-      break;
+  case State::kPhase1:
+    ProcessInPhaseOne(*batch);
+    break;
 
-    case State::kPhase2:
-      ProcessInPhaseTwo(*batch);
-      break;
+  case State::kPhase2:
+    ProcessInPhaseTwo(*batch);
+    break;
 
-    case State::kPhase3:
-      ProcessInPhaseThree(std::move(batch));
-      break;
+  case State::kPhase3:
+    ProcessInPhaseThree(std::move(batch));
+    break;
   }
 }
 
 PointsProcessor::FlushResult OutlierRemovingPointsProcessor::Flush() {
   switch (state_) {
-    case State::kPhase1:
-      LOG(INFO) << "Counting rays...";
-      state_ = State::kPhase2;
-      return FlushResult::kRestartStream;
+  case State::kPhase1:
+    LOG(INFO) << "Counting rays...";
+    state_ = State::kPhase2;
+    return FlushResult::kRestartStream;
 
-    case State::kPhase2:
-      LOG(INFO) << "Filtering outliers...";
-      state_ = State::kPhase3;
-      return FlushResult::kRestartStream;
+  case State::kPhase2:
+    LOG(INFO) << "Filtering outliers...";
+    state_ = State::kPhase3;
+    return FlushResult::kRestartStream;
 
-    case State::kPhase3:
-      CHECK(next_->Flush() == FlushResult::kFinished)
-          << "Voxel filtering and outlier removal must be configured to occur "
-             "after any stages that require multiple passes.";
-      return FlushResult::kFinished;
+  case State::kPhase3:
+    CHECK(next_->Flush() == FlushResult::kFinished)
+        << "Voxel filtering and outlier removal must be configured to occur "
+           "after any stages that require multiple passes.";
+    return FlushResult::kFinished;
   }
   LOG(FATAL);
 }
 
 void OutlierRemovingPointsProcessor::ProcessInPhaseOne(
-    const PointsBatch& batch) {
+    const PointsBatch &batch) {
   for (size_t i = 0; i < batch.points.size(); ++i) {
     ++voxels_.mutable_value(voxels_.GetCellIndex(batch.points[i]))->hits;
   }
 }
 
 void OutlierRemovingPointsProcessor::ProcessInPhaseTwo(
-    const PointsBatch& batch) {
+    const PointsBatch &batch) {
   // TODO(whess): This samples every 'voxel_size' distance and could be improved
   // by better ray casting, and also by marking the hits of the current range
   // data to be excluded.
@@ -118,5 +116,5 @@ void OutlierRemovingPointsProcessor::ProcessInPhaseThree(
   next_->Process(std::move(batch));
 }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

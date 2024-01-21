@@ -30,7 +30,8 @@ float SlowValueToBoundedFloat(const uint16 value, const uint16 unknown_value,
                               const float upper_bound) {
   CHECK_GE(value, 0);
   CHECK_LE(value, 32767);
-  if (value == unknown_value) return unknown_result;
+  if (value == unknown_value)
+    return unknown_result;
   const float kScale = (upper_bound - lower_bound) / 32766.f;
   return value * kScale + (lower_bound - kScale);
 }
@@ -62,12 +63,12 @@ std::unique_ptr<std::vector<float>> PrecomputeValueToCorrespondenceCost() {
       kMinCorrespondenceCost, kMaxCorrespondenceCost);
 }
 
-}  // namespace
+} // namespace
 
-const std::vector<float>* const kValueToProbability =
+const std::vector<float> *const kValueToProbability =
     PrecomputeValueToProbability().release();
 
-const std::vector<float>* const kValueToCorrespondenceCost =
+const std::vector<float> *const kValueToCorrespondenceCost =
     PrecomputeValueToCorrespondenceCost().release();
 
 std::vector<uint16> ComputeLookupTableToApplyOdds(const float odds) {
@@ -82,8 +83,8 @@ std::vector<uint16> ComputeLookupTableToApplyOdds(const float odds) {
   return result;
 }
 
-std::vector<uint16> ComputeLookupTableToApplyCorrespondenceCostOdds(
-    float odds) {
+std::vector<uint16>
+ComputeLookupTableToApplyCorrespondenceCostOdds(float odds) {
   std::vector<uint16> result;
   result.push_back(CorrespondenceCostToValue(ProbabilityToCorrespondenceCost(
                        ProbabilityFromOdds(odds))) +
@@ -99,5 +100,5 @@ std::vector<uint16> ComputeLookupTableToApplyCorrespondenceCostOdds(
   return result;
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

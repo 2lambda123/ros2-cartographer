@@ -37,20 +37,17 @@ namespace cartographer {
 namespace mapping {
 namespace internal {
 
-template <class T>
-auto GetTimeImpl(const T& t, int) -> decltype(t.time()) {
+template <class T> auto GetTimeImpl(const T &t, int) -> decltype(t.time()) {
   return t.time();
 }
-template <class T>
-auto GetTimeImpl(const T& t, unsigned) -> decltype(t.time) {
+template <class T> auto GetTimeImpl(const T &t, unsigned) -> decltype(t.time) {
   return t.time;
 }
-template <class T>
-common::Time GetTime(const T& t) {
+template <class T> common::Time GetTime(const T &t) {
   return GetTimeImpl(t, 0);
 }
 
-}  // namespace internal
+} // namespace internal
 
 // Uniquely identifies a trajectory node using a combination of a unique
 // trajectory ID and a zero-based index of the node inside that trajectory.
@@ -58,25 +55,25 @@ struct NodeId {
   int trajectory_id;
   int node_index;
 
-  bool operator==(const NodeId& other) const {
+  bool operator==(const NodeId &other) const {
     return std::forward_as_tuple(trajectory_id, node_index) ==
            std::forward_as_tuple(other.trajectory_id, other.node_index);
   }
 
-  bool operator!=(const NodeId& other) const { return !operator==(other); }
+  bool operator!=(const NodeId &other) const { return !operator==(other); }
 
-  bool operator<(const NodeId& other) const {
+  bool operator<(const NodeId &other) const {
     return std::forward_as_tuple(trajectory_id, node_index) <
            std::forward_as_tuple(other.trajectory_id, other.node_index);
   }
 
-  void ToProto(proto::NodeId* proto) const {
+  void ToProto(proto::NodeId *proto) const {
     proto->set_trajectory_id(trajectory_id);
     proto->set_node_index(node_index);
   }
 };
 
-inline std::ostream& operator<<(std::ostream& os, const NodeId& v) {
+inline std::ostream &operator<<(std::ostream &os, const NodeId &v) {
   return os << "(" << v.trajectory_id << ", " << v.node_index << ")";
 }
 
@@ -86,38 +83,37 @@ struct SubmapId {
   int trajectory_id;
   int submap_index;
 
-  bool operator==(const SubmapId& other) const {
+  bool operator==(const SubmapId &other) const {
     return std::forward_as_tuple(trajectory_id, submap_index) ==
            std::forward_as_tuple(other.trajectory_id, other.submap_index);
   }
 
-  bool operator!=(const SubmapId& other) const { return !operator==(other); }
+  bool operator!=(const SubmapId &other) const { return !operator==(other); }
 
-  bool operator<(const SubmapId& other) const {
+  bool operator<(const SubmapId &other) const {
     return std::forward_as_tuple(trajectory_id, submap_index) <
            std::forward_as_tuple(other.trajectory_id, other.submap_index);
   }
 
-  void ToProto(proto::SubmapId* proto) const {
+  void ToProto(proto::SubmapId *proto) const {
     proto->set_trajectory_id(trajectory_id);
     proto->set_submap_index(submap_index);
   }
 };
 
-inline std::ostream& operator<<(std::ostream& os, const SubmapId& v) {
+inline std::ostream &operator<<(std::ostream &os, const SubmapId &v) {
   return os << "(" << v.trajectory_id << ", " << v.submap_index << ")";
 }
 
-template <typename IteratorType>
-class Range {
- public:
-  Range(const IteratorType& begin, const IteratorType& end)
+template <typename IteratorType> class Range {
+public:
+  Range(const IteratorType &begin, const IteratorType &end)
       : begin_(begin), end_(end) {}
 
   IteratorType begin() const { return begin_; }
   IteratorType end() const { return end_; }
 
- private:
+private:
   IteratorType begin_;
   IteratorType end_;
 };
@@ -126,26 +122,25 @@ class Range {
 // 'SubmapId'.
 // Note: This container will only ever contain non-empty trajectories. Trimming
 // the last remaining node of a trajectory drops the trajectory.
-template <typename IdType, typename DataType>
-class MapById {
- private:
+template <typename IdType, typename DataType> class MapById {
+private:
   struct MapByIndex;
 
- public:
+public:
   struct IdDataReference {
     IdType id;
-    const DataType& data;
+    const DataType &data;
   };
 
   class ConstIterator {
-   public:
+  public:
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = IdDataReference;
     using difference_type = int64;
     using pointer = std::unique_ptr<const IdDataReference>;
-    using reference = const IdDataReference&;
+    using reference = const IdDataReference &;
 
-    explicit ConstIterator(const MapById& map_by_id, const int trajectory_id)
+    explicit ConstIterator(const MapById &map_by_id, const int trajectory_id)
         : current_trajectory_(
               map_by_id.trajectories_.lower_bound(trajectory_id)),
           end_trajectory_(map_by_id.trajectories_.end()) {
@@ -155,7 +150,7 @@ class MapById {
       }
     }
 
-    explicit ConstIterator(const MapById& map_by_id, const IdType& id)
+    explicit ConstIterator(const MapById &map_by_id, const IdType &id)
         : current_trajectory_(map_by_id.trajectories_.find(id.trajectory_id)),
           end_trajectory_(map_by_id.trajectories_.end()) {
       if (current_trajectory_ != end_trajectory_) {
@@ -178,14 +173,14 @@ class MapById {
       return common::make_unique<const IdDataReference>(this->operator*());
     }
 
-    ConstIterator& operator++() {
+    ConstIterator &operator++() {
       CHECK(current_trajectory_ != end_trajectory_);
       ++current_data_;
       AdvanceToValidDataIterator();
       return *this;
     }
 
-    ConstIterator& operator--() {
+    ConstIterator &operator--() {
       while (current_trajectory_ == end_trajectory_ ||
              current_data_ == current_trajectory_->second.data_.begin()) {
         --current_trajectory_;
@@ -195,7 +190,7 @@ class MapById {
       return *this;
     }
 
-    bool operator==(const ConstIterator& it) const {
+    bool operator==(const ConstIterator &it) const {
       if (current_trajectory_ == end_trajectory_ ||
           it.current_trajectory_ == it.end_trajectory_) {
         return current_trajectory_ == it.current_trajectory_;
@@ -204,9 +199,9 @@ class MapById {
              current_data_ == it.current_data_;
     }
 
-    bool operator!=(const ConstIterator& it) const { return !operator==(it); }
+    bool operator!=(const ConstIterator &it) const { return !operator==(it); }
 
-   private:
+  private:
     void AdvanceToValidDataIterator() {
       CHECK(current_trajectory_ != end_trajectory_);
       while (current_data_ == current_trajectory_->second.data_.end()) {
@@ -224,12 +219,12 @@ class MapById {
   };
 
   class ConstTrajectoryIterator {
-   public:
+  public:
     using iterator_category = std::bidirectional_iterator_tag;
     using value_type = int;
     using difference_type = int64;
-    using pointer = const int*;
-    using reference = const int&;
+    using pointer = const int *;
+    using reference = const int &;
 
     explicit ConstTrajectoryIterator(
         typename std::map<int, MapByIndex>::const_iterator current_trajectory)
@@ -237,32 +232,32 @@ class MapById {
 
     int operator*() const { return current_trajectory_->first; }
 
-    ConstTrajectoryIterator& operator++() {
+    ConstTrajectoryIterator &operator++() {
       ++current_trajectory_;
       return *this;
     }
 
-    ConstTrajectoryIterator& operator--() {
+    ConstTrajectoryIterator &operator--() {
       --current_trajectory_;
       return *this;
     }
 
-    bool operator==(const ConstTrajectoryIterator& it) const {
+    bool operator==(const ConstTrajectoryIterator &it) const {
       return current_trajectory_ == it.current_trajectory_;
     }
 
-    bool operator!=(const ConstTrajectoryIterator& it) const {
+    bool operator!=(const ConstTrajectoryIterator &it) const {
       return !operator==(it);
     }
 
-   private:
+  private:
     typename std::map<int, MapByIndex>::const_iterator current_trajectory_;
   };
 
   // Appends data to a 'trajectory_id', creating trajectories as needed.
-  IdType Append(const int trajectory_id, const DataType& data) {
+  IdType Append(const int trajectory_id, const DataType &data) {
     CHECK_GE(trajectory_id, 0);
-    auto& trajectory = trajectories_[trajectory_id];
+    auto &trajectory = trajectories_[trajectory_id];
     CHECK(trajectory.can_append_);
     const int index =
         trajectory.data_.empty() ? 0 : trajectory.data_.rbegin()->first + 1;
@@ -272,22 +267,22 @@ class MapById {
 
   // Returns an iterator to the element at 'id' or the end iterator if it does
   // not exist.
-  ConstIterator find(const IdType& id) const {
+  ConstIterator find(const IdType &id) const {
     return ConstIterator(*this, id);
   }
 
   // Inserts data (which must not exist already) into a trajectory.
-  void Insert(const IdType& id, const DataType& data) {
+  void Insert(const IdType &id, const DataType &data) {
     CHECK_GE(id.trajectory_id, 0);
     CHECK_GE(GetIndex(id), 0);
-    auto& trajectory = trajectories_[id.trajectory_id];
+    auto &trajectory = trajectories_[id.trajectory_id];
     trajectory.can_append_ = false;
     CHECK(trajectory.data_.emplace(GetIndex(id), data).second);
   }
 
   // Removes the data for 'id' which must exist.
-  void Trim(const IdType& id) {
-    auto& trajectory = trajectories_.at(id.trajectory_id);
+  void Trim(const IdType &id) {
+    auto &trajectory = trajectories_.at(id.trajectory_id);
     const auto it = trajectory.data_.find(GetIndex(id));
     CHECK(it != trajectory.data_.end());
     if (std::next(it) == trajectory.data_.end()) {
@@ -303,16 +298,16 @@ class MapById {
     }
   }
 
-  bool Contains(const IdType& id) const {
+  bool Contains(const IdType &id) const {
     return trajectories_.count(id.trajectory_id) != 0 &&
            trajectories_.at(id.trajectory_id).data_.count(GetIndex(id)) != 0;
   }
 
-  const DataType& at(const IdType& id) const {
+  const DataType &at(const IdType &id) const {
     return trajectories_.at(id.trajectory_id).data_.at(GetIndex(id));
   }
 
-  DataType& at(const IdType& id) {
+  DataType &at(const IdType &id) {
     return trajectories_.at(id.trajectory_id).data_.at(GetIndex(id));
   }
 
@@ -334,7 +329,7 @@ class MapById {
   // Returns count of all elements.
   size_t size() const {
     size_t size = 0;
-    for (const auto& item : trajectories_) {
+    for (const auto &item : trajectories_) {
       size += item.second.data_.size();
     }
     return size;
@@ -370,7 +365,7 @@ class MapById {
       return EndOfTrajectory(trajectory_id);
     }
 
-    const std::map<int, DataType>& trajectory =
+    const std::map<int, DataType> &trajectory =
         trajectories_.at(trajectory_id).data_;
     if (internal::GetTime(std::prev(trajectory.end())->second) < time) {
       return EndOfTrajectory(trajectory_id);
@@ -390,19 +385,19 @@ class MapById {
     return ConstIterator(*this, IdType{trajectory_id, left->first});
   }
 
- private:
+private:
   struct MapByIndex {
     bool can_append_ = true;
     std::map<int, DataType> data_;
   };
 
-  static int GetIndex(const NodeId& id) { return id.node_index; }
-  static int GetIndex(const SubmapId& id) { return id.submap_index; }
+  static int GetIndex(const NodeId &id) { return id.node_index; }
+  static int GetIndex(const SubmapId &id) { return id.submap_index; }
 
   std::map<int, MapByIndex> trajectories_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_ID_H_
+#endif // CARTOGRAPHER_MAPPING_ID_H_

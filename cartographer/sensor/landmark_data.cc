@@ -21,11 +21,11 @@
 namespace cartographer {
 namespace sensor {
 
-proto::LandmarkData ToProto(const LandmarkData& landmark_data) {
+proto::LandmarkData ToProto(const LandmarkData &landmark_data) {
   proto::LandmarkData proto;
   proto.set_timestamp(common::ToUniversal(landmark_data.time));
-  for (const auto& observation : landmark_data.landmark_observations) {
-    auto* item = proto.add_landmark_observations();
+  for (const auto &observation : landmark_data.landmark_observations) {
+    auto *item = proto.add_landmark_observations();
     item->set_id(observation.id);
     *item->mutable_landmark_to_tracking_transform() =
         transform::ToProto(observation.landmark_to_tracking_transform);
@@ -35,10 +35,10 @@ proto::LandmarkData ToProto(const LandmarkData& landmark_data) {
   return proto;
 }
 
-LandmarkData FromProto(const proto::LandmarkData& proto) {
+LandmarkData FromProto(const proto::LandmarkData &proto) {
   LandmarkData landmark_data;
   landmark_data.time = common::FromUniversal(proto.timestamp());
-  for (const auto& item : proto.landmark_observations()) {
+  for (const auto &item : proto.landmark_observations()) {
     landmark_data.landmark_observations.push_back({
         item.id(),
         transform::ToRigid3(item.landmark_to_tracking_transform()),
@@ -49,5 +49,5 @@ LandmarkData FromProto(const proto::LandmarkData& proto) {
   return landmark_data;
 }
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer

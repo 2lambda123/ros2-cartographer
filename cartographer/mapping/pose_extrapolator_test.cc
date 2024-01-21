@@ -18,8 +18,8 @@
 
 #include "Eigen/Geometry"
 #include "cartographer/common/make_unique.h"
-#include "gtest/gtest.h"
 #include "transform/rigid_transform_test_helpers.h"
+#include "gtest/gtest.h"
 
 namespace cartographer {
 namespace mapping {
@@ -176,6 +176,6 @@ TEST(PoseExtrapolatorTest, ExtrapolateWithIMU) {
       kPrecision);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

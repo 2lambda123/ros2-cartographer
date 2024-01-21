@@ -56,22 +56,23 @@ TEST(LandmarkCostFunction3DTest, SmokeTest) {
   const std::array<double, 3> next_node_translation{{2., 2., 2.}};
   const std::array<double, 4> landmark_rotation{{1., 0., 0., 0.}};
   const std::array<double, 3> landmark_translation{{1., 2., 2.}};
-  const std::array<const double*, 6> parameter_blocks{
+  const std::array<const double *, 6> parameter_blocks{
       {prev_node_rotation.data(), prev_node_translation.data(),
        next_node_rotation.data(), next_node_translation.data(),
        landmark_rotation.data(), landmark_translation.data()}};
 
   std::array<double, 6> residuals;
   std::array<std::array<double, 21>, 6> jacobians;
-  std::array<double*, 6> jacobians_ptrs;
-  for (int i = 0; i < 6; ++i) jacobians_ptrs[i] = jacobians[i].data();
+  std::array<double *, 6> jacobians_ptrs;
+  for (int i = 0; i < 6; ++i)
+    jacobians_ptrs[i] = jacobians[i].data();
   cost_function->Evaluate(parameter_blocks.data(), residuals.data(),
                           jacobians_ptrs.data());
   EXPECT_THAT(residuals, ElementsAre(DoubleEq(1.), DoubleEq(0.), DoubleEq(0.),
                                      DoubleEq(0.), DoubleEq(0.), DoubleEq(0.)));
 }
 
-}  // namespace
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer

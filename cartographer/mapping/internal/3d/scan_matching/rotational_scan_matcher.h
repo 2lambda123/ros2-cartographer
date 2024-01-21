@@ -27,31 +27,31 @@ namespace mapping {
 namespace scan_matching {
 
 class RotationalScanMatcher {
- public:
+public:
   // Computes the histogram for a gravity aligned 'point_cloud'.
-  static Eigen::VectorXf ComputeHistogram(const sensor::PointCloud& point_cloud,
+  static Eigen::VectorXf ComputeHistogram(const sensor::PointCloud &point_cloud,
                                           int histogram_size);
 
   // Creates a matcher from the given histograms rotated by the given angles.
   // The angles should be chosen to bring the histograms into approximately the
   // same frame.
   explicit RotationalScanMatcher(
-      const std::vector<std::pair<Eigen::VectorXf, float>>&
-          histograms_at_angles);
+      const std::vector<std::pair<Eigen::VectorXf, float>>
+          &histograms_at_angles);
 
   // Scores how well 'histogram' rotated by 'initial_angle' can be understood as
   // further rotated by certain 'angles' relative to the 'nodes'. Each angle
   // results in a score between 0 (worst) and 1 (best).
-  std::vector<float> Match(const Eigen::VectorXf& histogram,
+  std::vector<float> Match(const Eigen::VectorXf &histogram,
                            float initial_angle,
-                           const std::vector<float>& angles) const;
+                           const std::vector<float> &angles) const;
 
- private:
+private:
   Eigen::VectorXf histogram_;
 };
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_ROTATIONAL_SCAN_MATCHER_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_ROTATIONAL_SCAN_MATCHER_H_

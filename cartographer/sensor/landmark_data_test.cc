@@ -30,8 +30,8 @@ namespace {
 using ::testing::DoubleNear;
 using ::testing::Field;
 
-::testing::Matcher<const LandmarkObservation&> EqualsLandmark(
-    const LandmarkObservation& expected) {
+::testing::Matcher<const LandmarkObservation &>
+EqualsLandmark(const LandmarkObservation &expected) {
   return ::testing::AllOf(
       Field(&LandmarkObservation::id, expected.id),
       Field(&LandmarkObservation::landmark_to_tracking_transform,
@@ -43,7 +43,7 @@ using ::testing::Field;
 }
 
 class LandmarkDataTest : public ::testing::Test {
- protected:
+protected:
   LandmarkDataTest()
       : observations_(
             {{
@@ -72,6 +72,6 @@ TEST_F(LandmarkDataTest, LandmarkDataToAndFromProto) {
                           EqualsLandmark(expected.landmark_observations[1])));
 }
 
-}  // namespace
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace
+} // namespace sensor
+} // namespace cartographer

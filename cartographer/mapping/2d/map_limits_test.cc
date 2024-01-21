@@ -51,17 +51,17 @@ TEST(MapLimitsTest, ProtoConstructor) {
 TEST(MapLimitsTest, ConstructAndGet) {
   const MapLimits limits(42., Eigen::Vector2d(3., 0.), CellLimits(2, 3));
 
-  const CellLimits& cell_limits = limits.cell_limits();
+  const CellLimits &cell_limits = limits.cell_limits();
   EXPECT_EQ(2, cell_limits.num_x_cells);
   EXPECT_EQ(3, cell_limits.num_y_cells);
 
-  const Eigen::Vector2d& max = limits.max();
+  const Eigen::Vector2d &max = limits.max();
   EXPECT_EQ(3., max.x());
   EXPECT_EQ(0., max.y());
 
   EXPECT_EQ(42., limits.resolution());
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

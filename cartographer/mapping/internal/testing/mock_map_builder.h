@@ -31,7 +31,7 @@ namespace mapping {
 namespace testing {
 
 class MockMapBuilder : public mapping::MapBuilderInterface {
- public:
+public:
   MOCK_METHOD3(
       AddTrajectoryBuilder,
       int(const std::set<SensorId> &expected_sensor_ids,
@@ -57,8 +57,8 @@ class MockMapBuilder : public mapping::MapBuilderInterface {
           &());
 };
 
-}  // namespace testing
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace testing
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_TESTING_MOCK_MAP_BUILDER_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_TESTING_MOCK_MAP_BUILDER_H_

@@ -28,30 +28,29 @@ namespace cartographer {
 namespace mapping {
 namespace {
 
-static auto* kLocalSlamMatchingResults = metrics::Counter::Null();
-static auto* kLocalSlamInsertionResults = metrics::Counter::Null();
+static auto *kLocalSlamMatchingResults = metrics::Counter::Null();
+static auto *kLocalSlamInsertionResults = metrics::Counter::Null();
 
 template <typename LocalTrajectoryBuilder, typename PoseGraph>
 class GlobalTrajectoryBuilder : public mapping::TrajectoryBuilderInterface {
- public:
+public:
   // Passing a 'nullptr' for 'local_trajectory_builder' is acceptable, but no
   // 'TimedPointCloudData' may be added in that case.
   GlobalTrajectoryBuilder(
       std::unique_ptr<LocalTrajectoryBuilder> local_trajectory_builder,
-      const int trajectory_id, PoseGraph* const pose_graph,
-      const LocalSlamResultCallback& local_slam_result_callback)
-      : trajectory_id_(trajectory_id),
-        pose_graph_(pose_graph),
+      const int trajectory_id, PoseGraph *const pose_graph,
+      const LocalSlamResultCallback &local_slam_result_callback)
+      : trajectory_id_(trajectory_id), pose_graph_(pose_graph),
         local_trajectory_builder_(std::move(local_trajectory_builder)),
         local_slam_result_callback_(local_slam_result_callback) {}
   ~GlobalTrajectoryBuilder() override {}
 
-  GlobalTrajectoryBuilder(const GlobalTrajectoryBuilder&) = delete;
-  GlobalTrajectoryBuilder& operator=(const GlobalTrajectoryBuilder&) = delete;
+  GlobalTrajectoryBuilder(const GlobalTrajectoryBuilder &) = delete;
+  GlobalTrajectoryBuilder &operator=(const GlobalTrajectoryBuilder &) = delete;
 
   void AddSensorData(
-      const std::string& sensor_id,
-      const sensor::TimedPointCloudData& timed_point_cloud_data) override {
+      const std::string &sensor_id,
+      const sensor::TimedPointCloudData &timed_point_cloud_data) override {
     CHECK(local_trajectory_builder_)
         << "Cannot add TimedPointCloudData without a LocalTrajectoryBuilder.";
     std::unique_ptr<typename LocalTrajectoryBuilder::MatchingResult>
@@ -83,16 +82,16 @@ class GlobalTrajectoryBuilder : public mapping::TrajectoryBuilderInterface {
     }
   }
 
-  void AddSensorData(const std::string& sensor_id,
-                     const sensor::ImuData& imu_data) override {
+  void AddSensorData(const std::string &sensor_id,
+                     const sensor::ImuData &imu_data) override {
     if (local_trajectory_builder_) {
       local_trajectory_builder_->AddImuData(imu_data);
     }
     pose_graph_->AddImuData(trajectory_id_, imu_data);
   }
 
-  void AddSensorData(const std::string& sensor_id,
-                     const sensor::OdometryData& odometry_data) override {
+  void AddSensorData(const std::string &sensor_id,
+                     const sensor::OdometryData &odometry_data) override {
     CHECK(odometry_data.pose.IsValid()) << odometry_data.pose;
     if (local_trajectory_builder_) {
       local_trajectory_builder_->AddOdometryData(odometry_data);
@@ -100,9 +99,9 @@ class GlobalTrajectoryBuilder : public mapping::TrajectoryBuilderInterface {
     pose_graph_->AddOdometryData(trajectory_id_, odometry_data);
   }
 
-  void AddSensorData(
-      const std::string& sensor_id,
-      const sensor::FixedFramePoseData& fixed_frame_pose) override {
+  void
+  AddSensorData(const std::string &sensor_id,
+                const sensor::FixedFramePoseData &fixed_frame_pose) override {
     if (fixed_frame_pose.pose.has_value()) {
       CHECK(fixed_frame_pose.pose.value().IsValid())
           << fixed_frame_pose.pose.value();
@@ -110,8 +109,8 @@ class GlobalTrajectoryBuilder : public mapping::TrajectoryBuilderInterface {
     pose_graph_->AddFixedFramePoseData(trajectory_id_, fixed_frame_pose);
   }
 
-  void AddSensorData(const std::string& sensor_id,
-                     const sensor::LandmarkData& landmark_data) override {
+  void AddSensorData(const std::string &sensor_id,
+                     const sensor::LandmarkData &landmark_data) override {
     pose_graph_->AddLandmarkData(trajectory_id_, landmark_data);
   }
 
@@ -122,20 +121,20 @@ class GlobalTrajectoryBuilder : public mapping::TrajectoryBuilderInterface {
     local_slam_result_data->AddToPoseGraph(trajectory_id_, pose_graph_);
   }
 
- private:
+private:
   const int trajectory_id_;
-  PoseGraph* const pose_graph_;
+  PoseGraph *const pose_graph_;
   std::unique_ptr<LocalTrajectoryBuilder> local_trajectory_builder_;
   LocalSlamResultCallback local_slam_result_callback_;
 };
 
-}  // namespace
+} // namespace
 
 std::unique_ptr<TrajectoryBuilderInterface> CreateGlobalTrajectoryBuilder2D(
     std::unique_ptr<LocalTrajectoryBuilder2D> local_trajectory_builder,
-    const int trajectory_id, mapping::PoseGraph2D* const pose_graph,
-    const TrajectoryBuilderInterface::LocalSlamResultCallback&
-        local_slam_result_callback) {
+    const int trajectory_id, mapping::PoseGraph2D *const pose_graph,
+    const TrajectoryBuilderInterface::LocalSlamResultCallback
+        &local_slam_result_callback) {
   return common::make_unique<
       GlobalTrajectoryBuilder<LocalTrajectoryBuilder2D, mapping::PoseGraph2D>>(
       std::move(local_trajectory_builder), trajectory_id, pose_graph,
@@ -144,22 +143,22 @@ std::unique_ptr<TrajectoryBuilderInterface> CreateGlobalTrajectoryBuilder2D(
 
 std::unique_ptr<TrajectoryBuilderInterface> CreateGlobalTrajectoryBuilder3D(
     std::unique_ptr<LocalTrajectoryBuilder3D> local_trajectory_builder,
-    const int trajectory_id, mapping::PoseGraph3D* const pose_graph,
-    const TrajectoryBuilderInterface::LocalSlamResultCallback&
-        local_slam_result_callback) {
+    const int trajectory_id, mapping::PoseGraph3D *const pose_graph,
+    const TrajectoryBuilderInterface::LocalSlamResultCallback
+        &local_slam_result_callback) {
   return common::make_unique<
       GlobalTrajectoryBuilder<LocalTrajectoryBuilder3D, mapping::PoseGraph3D>>(
       std::move(local_trajectory_builder), trajectory_id, pose_graph,
       local_slam_result_callback);
 }
 
-void GlobalTrajectoryBuilderRegisterMetrics(metrics::FamilyFactory* factory) {
-  auto* results = factory->NewCounterFamily(
+void GlobalTrajectoryBuilderRegisterMetrics(metrics::FamilyFactory *factory) {
+  auto *results = factory->NewCounterFamily(
       "mapping_internal_global_trajectory_builder_local_slam_results",
       "Local SLAM results");
   kLocalSlamMatchingResults = results->Add({{"type", "MatchingResult"}});
   kLocalSlamInsertionResults = results->Add({{"type", "InsertionResult"}});
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

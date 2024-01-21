@@ -38,7 +38,7 @@ namespace {
 constexpr char kSensorId[] = "sensor_id";
 
 class LocalTrajectoryBuilderTest : public ::testing::Test {
- protected:
+protected:
   struct TrajectoryNode {
     common::Time time;
     transform::Rigid3d pose;
@@ -129,8 +129,8 @@ class LocalTrajectoryBuilderTest : public ::testing::Test {
   // Computes the earliest intersection of the ray 'from' to 'to' with the
   // axis-aligned cube with edge length 30 and center at the origin. Assumes
   // that 'from' is inside the cube.
-  Eigen::Vector3f CollideWithBox(const Eigen::Vector3f& from,
-                                 const Eigen::Vector3f& to) {
+  Eigen::Vector3f CollideWithBox(const Eigen::Vector3f &from,
+                                 const Eigen::Vector3f &to) {
     float first = 100.f;
     if (to.x() > from.x()) {
       first = std::min(first, (15.f - from.x()) / (to.x() - from.x()));
@@ -152,11 +152,11 @@ class LocalTrajectoryBuilderTest : public ::testing::Test {
 
   // Computes the earliest intersection of the ray 'from' to 'to' with all
   // bubbles. Returns 'to' if no intersection exists.
-  Eigen::Vector3f CollideWithBubbles(const Eigen::Vector3f& from,
-                                     const Eigen::Vector3f& to) {
+  Eigen::Vector3f CollideWithBubbles(const Eigen::Vector3f &from,
+                                     const Eigen::Vector3f &to) {
     float first = 1.f;
     constexpr float kBubbleRadius = 0.5f;
-    for (const Eigen::Vector3f& center : bubbles_) {
+    for (const Eigen::Vector3f &center : bubbles_) {
       const float a = (to - from).squaredNorm();
       const float beta = (to - from).dot(from - center);
       const float c =
@@ -174,7 +174,7 @@ class LocalTrajectoryBuilderTest : public ::testing::Test {
     return first * (to - from) + from;
   }
 
-  sensor::TimedRangeData GenerateRangeData(const transform::Rigid3d& pose) {
+  sensor::TimedRangeData GenerateRangeData(const transform::Rigid3d &pose) {
     // 360 degree rays at 16 angles.
     sensor::TimedPointCloud directions_in_rangefinder_frame;
     for (int r = -8; r != 8; ++r) {
@@ -202,7 +202,7 @@ class LocalTrajectoryBuilderTest : public ::testing::Test {
     // We simulate a 30 m edge length box around the origin, also containing
     // 50 cm radius spheres.
     sensor::TimedPointCloud returns_in_world_frame;
-    for (const Eigen::Vector4f& direction_in_world_frame :
+    for (const Eigen::Vector4f &direction_in_world_frame :
          sensor::TransformTimedPointCloud(directions_in_rangefinder_frame,
                                           pose.cast<float>())) {
       const Eigen::Vector3f origin =
@@ -220,7 +220,7 @@ class LocalTrajectoryBuilderTest : public ::testing::Test {
   }
 
   void AddLinearOnlyImuObservation(const common::Time time,
-                                   const transform::Rigid3d& expected_pose) {
+                                   const transform::Rigid3d &expected_pose) {
     const Eigen::Vector3d gravity =
         expected_pose.rotation().inverse() * Eigen::Vector3d(0., 0., 9.81);
     local_trajectory_builder_->AddImuData(
@@ -249,10 +249,10 @@ class LocalTrajectoryBuilderTest : public ::testing::Test {
     return trajectory;
   }
 
-  void VerifyAccuracy(const std::vector<TrajectoryNode>& expected_trajectory,
+  void VerifyAccuracy(const std::vector<TrajectoryNode> &expected_trajectory,
                       double expected_accuracy) {
     int num_poses = 0;
-    for (const TrajectoryNode& node : expected_trajectory) {
+    for (const TrajectoryNode &node : expected_trajectory) {
       AddLinearOnlyImuObservation(node.time, node.pose);
       const auto range_data = GenerateRangeData(node.pose);
       const std::unique_ptr<LocalTrajectoryBuilder3D::MatchingResult>
@@ -278,6 +278,6 @@ TEST_F(LocalTrajectoryBuilderTest, MoveInsideCubeUsingOnlyCeresScanMatcher) {
   VerifyAccuracy(GenerateCorkscrewTrajectory(), 1e-1);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

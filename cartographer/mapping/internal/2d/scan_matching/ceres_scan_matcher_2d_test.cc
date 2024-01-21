@@ -33,7 +33,7 @@ namespace scan_matching {
 namespace {
 
 class CeresScanMatcherTest : public ::testing::Test {
- protected:
+protected:
   CeresScanMatcherTest()
       : probability_grid_(
             MapLimits(1., Eigen::Vector2d(10., 10.), CellLimits(20, 20))) {
@@ -59,7 +59,7 @@ class CeresScanMatcherTest : public ::testing::Test {
     ceres_scan_matcher_ = common::make_unique<CeresScanMatcher2D>(options);
   }
 
-  void TestFromInitialPose(const transform::Rigid2d& initial_pose) {
+  void TestFromInitialPose(const transform::Rigid2d &initial_pose) {
     transform::Rigid2d pose;
     const transform::Rigid2d expected_pose =
         transform::Rigid2d::Translation({-0.5, 0.5});
@@ -94,7 +94,7 @@ TEST_F(CeresScanMatcherTest, testOptimizeAlongXY) {
   TestFromInitialPose(transform::Rigid2d::Translation({-0.3, 0.3}));
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

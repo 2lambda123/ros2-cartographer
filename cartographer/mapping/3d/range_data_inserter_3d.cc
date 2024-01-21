@@ -24,13 +24,13 @@ namespace cartographer {
 namespace mapping {
 namespace {
 
-void InsertMissesIntoGrid(const std::vector<uint16>& miss_table,
-                          const Eigen::Vector3f& origin,
-                          const sensor::PointCloud& returns,
-                          HybridGrid* hybrid_grid,
+void InsertMissesIntoGrid(const std::vector<uint16> &miss_table,
+                          const Eigen::Vector3f &origin,
+                          const sensor::PointCloud &returns,
+                          HybridGrid *hybrid_grid,
                           const int num_free_space_voxels) {
   const Eigen::Array3i origin_cell = hybrid_grid->GetCellIndex(origin);
-  for (const Eigen::Vector3f& hit : returns) {
+  for (const Eigen::Vector3f &hit : returns) {
     const Eigen::Array3i hit_cell = hybrid_grid->GetCellIndex(hit);
 
     const Eigen::Array3i delta = hit_cell - origin_cell;
@@ -51,10 +51,10 @@ void InsertMissesIntoGrid(const std::vector<uint16>& miss_table,
   }
 }
 
-}  // namespace
+} // namespace
 
 proto::RangeDataInserterOptions3D CreateRangeDataInserterOptions3D(
-    common::LuaParameterDictionary* parameter_dictionary) {
+    common::LuaParameterDictionary *parameter_dictionary) {
   proto::RangeDataInserterOptions3D options;
   options.set_hit_probability(
       parameter_dictionary->GetDouble("hit_probability"));
@@ -68,18 +68,17 @@ proto::RangeDataInserterOptions3D CreateRangeDataInserterOptions3D(
 }
 
 RangeDataInserter3D::RangeDataInserter3D(
-    const proto::RangeDataInserterOptions3D& options)
-    : options_(options),
-      hit_table_(
-          ComputeLookupTableToApplyOdds(Odds(options_.hit_probability()))),
+    const proto::RangeDataInserterOptions3D &options)
+    : options_(options), hit_table_(ComputeLookupTableToApplyOdds(
+                             Odds(options_.hit_probability()))),
       miss_table_(
           ComputeLookupTableToApplyOdds(Odds(options_.miss_probability()))) {}
 
-void RangeDataInserter3D::Insert(const sensor::RangeData& range_data,
-                                 HybridGrid* hybrid_grid) const {
+void RangeDataInserter3D::Insert(const sensor::RangeData &range_data,
+                                 HybridGrid *hybrid_grid) const {
   CHECK_NOTNULL(hybrid_grid);
 
-  for (const Eigen::Vector3f& hit : range_data.returns) {
+  for (const Eigen::Vector3f &hit : range_data.returns) {
     const Eigen::Array3i hit_cell = hybrid_grid->GetCellIndex(hit);
     hybrid_grid->ApplyLookupTable(hit_cell, hit_table_);
   }
@@ -91,5 +90,5 @@ void RangeDataInserter3D::Insert(const sensor::RangeData& range_data,
   hybrid_grid->FinishUpdate();
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

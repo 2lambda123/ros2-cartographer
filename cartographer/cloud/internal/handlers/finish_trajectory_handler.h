@@ -32,12 +32,12 @@ DEFINE_HANDLER_SIGNATURE(
 
 class FinishTrajectoryHandler
     : public async_grpc::RpcHandler<FinishTrajectorySignature> {
- public:
-  void OnRequest(const proto::FinishTrajectoryRequest& request) override;
+public:
+  void OnRequest(const proto::FinishTrajectoryRequest &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_FINISH_TRAJECTORY_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_FINISH_TRAJECTORY_HANDLER_H

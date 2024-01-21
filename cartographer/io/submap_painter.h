@@ -74,26 +74,26 @@ struct SubmapTextures {
 };
 
 PaintSubmapSlicesResult PaintSubmapSlices(
-    const std::map<::cartographer::mapping::SubmapId, SubmapSlice>& submaps,
+    const std::map<::cartographer::mapping::SubmapId, SubmapSlice> &submaps,
     double resolution);
 
 void FillSubmapSlice(
-    const ::cartographer::transform::Rigid3d& global_submap_pose,
-    const ::cartographer::mapping::proto::Submap& proto,
-    SubmapSlice* const submap_slice);
+    const ::cartographer::transform::Rigid3d &global_submap_pose,
+    const ::cartographer::mapping::proto::Submap &proto,
+    SubmapSlice *const submap_slice);
 
 // Unpacks cell data as provided by the backend into 'intensity' and 'alpha'.
-SubmapTexture::Pixels UnpackTextureData(const std::string& compressed_cells,
+SubmapTexture::Pixels UnpackTextureData(const std::string &compressed_cells,
                                         int width, int height);
 
 // Draw a texture into a cairo surface. 'cairo_data' will store the pixel data
 // for the surface and must therefore outlive the use of the surface.
-UniqueCairoSurfacePtr DrawTexture(const std::vector<char>& intensity,
-                                  const std::vector<char>& alpha, int width,
+UniqueCairoSurfacePtr DrawTexture(const std::vector<char> &intensity,
+                                  const std::vector<char> &alpha, int width,
                                   int height,
-                                  std::vector<uint32_t>* cairo_data);
+                                  std::vector<uint32_t> *cairo_data);
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_IO_SUBMAP_PAINTER_H_
+#endif // CARTOGRAPHER_IO_SUBMAP_PAINTER_H_

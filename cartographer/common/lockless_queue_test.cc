@@ -20,6 +20,6 @@ TEST(LocklessQueueTest, PushAndPop) {
   EXPECT_EQ(queue.Pop(), nullptr);
 }
 
-}  // namespace
-}  // namespace common
-}  // namespace cartographer
+} // namespace
+} // namespace common
+} // namespace cartographer

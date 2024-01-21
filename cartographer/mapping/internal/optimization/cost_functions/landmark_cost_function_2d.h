@@ -35,13 +35,14 @@ namespace optimization {
 // the landmark measurement and the linearly interpolated pose of embedded in 3D
 // space node poses.
 class LandmarkCostFunction2D {
- public:
+public:
   using LandmarkObservation =
       PoseGraphInterface::LandmarkNode::LandmarkObservation;
 
-  static ceres::CostFunction* CreateAutoDiffCostFunction(
-      const LandmarkObservation& observation, const NodeSpec2D& prev_node,
-      const NodeSpec2D& next_node) {
+  static ceres::CostFunction *
+  CreateAutoDiffCostFunction(const LandmarkObservation &observation,
+                             const NodeSpec2D &prev_node,
+                             const NodeSpec2D &next_node) {
     return new ceres::AutoDiffCostFunction<
         LandmarkCostFunction2D, 6 /* residuals */,
         3 /* previous node pose variables */, 3 /* next node pose variables */,
@@ -51,13 +52,14 @@ class LandmarkCostFunction2D {
   }
 
   template <typename T>
-  bool operator()(const T* const prev_node_pose, const T* const next_node_pose,
-                  const T* const landmark_rotation,
-                  const T* const landmark_translation, T* const e) const {
+  bool operator()(const T *const prev_node_pose, const T *const next_node_pose,
+                  const T *const landmark_rotation,
+                  const T *const landmark_translation, T *const e) const {
     const std::tuple<std::array<T, 4>, std::array<T, 3>>
-        interpolated_rotation_and_translation = InterpolateNodes2D(
-            prev_node_pose, prev_node_gravity_alignment_, next_node_pose,
-            next_node_gravity_alignment_, interpolation_parameter_);
+        interpolated_rotation_and_translation =
+            InterpolateNodes2D(prev_node_pose, prev_node_gravity_alignment_,
+                               next_node_pose, next_node_gravity_alignment_,
+                               interpolation_parameter_);
     const std::array<T, 6> error = ScaleError(
         ComputeUnscaledError(
             landmark_to_tracking_transform_,
@@ -69,10 +71,10 @@ class LandmarkCostFunction2D {
     return true;
   }
 
- private:
-  LandmarkCostFunction2D(const LandmarkObservation& observation,
-                         const NodeSpec2D& prev_node,
-                         const NodeSpec2D& next_node)
+private:
+  LandmarkCostFunction2D(const LandmarkObservation &observation,
+                         const NodeSpec2D &prev_node,
+                         const NodeSpec2D &next_node)
       : landmark_to_tracking_transform_(
             observation.landmark_to_tracking_transform),
         prev_node_gravity_alignment_(prev_node.gravity_alignment),
@@ -91,8 +93,8 @@ class LandmarkCostFunction2D {
   const double interpolation_parameter_;
 };
 
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_COST_FUNCTIONS_LANDMARK_COST_FUNCTION_2D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_OPTIMIZATION_COST_FUNCTIONS_LANDMARK_COST_FUNCTION_2D_H_

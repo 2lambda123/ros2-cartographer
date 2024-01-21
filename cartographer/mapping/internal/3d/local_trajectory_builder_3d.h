@@ -41,7 +41,7 @@ namespace mapping {
 // Wires up the local SLAM stack (i.e. pose extrapolator, scan matching, etc.)
 // without loop closure.
 class LocalTrajectoryBuilder3D {
- public:
+public:
   struct InsertionResult {
     std::shared_ptr<const mapping::TrajectoryNode::Data> constant_data;
     std::vector<std::shared_ptr<const mapping::Submap3D>> insertion_submaps;
@@ -55,37 +55,38 @@ class LocalTrajectoryBuilder3D {
   };
 
   explicit LocalTrajectoryBuilder3D(
-      const mapping::proto::LocalTrajectoryBuilderOptions3D& options,
-      const std::vector<std::string>& expected_range_sensor_ids);
+      const mapping::proto::LocalTrajectoryBuilderOptions3D &options,
+      const std::vector<std::string> &expected_range_sensor_ids);
   ~LocalTrajectoryBuilder3D();
 
-  LocalTrajectoryBuilder3D(const LocalTrajectoryBuilder3D&) = delete;
-  LocalTrajectoryBuilder3D& operator=(const LocalTrajectoryBuilder3D&) = delete;
+  LocalTrajectoryBuilder3D(const LocalTrajectoryBuilder3D &) = delete;
+  LocalTrajectoryBuilder3D &
+  operator=(const LocalTrajectoryBuilder3D &) = delete;
 
-  void AddImuData(const sensor::ImuData& imu_data);
+  void AddImuData(const sensor::ImuData &imu_data);
   // Returns 'MatchingResult' when range data accumulation completed,
   // otherwise 'nullptr'.  `TimedPointCloudData::time` is when the last point in
   // `range_data` was acquired, `TimedPointCloudData::ranges` contains the
   // relative time of point with respect to `TimedPointCloudData::time`.
-  std::unique_ptr<MatchingResult> AddRangeData(
-      const std::string& sensor_id,
-      const sensor::TimedPointCloudData& range_data);
-  void AddOdometryData(const sensor::OdometryData& odometry_data);
+  std::unique_ptr<MatchingResult>
+  AddRangeData(const std::string &sensor_id,
+               const sensor::TimedPointCloudData &range_data);
+  void AddOdometryData(const sensor::OdometryData &odometry_data);
 
-  static void RegisterMetrics(metrics::FamilyFactory* family_factory);
+  static void RegisterMetrics(metrics::FamilyFactory *family_factory);
 
- private:
+private:
   std::unique_ptr<MatchingResult> AddAccumulatedRangeData(
       common::Time time,
-      const sensor::RangeData& filtered_range_data_in_tracking);
+      const sensor::RangeData &filtered_range_data_in_tracking);
 
   std::unique_ptr<InsertionResult> InsertIntoSubmap(
-      common::Time time, const sensor::RangeData& filtered_range_data_in_local,
-      const sensor::RangeData& filtered_range_data_in_tracking,
-      const sensor::PointCloud& high_resolution_point_cloud_in_tracking,
-      const sensor::PointCloud& low_resolution_point_cloud_in_tracking,
-      const transform::Rigid3d& pose_estimate,
-      const Eigen::Quaterniond& gravity_alignment);
+      common::Time time, const sensor::RangeData &filtered_range_data_in_local,
+      const sensor::RangeData &filtered_range_data_in_tracking,
+      const sensor::PointCloud &high_resolution_point_cloud_in_tracking,
+      const sensor::PointCloud &low_resolution_point_cloud_in_tracking,
+      const transform::Rigid3d &pose_estimate,
+      const Eigen::Quaterniond &gravity_alignment);
 
   const mapping::proto::LocalTrajectoryBuilderOptions3D options_;
   mapping::ActiveSubmaps3D active_submaps_;
@@ -104,7 +105,7 @@ class LocalTrajectoryBuilder3D {
   RangeDataCollator range_data_collator_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_3D_LOCAL_TRAJECTORY_BUILDER_3D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_3D_LOCAL_TRAJECTORY_BUILDER_3D_H_

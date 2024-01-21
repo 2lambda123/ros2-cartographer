@@ -23,26 +23,27 @@ namespace io {
 
 // Streams a PLY file to disk. The header is written in 'Flush'.
 class PlyWritingPointsProcessor : public PointsProcessor {
- public:
-  constexpr static const char* kConfigurationFileActionName = "write_ply";
+public:
+  constexpr static const char *kConfigurationFileActionName = "write_ply";
   PlyWritingPointsProcessor(std::unique_ptr<FileWriter> file_writer,
-                            PointsProcessor* next);
+                            PointsProcessor *next);
 
-  static std::unique_ptr<PlyWritingPointsProcessor> FromDictionary(
-      const FileWriterFactory& file_writer_factory,
-      common::LuaParameterDictionary* dictionary, PointsProcessor* next);
+  static std::unique_ptr<PlyWritingPointsProcessor>
+  FromDictionary(const FileWriterFactory &file_writer_factory,
+                 common::LuaParameterDictionary *dictionary,
+                 PointsProcessor *next);
 
   ~PlyWritingPointsProcessor() override {}
 
-  PlyWritingPointsProcessor(const PlyWritingPointsProcessor&) = delete;
-  PlyWritingPointsProcessor& operator=(const PlyWritingPointsProcessor&) =
-      delete;
+  PlyWritingPointsProcessor(const PlyWritingPointsProcessor &) = delete;
+  PlyWritingPointsProcessor &
+  operator=(const PlyWritingPointsProcessor &) = delete;
 
   void Process(std::unique_ptr<PointsBatch> batch) override;
   FlushResult Flush() override;
 
- private:
-  PointsProcessor* const next_;
+private:
+  PointsProcessor *const next_;
 
   int64 num_points_;
   bool has_colors_;
@@ -50,5 +51,5 @@ class PlyWritingPointsProcessor : public PointsProcessor {
   std::unique_ptr<FileWriter> file_;
 };
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

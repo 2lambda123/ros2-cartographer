@@ -22,30 +22,30 @@
 namespace cartographer {
 namespace sensor {
 
-proto::TimedPointCloudData ToProto(
-    const TimedPointCloudData& timed_point_cloud_data) {
+proto::TimedPointCloudData
+ToProto(const TimedPointCloudData &timed_point_cloud_data) {
   proto::TimedPointCloudData proto;
   proto.set_timestamp(common::ToUniversal(timed_point_cloud_data.time));
   *proto.mutable_origin() = transform::ToProto(timed_point_cloud_data.origin);
   proto.mutable_point_data()->Reserve(timed_point_cloud_data.ranges.size());
-  for (const Eigen::Vector4f& range : timed_point_cloud_data.ranges) {
+  for (const Eigen::Vector4f &range : timed_point_cloud_data.ranges) {
     *proto.add_point_data() = transform::ToProto(range);
   }
   return proto;
 }
 
-TimedPointCloudData FromProto(const proto::TimedPointCloudData& proto) {
+TimedPointCloudData FromProto(const proto::TimedPointCloudData &proto) {
   TimedPointCloud timed_point_cloud;
   timed_point_cloud.reserve(proto.point_data().size());
   std::transform(
       proto.point_data().begin(), proto.point_data().end(),
       std::back_inserter(timed_point_cloud),
-      static_cast<Eigen::Vector4f (*)(const transform::proto::Vector4f&)>(
+      static_cast<Eigen::Vector4f (*)(const transform::proto::Vector4f &)>(
           transform::ToEigen));
   return TimedPointCloudData{common::FromUniversal(proto.timestamp()),
                              transform::ToEigen(proto.origin()),
                              timed_point_cloud};
 }
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer

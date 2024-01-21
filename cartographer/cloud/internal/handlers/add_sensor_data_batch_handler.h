@@ -32,12 +32,12 @@ DEFINE_HANDLER_SIGNATURE(
 
 class AddSensorDataBatchHandler
     : public async_grpc::RpcHandler<AddSensorDataBatchSignature> {
- public:
-  void OnRequest(const proto::AddSensorDataBatchRequest& request) override;
+public:
+  void OnRequest(const proto::AddSensorDataBatchRequest &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_SENSOR_DATA_BATCH_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_SENSOR_DATA_BATCH_HANDLER_H

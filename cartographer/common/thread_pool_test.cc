@@ -26,13 +26,13 @@ namespace common {
 namespace {
 
 class Receiver {
- public:
+public:
   void Receive(int number) {
     Mutex::Locker locker(&mutex_);
     received_numbers_.push_back(number);
   }
 
-  void WaitForNumberSequence(const std::vector<int>& expected_numbers) {
+  void WaitForNumberSequence(const std::vector<int> &expected_numbers) {
     common::MutexLocker locker(&mutex_);
     locker.Await([this, &expected_numbers]() REQUIRES(mutex_) {
       return (received_numbers_.size() >= expected_numbers.size());
@@ -170,6 +170,6 @@ TEST(ThreadPoolTest, RunWithFinishedDependency) {
   receiver.WaitForNumberSequence({1, 2});
 }
 
-}  // namespace
-}  // namespace common
-}  // namespace cartographer
+} // namespace
+} // namespace common
+} // namespace cartographer

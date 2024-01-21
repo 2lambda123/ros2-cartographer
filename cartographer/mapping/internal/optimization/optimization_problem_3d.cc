@@ -54,9 +54,9 @@ using TrajectoryData =
     ::cartographer::mapping::PoseGraphInterface::TrajectoryData;
 
 // For odometry.
-std::unique_ptr<transform::Rigid3d> Interpolate(
-    const sensor::MapByTime<sensor::OdometryData>& map_by_time,
-    const int trajectory_id, const common::Time time) {
+std::unique_ptr<transform::Rigid3d>
+Interpolate(const sensor::MapByTime<sensor::OdometryData> &map_by_time,
+            const int trajectory_id, const common::Time time) {
   const auto it = map_by_time.lower_bound(trajectory_id, time);
   if (it == map_by_time.EndOfTrajectory(trajectory_id)) {
     return nullptr;
@@ -75,9 +75,9 @@ std::unique_ptr<transform::Rigid3d> Interpolate(
 }
 
 // For fixed frame pose.
-std::unique_ptr<transform::Rigid3d> Interpolate(
-    const sensor::MapByTime<sensor::FixedFramePoseData>& map_by_time,
-    const int trajectory_id, const common::Time time) {
+std::unique_ptr<transform::Rigid3d>
+Interpolate(const sensor::MapByTime<sensor::FixedFramePoseData> &map_by_time,
+            const int trajectory_id, const common::Time time) {
   const auto it = map_by_time.lower_bound(trajectory_id, time);
   if (it == map_by_time.EndOfTrajectory(trajectory_id) ||
       !it->pose.has_value()) {
@@ -103,10 +103,11 @@ std::unique_ptr<transform::Rigid3d> Interpolate(
 
 // Selects a trajectory node closest in time to the landmark observation and
 // applies a relative transform from it.
-transform::Rigid3d GetInitialLandmarkPose(
-    const LandmarkNode::LandmarkObservation& observation,
-    const NodeSpec3D& prev_node, const NodeSpec3D& next_node,
-    const CeresPose& prev_node_pose, const CeresPose& next_node_pose) {
+transform::Rigid3d
+GetInitialLandmarkPose(const LandmarkNode::LandmarkObservation &observation,
+                       const NodeSpec3D &prev_node, const NodeSpec3D &next_node,
+                       const CeresPose &prev_node_pose,
+                       const CeresPose &next_node_pose) {
   const double interpolation_parameter =
       common::ToSeconds(observation.time - prev_node.time) /
       common::ToSeconds(next_node.time - prev_node.time);
@@ -122,19 +123,19 @@ transform::Rigid3d GetInitialLandmarkPose(
 }
 
 void AddLandmarkCostFunctions(
-    const std::map<std::string, LandmarkNode>& landmark_nodes,
-    bool freeze_landmarks, const MapById<NodeId, NodeSpec3D>& node_data,
-    MapById<NodeId, CeresPose>* C_nodes,
-    std::map<std::string, CeresPose>* C_landmarks, ceres::Problem* problem) {
-  for (const auto& landmark_node : landmark_nodes) {
+    const std::map<std::string, LandmarkNode> &landmark_nodes,
+    bool freeze_landmarks, const MapById<NodeId, NodeSpec3D> &node_data,
+    MapById<NodeId, CeresPose> *C_nodes,
+    std::map<std::string, CeresPose> *C_landmarks, ceres::Problem *problem) {
+  for (const auto &landmark_node : landmark_nodes) {
     // Do not use landmarks that were not optimized for localization.
     if (!landmark_node.second.global_landmark_pose.has_value() &&
         freeze_landmarks) {
       continue;
     }
-    for (const auto& observation : landmark_node.second.landmark_observations) {
-      const std::string& landmark_id = landmark_node.first;
-      const auto& begin_of_trajectory =
+    for (const auto &observation : landmark_node.second.landmark_observations) {
+      const std::string &landmark_id = landmark_node.first;
+      const auto &begin_of_trajectory =
           node_data.BeginOfTrajectory(observation.trajectory_id);
       // The landmark observation was made before the trajectory was created.
       if (observation.time < begin_of_trajectory->data.time) {
@@ -153,8 +154,8 @@ void AddLandmarkCostFunctions(
       }
       auto prev = std::prev(next);
       // Add parameter blocks for the landmark ID if they were not added before.
-      CeresPose* prev_node_pose = &C_nodes->at(prev->id);
-      CeresPose* next_node_pose = &C_nodes->at(next->id);
+      CeresPose *prev_node_pose = &C_nodes->at(prev->id);
+      CeresPose *next_node_pose = &C_nodes->at(next->id);
       if (!C_landmarks->count(landmark_id)) {
         const transform::Rigid3d starting_point =
             landmark_node.second.global_landmark_pose.has_value()
@@ -185,48 +186,48 @@ void AddLandmarkCostFunctions(
   }
 }
 
-}  // namespace
+} // namespace
 
 OptimizationProblem3D::OptimizationProblem3D(
-    const optimization::proto::OptimizationProblemOptions& options)
+    const optimization::proto::OptimizationProblemOptions &options)
     : options_(options) {}
 
 OptimizationProblem3D::~OptimizationProblem3D() {}
 
 void OptimizationProblem3D::AddImuData(const int trajectory_id,
-                                       const sensor::ImuData& imu_data) {
+                                       const sensor::ImuData &imu_data) {
   imu_data_.Append(trajectory_id, imu_data);
 }
 
 void OptimizationProblem3D::AddOdometryData(
-    const int trajectory_id, const sensor::OdometryData& odometry_data) {
+    const int trajectory_id, const sensor::OdometryData &odometry_data) {
   odometry_data_.Append(trajectory_id, odometry_data);
 }
 
 void OptimizationProblem3D::AddFixedFramePoseData(
     const int trajectory_id,
-    const sensor::FixedFramePoseData& fixed_frame_pose_data) {
+    const sensor::FixedFramePoseData &fixed_frame_pose_data) {
   fixed_frame_pose_data_.Append(trajectory_id, fixed_frame_pose_data);
 }
 
 void OptimizationProblem3D::AddTrajectoryNode(const int trajectory_id,
-                                              const NodeSpec3D& node_data) {
+                                              const NodeSpec3D &node_data) {
   node_data_.Append(trajectory_id, node_data);
   trajectory_data_[trajectory_id];
 }
 
 void OptimizationProblem3D::SetTrajectoryData(
-    int trajectory_id, const TrajectoryData& trajectory_data) {
+    int trajectory_id, const TrajectoryData &trajectory_data) {
   trajectory_data_[trajectory_id] = trajectory_data;
 }
 
-void OptimizationProblem3D::InsertTrajectoryNode(const NodeId& node_id,
-                                                 const NodeSpec3D& node_data) {
+void OptimizationProblem3D::InsertTrajectoryNode(const NodeId &node_id,
+                                                 const NodeSpec3D &node_data) {
   node_data_.Insert(node_id, node_data);
   trajectory_data_[node_id.trajectory_id];
 }
 
-void OptimizationProblem3D::TrimTrajectoryNode(const NodeId& node_id) {
+void OptimizationProblem3D::TrimTrajectoryNode(const NodeId &node_id) {
   imu_data_.Trim(node_data_, node_id);
   odometry_data_.Trim(node_data_, node_id);
   fixed_frame_pose_data_.Trim(node_data_, node_id);
@@ -237,16 +238,16 @@ void OptimizationProblem3D::TrimTrajectoryNode(const NodeId& node_id) {
 }
 
 void OptimizationProblem3D::AddSubmap(
-    const int trajectory_id, const transform::Rigid3d& global_submap_pose) {
+    const int trajectory_id, const transform::Rigid3d &global_submap_pose) {
   submap_data_.Append(trajectory_id, SubmapSpec3D{global_submap_pose});
 }
 
 void OptimizationProblem3D::InsertSubmap(
-    const SubmapId& submap_id, const transform::Rigid3d& global_submap_pose) {
+    const SubmapId &submap_id, const transform::Rigid3d &global_submap_pose) {
   submap_data_.Insert(submap_id, SubmapSpec3D{global_submap_pose});
 }
 
-void OptimizationProblem3D::TrimSubmap(const SubmapId& submap_id) {
+void OptimizationProblem3D::TrimSubmap(const SubmapId &submap_id) {
   submap_data_.Trim(submap_id);
 }
 
@@ -257,9 +258,9 @@ void OptimizationProblem3D::SetMaxNumIterations(
 }
 
 void OptimizationProblem3D::Solve(
-    const std::vector<Constraint>& constraints,
-    const std::set<int>& frozen_trajectories,
-    const std::map<std::string, LandmarkNode>& landmark_nodes) {
+    const std::vector<Constraint> &constraints,
+    const std::set<int> &frozen_trajectories,
+    const std::map<std::string, LandmarkNode> &landmark_nodes) {
   if (node_data_.empty()) {
     // Nothing to optimize.
     return;
@@ -283,7 +284,7 @@ void OptimizationProblem3D::Solve(
   std::map<std::string, CeresPose> C_landmarks;
   bool first_submap = true;
   bool freeze_landmarks = !frozen_trajectories.empty();
-  for (const auto& submap_id_data : submap_data_) {
+  for (const auto &submap_id_data : submap_data_) {
     const bool frozen =
         frozen_trajectories.count(submap_id_data.id.trajectory_id) != 0;
     if (first_submap) {
@@ -314,7 +315,7 @@ void OptimizationProblem3D::Solve(
           C_submaps.at(submap_id_data.id).translation());
     }
   }
-  for (const auto& node_id_data : node_data_) {
+  for (const auto &node_id_data : node_data_) {
     const bool frozen =
         frozen_trajectories.count(node_id_data.id.trajectory_id) != 0;
     C_nodes.Insert(
@@ -329,7 +330,7 @@ void OptimizationProblem3D::Solve(
     }
   }
   // Add cost functions for intra- and inter-submap constraints.
-  for (const Constraint& constraint : constraints) {
+  for (const Constraint &constraint : constraints) {
     problem.AddResidualBlock(
         SpaCostFunction3D::CreateAutoDiffCostFunction(constraint.pose),
         // Only loop closure constraints should have a loss function.
@@ -355,7 +356,7 @@ void OptimizationProblem3D::Solve(
         node_it = trajectory_end;
         continue;
       }
-      TrajectoryData& trajectory_data = trajectory_data_.at(trajectory_id);
+      TrajectoryData &trajectory_data = trajectory_data_.at(trajectory_id);
 
       problem.AddParameterBlock(trajectory_data.imu_calibration.data(), 4,
                                 new ceres::QuaternionParameterization());
@@ -367,10 +368,10 @@ void OptimizationProblem3D::Solve(
       auto prev_node_it = node_it;
       for (++node_it; node_it != trajectory_end; ++node_it) {
         const NodeId first_node_id = prev_node_it->id;
-        const NodeSpec3D& first_node_data = prev_node_it->data;
+        const NodeSpec3D &first_node_data = prev_node_it->data;
         prev_node_it = node_it;
         const NodeId second_node_id = node_it->id;
-        const NodeSpec3D& second_node_data = node_it->data;
+        const NodeSpec3D &second_node_data = node_it->data;
 
         if (second_node_id.node_index != first_node_id.node_index + 1) {
           continue;
@@ -389,7 +390,7 @@ void OptimizationProblem3D::Solve(
         if (next_node_it != trajectory_end &&
             next_node_it->id.node_index == second_node_id.node_index + 1) {
           const NodeId third_node_id = next_node_it->id;
-          const NodeSpec3D& third_node_data = next_node_it->data;
+          const NodeSpec3D &third_node_data = next_node_it->data;
           const common::Time first_time = first_node_data.time;
           const common::Time second_time = second_node_data.time;
           const common::Time third_time = third_node_data.time;
@@ -447,10 +448,10 @@ void OptimizationProblem3D::Solve(
       auto prev_node_it = node_it;
       for (++node_it; node_it != trajectory_end; ++node_it) {
         const NodeId first_node_id = prev_node_it->id;
-        const NodeSpec3D& first_node_data = prev_node_it->data;
+        const NodeSpec3D &first_node_data = prev_node_it->data;
         prev_node_it = node_it;
         const NodeId second_node_id = node_it->id;
-        const NodeSpec3D& second_node_data = node_it->data;
+        const NodeSpec3D &second_node_data = node_it->data;
 
         if (second_node_id.node_index != first_node_id.node_index + 1) {
           continue;
@@ -497,11 +498,11 @@ void OptimizationProblem3D::Solve(
       continue;
     }
 
-    const TrajectoryData& trajectory_data = trajectory_data_.at(trajectory_id);
+    const TrajectoryData &trajectory_data = trajectory_data_.at(trajectory_id);
     bool fixed_frame_pose_initialized = false;
     for (; node_it != trajectory_end; ++node_it) {
       const NodeId node_id = node_it->id;
-      const NodeSpec3D& node_data = node_it->data;
+      const NodeSpec3D &node_data = node_it->data;
 
       const std::unique_ptr<transform::Rigid3d> fixed_frame_pose =
           Interpolate(fixed_frame_pose_data_, trajectory_id, node_data.time);
@@ -552,14 +553,14 @@ void OptimizationProblem3D::Solve(
       &problem, &summary);
   if (options_.log_solver_summary()) {
     LOG(INFO) << summary.FullReport();
-    for (const auto& trajectory_id_and_data : trajectory_data_) {
+    for (const auto &trajectory_id_and_data : trajectory_data_) {
       const int trajectory_id = trajectory_id_and_data.first;
-      const TrajectoryData& trajectory_data = trajectory_id_and_data.second;
+      const TrajectoryData &trajectory_data = trajectory_id_and_data.second;
       if (trajectory_id != 0) {
         LOG(INFO) << "Trajectory " << trajectory_id << ":";
       }
       LOG(INFO) << "Gravity was: " << trajectory_data.gravity_constant;
-      const auto& imu_calibration = trajectory_data.imu_calibration;
+      const auto &imu_calibration = trajectory_data.imu_calibration;
       LOG(INFO) << "IMU correction was: "
                 << common::RadToDeg(2. * std::acos(imu_calibration[0]))
                 << " deg (" << imu_calibration[0] << ", " << imu_calibration[1]
@@ -569,27 +570,27 @@ void OptimizationProblem3D::Solve(
   }
 
   // Store the result.
-  for (const auto& C_submap_id_data : C_submaps) {
+  for (const auto &C_submap_id_data : C_submaps) {
     submap_data_.at(C_submap_id_data.id).global_pose =
         C_submap_id_data.data.ToRigid();
   }
-  for (const auto& C_node_id_data : C_nodes) {
+  for (const auto &C_node_id_data : C_nodes) {
     node_data_.at(C_node_id_data.id).global_pose =
         C_node_id_data.data.ToRigid();
   }
-  for (const auto& C_fixed_frame : C_fixed_frames) {
+  for (const auto &C_fixed_frame : C_fixed_frames) {
     trajectory_data_.at(C_fixed_frame.first).fixed_frame_origin_in_map =
         C_fixed_frame.second.ToRigid();
   }
-  for (const auto& C_landmark : C_landmarks) {
+  for (const auto &C_landmark : C_landmarks) {
     landmark_data_[C_landmark.first] = C_landmark.second.ToRigid();
   }
 }
 
 std::unique_ptr<transform::Rigid3d>
 OptimizationProblem3D::CalculateOdometryBetweenNodes(
-    const int trajectory_id, const NodeSpec3D& first_node_data,
-    const NodeSpec3D& second_node_data) const {
+    const int trajectory_id, const NodeSpec3D &first_node_data,
+    const NodeSpec3D &second_node_data) const {
   if (odometry_data_.HasTrajectory(trajectory_id)) {
     const std::unique_ptr<transform::Rigid3d> first_node_odometry =
         Interpolate(odometry_data_, trajectory_id, first_node_data.time);
@@ -604,6 +605,6 @@ OptimizationProblem3D::CalculateOdometryBetweenNodes(
   return nullptr;
 }
 
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer

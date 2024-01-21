@@ -36,6 +36,6 @@ void GetSubmapHandler::OnRequest(const proto::GetSubmapRequest &request) {
   Send(std::move(response));
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

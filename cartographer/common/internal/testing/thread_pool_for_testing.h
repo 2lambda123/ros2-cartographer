@@ -30,7 +30,7 @@ namespace common {
 namespace testing {
 
 class ThreadPoolForTesting : public ThreadPoolInterface {
- public:
+public:
   ThreadPoolForTesting();
   ~ThreadPoolForTesting();
 
@@ -39,23 +39,23 @@ class ThreadPoolForTesting : public ThreadPoolInterface {
 
   void WaitUntilIdle();
 
- private:
+private:
   friend class Task;
 
   void DoWork();
 
-  void NotifyDependenciesCompleted(Task* task) EXCLUDES(mutex_) override;
+  void NotifyDependenciesCompleted(Task *task) EXCLUDES(mutex_) override;
 
   Mutex mutex_;
   bool running_ GUARDED_BY(mutex_) = true;
   bool idle_ GUARDED_BY(mutex_) = true;
   std::deque<std::shared_ptr<Task>> task_queue_ GUARDED_BY(mutex_);
-  std::map<Task*, std::shared_ptr<Task>> tasks_not_ready_ GUARDED_BY(mutex_);
+  std::map<Task *, std::shared_ptr<Task>> tasks_not_ready_ GUARDED_BY(mutex_);
   std::thread thread_ GUARDED_BY(mutex_);
 };
 
-}  // namespace testing
-}  // namespace common
-}  // namespace cartographer
+} // namespace testing
+} // namespace common
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_COMMON_INTERNAL_TESTING_THREAD_POOL_FOR_TESTING_H_
+#endif // CARTOGRAPHER_COMMON_INTERNAL_TESTING_THREAD_POOL_FOR_TESTING_H_

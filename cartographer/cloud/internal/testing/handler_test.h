@@ -21,9 +21,9 @@
 #include "cartographer/common/make_unique.h"
 #include "cartographer/mapping/internal/testing/mock_map_builder.h"
 #include "cartographer/mapping/internal/testing/mock_pose_graph.h"
-#include "gtest/gtest.h"
 #include "mock_local_trajectory_uploader.h"
 #include "mock_map_builder_context.h"
+#include "gtest/gtest.h"
 
 namespace cartographer {
 namespace cloud {
@@ -34,7 +34,7 @@ using ::testing::Test;
 
 template <typename HandlerConcept, typename HandlerType>
 class HandlerTest : public Test {
- public:
+public:
   void SetUp() override {
     test_server_ = common::make_unique<
         async_grpc::testing::RpcHandlerTestServer<HandlerConcept, HandlerType>>(
@@ -65,7 +65,7 @@ class HandlerTest : public Test {
         .WillRepeatedly(Return(mock_local_trajectory_uploader_.get()));
   }
 
- protected:
+protected:
   std::unique_ptr<
       async_grpc::testing::RpcHandlerTestServer<HandlerConcept, HandlerType>>
       test_server_;
@@ -75,8 +75,8 @@ class HandlerTest : public Test {
   std::unique_ptr<mapping::testing::MockPoseGraph> mock_pose_graph_;
 };
 
-}  // namespace testing
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace testing
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_TESTING_HANDLER_TEST_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_TESTING_HANDLER_TEST_H

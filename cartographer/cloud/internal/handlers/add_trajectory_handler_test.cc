@@ -68,7 +68,7 @@ const std::string kMessage = R"(
 class AddTrajectoryHandlerTest
     : public testing::HandlerTest<AddTrajectorySignature,
                                   AddTrajectoryHandler> {
- public:
+public:
   void SetUp() override {
     testing::HandlerTest<AddTrajectorySignature, AddTrajectoryHandler>::SetUp();
     mock_map_builder_ = common::make_unique<mapping::testing::MockMapBuilder>();
@@ -79,9 +79,9 @@ class AddTrajectoryHandlerTest
         .WillOnce(ReturnRef(*mock_map_builder_));
   }
 
- protected:
-  std::set<mapping::TrajectoryBuilderInterface::SensorId> ParseSensorIds(
-      const proto::AddTrajectoryRequest &request) {
+protected:
+  std::set<mapping::TrajectoryBuilderInterface::SensorId>
+  ParseSensorIds(const proto::AddTrajectoryRequest &request) {
     std::set<mapping::TrajectoryBuilderInterface::SensorId> expected_sensor_ids;
     for (const auto &sensor_id : request.expected_sensor_ids()) {
       expected_sensor_ids.insert(cloud::FromProto(sensor_id));
@@ -131,7 +131,7 @@ TEST_F(AddTrajectoryHandlerTest, WithLocalSlamUploader) {
   EXPECT_EQ(test_server_->response().trajectory_id(), 13);
 }
 
-}  // namespace
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

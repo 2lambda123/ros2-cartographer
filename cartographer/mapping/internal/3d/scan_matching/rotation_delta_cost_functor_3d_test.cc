@@ -25,15 +25,16 @@ namespace {
 
 constexpr double kPrecision = 1e-8;
 
-double ComputeRotationDeltaSquaredCost(
-    const Eigen::Quaterniond& rotation, const double scaling_factor,
-    const Eigen::Quaterniond& target_rotation) {
+double
+ComputeRotationDeltaSquaredCost(const Eigen::Quaterniond &rotation,
+                                const double scaling_factor,
+                                const Eigen::Quaterniond &target_rotation) {
   std::unique_ptr<ceres::CostFunction> cost_function(
       RotationDeltaCostFunctor3D::CreateAutoDiffCostFunction(scaling_factor,
                                                              target_rotation));
   const std::array<double, 4> parameter_quaternion = {
       {rotation.w(), rotation.x(), rotation.y(), rotation.z()}};
-  const std::vector<const double*> parameters = {parameter_quaternion.data()};
+  const std::vector<const double *> parameters = {parameter_quaternion.data()};
   std::vector<double> residuals(cost_function->num_residuals());
   EXPECT_TRUE(cost_function->Evaluate(parameters.data(), residuals.data(),
                                       nullptr /* jacobian */));
@@ -45,11 +46,11 @@ double ComputeRotationDeltaSquaredCost(
 }
 
 TEST(RotationDeltaCostFunctor3DTest, SameRotationGivesZeroCost) {
-  EXPECT_NEAR(
-      0.,
-      ComputeRotationDeltaSquaredCost(Eigen::Quaterniond::Identity(), 1.0,
-                                      Eigen::Quaterniond::Identity()),
-      kPrecision);
+  EXPECT_NEAR(0.,
+              ComputeRotationDeltaSquaredCost(Eigen::Quaterniond::Identity(),
+                                              1.0,
+                                              Eigen::Quaterniond::Identity()),
+              kPrecision);
 
   Eigen::Quaterniond rotation(
       Eigen::AngleAxisd(0.9, Eigen::Vector3d(0.2, 0.1, 0.3).normalized()));
@@ -79,7 +80,7 @@ TEST(RotationDeltaCostFunctor3DTest, ComputesCorrectCost) {
               kPrecision);
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

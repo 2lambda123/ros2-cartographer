@@ -33,12 +33,12 @@ namespace scan_matching {
 // For this reason, it is also important that the interpolation scheme be
 // continuously differentiable.
 class InterpolatedGrid {
- public:
-  explicit InterpolatedGrid(const HybridGrid& hybrid_grid)
+public:
+  explicit InterpolatedGrid(const HybridGrid &hybrid_grid)
       : hybrid_grid_(hybrid_grid) {}
 
-  InterpolatedGrid(const InterpolatedGrid&) = delete;
-  InterpolatedGrid& operator=(const InterpolatedGrid&) = delete;
+  InterpolatedGrid(const InterpolatedGrid &) = delete;
+  InterpolatedGrid &operator=(const InterpolatedGrid &) = delete;
 
   // Returns the interpolated probability at (x, y, z) of the HybridGrid
   // used to perform the interpolation.
@@ -48,7 +48,7 @@ class InterpolatedGrid {
   // tensor product volume of piecewise cubic polynomials that interpolate
   // the values, and have vanishing derivative at the interval boundaries.
   template <typename T>
-  T GetProbability(const T& x, const T& y, const T& z) const {
+  T GetProbability(const T &x, const T &y, const T &z) const {
     double x1, y1, z1, x2, y2, z2;
     ComputeInterpolationDataPoints(x, y, z, &x1, &y1, &z1, &x2, &y2, &z2);
 
@@ -102,12 +102,12 @@ class InterpolatedGrid {
            q1;
   }
 
- private:
+private:
   template <typename T>
-  void ComputeInterpolationDataPoints(const T& x, const T& y, const T& z,
-                                      double* x1, double* y1, double* z1,
-                                      double* x2, double* y2,
-                                      double* z2) const {
+  void ComputeInterpolationDataPoints(const T &x, const T &y, const T &z,
+                                      double *x1, double *y1, double *z1,
+                                      double *x2, double *y2,
+                                      double *z2) const {
     const Eigen::Vector3f lower = CenterOfLowerVoxel(x, y, z);
     *x1 = lower.x();
     *y1 = lower.y();
@@ -140,16 +140,16 @@ class InterpolatedGrid {
 
   // Uses the scalar part of a Ceres Jet.
   template <typename T>
-  Eigen::Vector3f CenterOfLowerVoxel(const T& jet_x, const T& jet_y,
-                                     const T& jet_z) const {
+  Eigen::Vector3f CenterOfLowerVoxel(const T &jet_x, const T &jet_y,
+                                     const T &jet_z) const {
     return CenterOfLowerVoxel(jet_x.a, jet_y.a, jet_z.a);
   }
 
-  const HybridGrid& hybrid_grid_;
+  const HybridGrid &hybrid_grid_;
 };
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_INTERPOLATED_GRID_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_INTERPOLATED_GRID_H_

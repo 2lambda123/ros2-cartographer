@@ -23,11 +23,11 @@ namespace Eigen {
 // Prints Vector3f in a readable format in matcher ApproximatelyEquals when
 // failing a test. Without this function, the output is formated as hexadecimal
 // 8 bit numbers.
-void PrintTo(const Vector3f& x, std::ostream* os) {
+void PrintTo(const Vector3f &x, std::ostream *os) {
   *os << "(" << x[0] << ", " << x[1] << ", " << x[2] << ")";
 }
 
-}  // namespace Eigen
+} // namespace Eigen
 
 namespace cartographer {
 namespace sensor {
@@ -47,7 +47,7 @@ MATCHER_P(ApproximatelyEquals, expected,
 
 // Helper function to test the mapping of a single point. Includes test for
 // recompressing the same point again.
-void TestPoint(const Eigen::Vector3f& p) {
+void TestPoint(const Eigen::Vector3f &p) {
   CompressedPointCloud compressed({p});
   EXPECT_EQ(1, compressed.size());
   EXPECT_THAT(*compressed.begin(), ApproximatelyEquals(p));
@@ -106,7 +106,7 @@ TEST(CompressPointCloudTest, CompressesNoGaps) {
   EXPECT_EQ(decompressed.size(), recompressed.size());
 
   std::vector<float> x_coord;
-  for (const Eigen::Vector3f& p : compressed) {
+  for (const Eigen::Vector3f &p : compressed) {
     x_coord.push_back(p[0]);
   }
   std::sort(x_coord.begin(), x_coord.end());
@@ -116,6 +116,6 @@ TEST(CompressPointCloudTest, CompressesNoGaps) {
   }
 }
 
-}  // namespace
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace
+} // namespace sensor
+} // namespace cartographer

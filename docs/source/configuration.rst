@@ -486,5 +486,3 @@ float min_num_points
 
 float max_range
   Points further away from the origin are removed.
-
-

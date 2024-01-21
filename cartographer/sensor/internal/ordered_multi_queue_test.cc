@@ -26,14 +26,14 @@ namespace sensor {
 namespace {
 
 class OrderedMultiQueueTest : public ::testing::Test {
- protected:
+protected:
   // These are keys are chosen so that they sort first, second, third.
   const QueueKey kFirst{1, "a"};
   const QueueKey kSecond{1, "b"};
   const QueueKey kThird{2, "b"};
 
   void SetUp() {
-    for (const auto& queue_key : {kFirst, kSecond, kThird}) {
+    for (const auto &queue_key : {kFirst, kSecond, kThird}) {
       queue_.AddQueue(queue_key, [this](std::unique_ptr<Data> data) {
         if (!values_.empty()) {
           EXPECT_GE(data->GetTime(), values_.back()->GetTime());
@@ -44,10 +44,10 @@ class OrderedMultiQueueTest : public ::testing::Test {
   }
 
   std::unique_ptr<Data> MakeImu(const int ordinal) {
-    return MakeDispatchable(
-        "imu",
-        sensor::ImuData{common::FromUniversal(ordinal), Eigen::Vector3d::Zero(),
-                        Eigen::Vector3d::Zero()});
+    return MakeDispatchable("imu",
+                            sensor::ImuData{common::FromUniversal(ordinal),
+                                            Eigen::Vector3d::Zero(),
+                                            Eigen::Vector3d::Zero()});
   }
 
   std::vector<std::unique_ptr<Data>> values_;
@@ -112,6 +112,6 @@ TEST_F(OrderedMultiQueueTest, CommonStartTimePerTrajectory) {
   EXPECT_EQ(values_.size(), 4);
 }
 
-}  // namespace
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace
+} // namespace sensor
+} // namespace cartographer

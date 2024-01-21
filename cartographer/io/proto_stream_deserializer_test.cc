@@ -19,9 +19,9 @@
 #include "cartographer/io/internal/in_memory_proto_stream.h"
 #include "cartographer/io/proto_stream_deserializer.h"
 #include "glog/logging.h"
-#include "gmock/gmock.h"
 #include "google/protobuf/text_format.h"
 #include "google/protobuf/util/message_differencer.h"
+#include "gmock/gmock.h"
 #include "gtest/gtest.h"
 
 namespace cartographer {
@@ -50,22 +50,21 @@ constexpr char kOdometryDataProtoString[] = "odometry_data {}";
 constexpr char kFixedFramePoseDataProtoString[] = "fixed_frame_pose_data {}";
 constexpr char kLandmarkDataProtoString[] = "landmark_data {}";
 
-template <typename T>
-T ProtoFromStringOrDie(const std::string& proto_string) {
+template <typename T> T ProtoFromStringOrDie(const std::string &proto_string) {
   T msg;
   CHECK(google::protobuf::TextFormat::ParseFromString(proto_string, &msg));
   return msg;
 }
 
 class ProtoStreamDeserializerTest : public ::testing::Test {
- protected:
+protected:
   void InitializeProtoReader(
-      const std::string& header_textpb,
-      const std::initializer_list<std::string>& data_textpbs) {
+      const std::string &header_textpb,
+      const std::initializer_list<std::string> &data_textpbs) {
     std::queue<std::unique_ptr<Message>> proto_queue;
     proto_queue.emplace(make_unique<SerializationHeader>(
         ProtoFromStringOrDie<SerializationHeader>(header_textpb)));
-    for (const std::string& data_textpb : data_textpbs) {
+    for (const std::string &data_textpb : data_textpbs) {
       proto_queue.emplace(make_unique<SerializedData>(
           ProtoFromStringOrDie<SerializedData>(data_textpb)));
     }
@@ -154,6 +153,6 @@ TEST_F(ProtoStreamDeserializerTest, FailsIfVersionNotSupported) {
                "Unsupported serialization format");
 }
 
-}  // namespace
-}  // namespace io
-}  // namespace cartographer
+} // namespace
+} // namespace io
+} // namespace cartographer

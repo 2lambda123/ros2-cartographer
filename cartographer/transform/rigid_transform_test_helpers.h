@@ -30,12 +30,12 @@ namespace cartographer {
 namespace transform {
 
 template <typename T>
-Eigen::Transform<T, 2, Eigen::Affine> ToEigen(const Rigid2<T>& rigid2) {
+Eigen::Transform<T, 2, Eigen::Affine> ToEigen(const Rigid2<T> &rigid2) {
   return Eigen::Translation<T, 2>(rigid2.translation()) * rigid2.rotation();
 }
 
 template <typename T>
-Eigen::Transform<T, 3, Eigen::Affine> ToEigen(const Rigid3<T>& rigid3) {
+Eigen::Transform<T, 3, Eigen::Affine> ToEigen(const Rigid3<T> &rigid3) {
   return Eigen::Translation<T, 3>(rigid3.translation()) * rigid3.rotation();
 }
 
@@ -45,7 +45,7 @@ MATCHER_P2(IsNearly, rigid, epsilon,
   return ToEigen(arg).isApprox(ToEigen(rigid), epsilon);
 }
 
-}  // namespace transform
-}  // namespace cartographer
+} // namespace transform
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_TRANSFORM_RIGID_TRANSFORM_TEST_HELPERS_H_
+#endif // CARTOGRAPHER_TRANSFORM_RIGID_TRANSFORM_TEST_HELPERS_H_

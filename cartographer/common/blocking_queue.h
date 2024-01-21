@@ -31,16 +31,15 @@ namespace common {
 
 // A thread-safe blocking queue that is useful for producer/consumer patterns.
 // 'T' must be movable.
-template <typename T>
-class BlockingQueue {
- public:
+template <typename T> class BlockingQueue {
+public:
   static constexpr size_t kInfiniteQueueSize = 0;
 
   // Constructs a blocking queue with infinite queue size.
   BlockingQueue() : BlockingQueue(kInfiniteQueueSize) {}
 
-  BlockingQueue(const BlockingQueue&) = delete;
-  BlockingQueue& operator=(const BlockingQueue&) = delete;
+  BlockingQueue(const BlockingQueue &) = delete;
+  BlockingQueue &operator=(const BlockingQueue &) = delete;
 
   // Constructs a blocking queue with a size of 'queue_size'.
   explicit BlockingQueue(const size_t queue_size) : queue_size_(queue_size) {}
@@ -90,8 +89,7 @@ class BlockingQueue {
   // Returns the next value in the queue or nullptr if the queue is empty.
   // Maintains ownership. This assumes a member function get() that returns
   // a pointer to the given type R.
-  template <typename R>
-  const R* Peek() {
+  template <typename R> const R *Peek() {
     MutexLocker lock(&mutex_);
     if (deque_.empty()) {
       return nullptr;
@@ -111,7 +109,7 @@ class BlockingQueue {
     lock.Await([this]() REQUIRES(mutex_) { return QueueEmptyCondition(); });
   }
 
- private:
+private:
   // Returns true iff the queue is empty.
   bool QueueEmptyCondition() REQUIRES(mutex_) { return deque_.empty(); }
 
@@ -125,7 +123,7 @@ class BlockingQueue {
   std::deque<T> deque_ GUARDED_BY(mutex_);
 };
 
-}  // namespace common
-}  // namespace cartographer
+} // namespace common
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_COMMON_BLOCKING_QUEUE_H_
+#endif // CARTOGRAPHER_COMMON_BLOCKING_QUEUE_H_

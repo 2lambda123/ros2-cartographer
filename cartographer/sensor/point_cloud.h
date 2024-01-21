@@ -44,24 +44,24 @@ struct PointCloudWithIntensities {
 };
 
 // Transforms 'point_cloud' according to 'transform'.
-PointCloud TransformPointCloud(const PointCloud& point_cloud,
-                               const transform::Rigid3f& transform);
+PointCloud TransformPointCloud(const PointCloud &point_cloud,
+                               const transform::Rigid3f &transform);
 
 // Transforms 'point_cloud' according to 'transform'.
-TimedPointCloud TransformTimedPointCloud(const TimedPointCloud& point_cloud,
-                                         const transform::Rigid3f& transform);
+TimedPointCloud TransformTimedPointCloud(const TimedPointCloud &point_cloud,
+                                         const transform::Rigid3f &transform);
 
 // Returns a new point cloud without points that fall outside the region defined
 // by 'min_z' and 'max_z'.
-PointCloud CropPointCloud(const PointCloud& point_cloud, float min_z,
+PointCloud CropPointCloud(const PointCloud &point_cloud, float min_z,
                           float max_z);
 
 // Returns a new point cloud without points that fall outside the region defined
 // by 'min_z' and 'max_z'.
-TimedPointCloud CropTimedPointCloud(const TimedPointCloud& point_cloud,
+TimedPointCloud CropTimedPointCloud(const TimedPointCloud &point_cloud,
                                     float min_z, float max_z);
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_POINT_CLOUD_H_
+#endif // CARTOGRAPHER_SENSOR_POINT_CLOUD_H_

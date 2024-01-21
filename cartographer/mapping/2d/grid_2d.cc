@@ -21,7 +21,7 @@ namespace cartographer {
 namespace mapping {
 
 proto::GridOptions2D CreateGridOptions2D(
-    common::LuaParameterDictionary* const parameter_dictionary) {
+    common::LuaParameterDictionary *const parameter_dictionary) {
   proto::GridOptions2D options;
   const std::string grid_type_string =
       parameter_dictionary->GetString("grid_type");
@@ -33,27 +33,27 @@ proto::GridOptions2D CreateGridOptions2D(
   return options;
 }
 
-Grid2D::Grid2D(const MapLimits& limits, float min_correspondence_cost,
+Grid2D::Grid2D(const MapLimits &limits, float min_correspondence_cost,
                float max_correspondence_cost)
     : limits_(limits),
-      correspondence_cost_cells_(
-          limits_.cell_limits().num_x_cells * limits_.cell_limits().num_y_cells,
-          kUnknownCorrespondenceValue),
+      correspondence_cost_cells_(limits_.cell_limits().num_x_cells *
+                                     limits_.cell_limits().num_y_cells,
+                                 kUnknownCorrespondenceValue),
       min_correspondence_cost_(min_correspondence_cost),
       max_correspondence_cost_(max_correspondence_cost) {
   CHECK_LT(min_correspondence_cost_, max_correspondence_cost_);
 }
 
-Grid2D::Grid2D(const proto::Grid2D& proto)
+Grid2D::Grid2D(const proto::Grid2D &proto)
     : limits_(proto.limits()), correspondence_cost_cells_() {
   if (proto.has_known_cells_box()) {
-    const auto& box = proto.known_cells_box();
+    const auto &box = proto.known_cells_box();
     known_cells_box_ =
         Eigen::AlignedBox2i(Eigen::Vector2i(box.min_x(), box.min_y()),
                             Eigen::Vector2i(box.max_x(), box.max_y()));
   }
   correspondence_cost_cells_.reserve(proto.cells_size());
-  for (const auto& cell : proto.cells()) {
+  for (const auto &cell : proto.cells()) {
     CHECK_LE(cell, std::numeric_limits<uint16>::max());
     correspondence_cost_cells_.push_back(cell);
   }
@@ -83,14 +83,15 @@ void Grid2D::FinishUpdate() {
 }
 
 // Returns the correspondence cost of the cell with 'cell_index'.
-float Grid2D::GetCorrespondenceCost(const Eigen::Array2i& cell_index) const {
-  if (!limits().Contains(cell_index)) return kMaxCorrespondenceCost;
+float Grid2D::GetCorrespondenceCost(const Eigen::Array2i &cell_index) const {
+  if (!limits().Contains(cell_index))
+    return kMaxCorrespondenceCost;
   return ValueToCorrespondenceCost(
       correspondence_cost_cells()[ToFlatIndex(cell_index)]);
 }
 
 // Returns true if the correspondence cost at the specified index is known.
-bool Grid2D::IsKnown(const Eigen::Array2i& cell_index) const {
+bool Grid2D::IsKnown(const Eigen::Array2i &cell_index) const {
   return limits_.Contains(cell_index) &&
          correspondence_cost_cells_[ToFlatIndex(cell_index)] !=
              kUnknownCorrespondenceValue;
@@ -98,8 +99,8 @@ bool Grid2D::IsKnown(const Eigen::Array2i& cell_index) const {
 
 // Fills in 'offset' and 'limits' to define a subregion of that contains all
 // known cells.
-void Grid2D::ComputeCroppedLimits(Eigen::Array2i* const offset,
-                                  CellLimits* const limits) const {
+void Grid2D::ComputeCroppedLimits(Eigen::Array2i *const offset,
+                                  CellLimits *const limits) const {
   if (known_cells_box_.isEmpty()) {
     *offset = Eigen::Array2i::Zero();
     *limits = CellLimits(1, 1);
@@ -113,7 +114,7 @@ void Grid2D::ComputeCroppedLimits(Eigen::Array2i* const offset,
 // Grows the map as necessary to include 'point'. This changes the meaning of
 // these coordinates going forward. This method must be called immediately
 // after 'FinishUpdate', before any calls to 'ApplyLookupTable'.
-void Grid2D::GrowLimits(const Eigen::Vector2f& point) {
+void Grid2D::GrowLimits(const Eigen::Vector2f &point) {
   CHECK(update_indices_.empty());
   while (!limits_.Contains(limits_.GetCellIndex(point))) {
     const int x_offset = limits_.cell_limits().num_x_cells / 2;
@@ -148,13 +149,13 @@ proto::Grid2D Grid2D::ToProto() const {
   proto::Grid2D result;
   *result.mutable_limits() = mapping::ToProto(limits_);
   result.mutable_cells()->Reserve(correspondence_cost_cells_.size());
-  for (const auto& cell : correspondence_cost_cells_) {
+  for (const auto &cell : correspondence_cost_cells_) {
     result.mutable_cells()->Add(cell);
   }
   CHECK(update_indices().empty()) << "Serializing a grid during an update is "
                                      "not supported. Finish the update first.";
   if (!known_cells_box().isEmpty()) {
-    auto* const box = result.mutable_known_cells_box();
+    auto *const box = result.mutable_known_cells_box();
     box->set_max_x(known_cells_box().max().x());
     box->set_max_y(known_cells_box().max().y());
     box->set_min_x(known_cells_box().min().x());
@@ -165,10 +166,10 @@ proto::Grid2D Grid2D::ToProto() const {
   return result;
 }
 
-int Grid2D::ToFlatIndex(const Eigen::Array2i& cell_index) const {
+int Grid2D::ToFlatIndex(const Eigen::Array2i &cell_index) const {
   CHECK(limits_.Contains(cell_index)) << cell_index;
   return limits_.cell_limits().num_x_cells * cell_index.y() + cell_index.x();
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

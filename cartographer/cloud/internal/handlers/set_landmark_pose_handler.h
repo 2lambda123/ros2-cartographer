@@ -32,12 +32,12 @@ DEFINE_HANDLER_SIGNATURE(
 
 class SetLandmarkPoseHandler
     : public async_grpc::RpcHandler<SetLandmarkPoseSignature> {
- public:
+public:
   void OnRequest(const proto::SetLandmarkPoseRequest &request) override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_SET_LANDMARK_POSE_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_SET_LANDMARK_POSE_HANDLER_H

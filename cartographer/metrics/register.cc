@@ -25,7 +25,7 @@
 namespace cartographer {
 namespace metrics {
 
-void RegisterAllMetrics(FamilyFactory* registry) {
+void RegisterAllMetrics(FamilyFactory *registry) {
   mapping::constraints::ConstraintBuilder2D::RegisterMetrics(registry);
   mapping::constraints::ConstraintBuilder3D::RegisterMetrics(registry);
   mapping::GlobalTrajectoryBuilderRegisterMetrics(registry);
@@ -33,5 +33,5 @@ void RegisterAllMetrics(FamilyFactory* registry) {
   mapping::LocalTrajectoryBuilder3D::RegisterMetrics(registry);
 }
 
-}  // namespace metrics
-}  // namespace cartographer
+} // namespace metrics
+} // namespace cartographer

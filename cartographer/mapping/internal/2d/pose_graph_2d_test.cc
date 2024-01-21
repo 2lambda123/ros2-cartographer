@@ -36,7 +36,7 @@ namespace mapping {
 namespace {
 
 class PoseGraph2DTest : public ::testing::Test {
- protected:
+protected:
   PoseGraph2DTest() : thread_pool_(1) {
     // Builds a wavy, irregularly circular point cloud that is unique
     // rotationally. This gives us good rotational texture and avoids any
@@ -151,14 +151,14 @@ class PoseGraph2DTest : public ::testing::Test {
     current_pose_ = transform::Rigid2d::Identity();
   }
 
-  void MoveRelativeWithNoise(const transform::Rigid2d& movement,
-                             const transform::Rigid2d& noise) {
+  void MoveRelativeWithNoise(const transform::Rigid2d &movement,
+                             const transform::Rigid2d &noise) {
     current_pose_ = current_pose_ * movement;
     const sensor::PointCloud new_point_cloud = sensor::TransformPointCloud(
         point_cloud_,
         transform::Embed3D(current_pose_.inverse().cast<float>()));
     std::vector<std::shared_ptr<const Submap2D>> insertion_submaps;
-    for (const auto& submap : active_submaps_->submaps()) {
+    for (const auto &submap : active_submaps_->submaps()) {
       insertion_submaps.push_back(submap);
     }
     const sensor::RangeData range_data{
@@ -180,12 +180,11 @@ class PoseGraph2DTest : public ::testing::Test {
         kTrajectoryId, insertion_submaps);
   }
 
-  void MoveRelative(const transform::Rigid2d& movement) {
+  void MoveRelative(const transform::Rigid2d &movement) {
     MoveRelativeWithNoise(movement, transform::Rigid2d::Identity());
   }
 
-  template <typename Range>
-  std::vector<int> ToVectorInt(const Range& range) {
+  template <typename Range> std::vector<int> ToVectorInt(const Range &range) {
     return std::vector<int>(range.begin(), range.end());
   }
 
@@ -232,10 +231,9 @@ TEST_F(PoseGraph2DTest, NoOverlappingNodes) {
   ASSERT_THAT(ToVectorInt(nodes.trajectory_ids()),
               ::testing::ContainerEq(std::vector<int>{0}));
   for (int i = 0; i != 4; ++i) {
-    EXPECT_THAT(
-        poses[i],
-        IsNearly(transform::Project2D(nodes.at(NodeId{0, i}).global_pose),
-                 1e-2))
+    EXPECT_THAT(poses[i], IsNearly(transform::Project2D(
+                                       nodes.at(NodeId{0, i}).global_pose),
+                                   1e-2))
         << i;
   }
 }
@@ -253,10 +251,9 @@ TEST_F(PoseGraph2DTest, ConsecutivelyOverlappingNodes) {
   ASSERT_THAT(ToVectorInt(nodes.trajectory_ids()),
               ::testing::ContainerEq(std::vector<int>{0}));
   for (int i = 0; i != 5; ++i) {
-    EXPECT_THAT(
-        poses[i],
-        IsNearly(transform::Project2D(nodes.at(NodeId{0, i}).global_pose),
-                 1e-2))
+    EXPECT_THAT(poses[i], IsNearly(transform::Project2D(
+                                       nodes.at(NodeId{0, i}).global_pose),
+                                   1e-2))
         << i;
   }
 }
@@ -295,6 +292,6 @@ TEST_F(PoseGraph2DTest, OverlappingNodes) {
               ::testing::Lt(error_before.translation().norm()));
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

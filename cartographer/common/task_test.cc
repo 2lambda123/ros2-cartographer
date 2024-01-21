@@ -28,13 +28,13 @@ namespace common {
 namespace {
 
 class MockCallback {
- public:
+public:
   MOCK_METHOD0(Run, void());
 };
 
 class FakeThreadPool : public ThreadPoolInterface {
- public:
-  void NotifyDependenciesCompleted(Task* task) override {
+public:
+  void NotifyDependenciesCompleted(Task *task) override {
     auto it = tasks_not_ready_.find(task);
     ASSERT_NE(it, tasks_not_ready_.end());
     task_queue_.push_back(it->second);
@@ -59,14 +59,14 @@ class FakeThreadPool : public ThreadPoolInterface {
 
   bool IsEmpty() { return task_queue_.empty(); }
 
- private:
+private:
   std::deque<std::shared_ptr<Task>> task_queue_;
-  std::map<Task*, std::shared_ptr<Task>> tasks_not_ready_;
+  std::map<Task *, std::shared_ptr<Task>> tasks_not_ready_;
 };
 
 class TaskTest : public ::testing::Test {
- protected:
-  FakeThreadPool* thread_pool() { return &thread_pool_; }
+protected:
+  FakeThreadPool *thread_pool() { return &thread_pool_; }
   FakeThreadPool thread_pool_;
 };
 
@@ -181,6 +181,6 @@ TEST_F(TaskTest, RunWithCompletedDependency) {
   EXPECT_EQ(shared_b->GetState(), Task::COMPLETED);
 }
 
-}  // namespace
-}  // namespace common
-}  // namespace cartographer
+} // namespace
+} // namespace common
+} // namespace cartographer

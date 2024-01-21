@@ -31,9 +31,10 @@ namespace scan_matching {
 // Computes the cost of rotating 'rotation_quaternion' to 'target_rotation'.
 // Cost increases with the solution's distance from 'target_rotation'.
 class RotationDeltaCostFunctor3D {
- public:
-  static ceres::CostFunction* CreateAutoDiffCostFunction(
-      const double scaling_factor, const Eigen::Quaterniond& target_rotation) {
+public:
+  static ceres::CostFunction *
+  CreateAutoDiffCostFunction(const double scaling_factor,
+                             const Eigen::Quaterniond &target_rotation) {
     return new ceres::AutoDiffCostFunction<RotationDeltaCostFunctor3D,
                                            3 /* residuals */,
                                            4 /* rotation variables */>(
@@ -41,7 +42,7 @@ class RotationDeltaCostFunctor3D {
   }
 
   template <typename T>
-  bool operator()(const T* const rotation_quaternion, T* residual) const {
+  bool operator()(const T *const rotation_quaternion, T *residual) const {
     std::array<T, 4> delta;
     common::QuaternionProduct(target_rotation_inverse_, rotation_quaternion,
                               delta.data());
@@ -53,11 +54,11 @@ class RotationDeltaCostFunctor3D {
     return true;
   }
 
- private:
+private:
   // Constructs a new RotationDeltaCostFunctor3D from the given
   // 'target_rotation'.
   explicit RotationDeltaCostFunctor3D(const double scaling_factor,
-                                      const Eigen::Quaterniond& target_rotation)
+                                      const Eigen::Quaterniond &target_rotation)
       : scaling_factor_(scaling_factor) {
     target_rotation_inverse_[0] = target_rotation.w();
     target_rotation_inverse_[1] = -target_rotation.x();
@@ -65,16 +66,16 @@ class RotationDeltaCostFunctor3D {
     target_rotation_inverse_[3] = -target_rotation.z();
   }
 
-  RotationDeltaCostFunctor3D(const RotationDeltaCostFunctor3D&) = delete;
-  RotationDeltaCostFunctor3D& operator=(const RotationDeltaCostFunctor3D&) =
-      delete;
+  RotationDeltaCostFunctor3D(const RotationDeltaCostFunctor3D &) = delete;
+  RotationDeltaCostFunctor3D &
+  operator=(const RotationDeltaCostFunctor3D &) = delete;
 
   const double scaling_factor_;
   double target_rotation_inverse_[4];
 };
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_ROTATION_DELTA_COST_FUNCTOR_3D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_ROTATION_DELTA_COST_FUNCTOR_3D_H_

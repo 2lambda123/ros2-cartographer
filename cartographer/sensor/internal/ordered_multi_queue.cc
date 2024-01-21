@@ -32,35 +32,35 @@ namespace {
 // for data.
 const int kMaxQueueSize = 500;
 
-}  // namespace
+} // namespace
 
-inline std::ostream& operator<<(std::ostream& out, const QueueKey& key) {
+inline std::ostream &operator<<(std::ostream &out, const QueueKey &key) {
   return out << '(' << key.trajectory_id << ", " << key.sensor_id << ')';
 }
 
 OrderedMultiQueue::OrderedMultiQueue() {}
 
 OrderedMultiQueue::~OrderedMultiQueue() {
-  for (auto& entry : queues_) {
+  for (auto &entry : queues_) {
     CHECK(entry.second.finished);
   }
 }
 
-void OrderedMultiQueue::AddQueue(const QueueKey& queue_key, Callback callback) {
+void OrderedMultiQueue::AddQueue(const QueueKey &queue_key, Callback callback) {
   CHECK_EQ(queues_.count(queue_key), 0);
   queues_[queue_key].callback = std::move(callback);
 }
 
-void OrderedMultiQueue::MarkQueueAsFinished(const QueueKey& queue_key) {
+void OrderedMultiQueue::MarkQueueAsFinished(const QueueKey &queue_key) {
   auto it = queues_.find(queue_key);
   CHECK(it != queues_.end()) << "Did not find '" << queue_key << "'.";
-  auto& queue = it->second;
+  auto &queue = it->second;
   CHECK(!queue.finished);
   queue.finished = true;
   Dispatch();
 }
 
-void OrderedMultiQueue::Add(const QueueKey& queue_key,
+void OrderedMultiQueue::Add(const QueueKey &queue_key,
                             std::unique_ptr<Data> data) {
   auto it = queues_.find(queue_key);
   if (it == queues_.end()) {
@@ -74,12 +74,12 @@ void OrderedMultiQueue::Add(const QueueKey& queue_key,
 
 void OrderedMultiQueue::Flush() {
   std::vector<QueueKey> unfinished_queues;
-  for (auto& entry : queues_) {
+  for (auto &entry : queues_) {
     if (!entry.second.finished) {
       unfinished_queues.push_back(entry.first);
     }
   }
-  for (auto& unfinished_queue : unfinished_queues) {
+  for (auto &unfinished_queue : unfinished_queues) {
     MarkQueueAsFinished(unfinished_queue);
   }
 }
@@ -91,11 +91,11 @@ QueueKey OrderedMultiQueue::GetBlocker() const {
 
 void OrderedMultiQueue::Dispatch() {
   while (true) {
-    const Data* next_data = nullptr;
-    Queue* next_queue = nullptr;
+    const Data *next_data = nullptr;
+    Queue *next_queue = nullptr;
     QueueKey next_queue_key;
     for (auto it = queues_.begin(); it != queues_.end();) {
-      const auto* data = it->second.queue.Peek<Data>();
+      const auto *data = it->second.queue.Peek<Data>();
       if (data == nullptr) {
         if (it->second.finished) {
           queues_.erase(it++);
@@ -148,9 +148,9 @@ void OrderedMultiQueue::Dispatch() {
   }
 }
 
-void OrderedMultiQueue::CannotMakeProgress(const QueueKey& queue_key) {
+void OrderedMultiQueue::CannotMakeProgress(const QueueKey &queue_key) {
   blocker_ = queue_key;
-  for (auto& entry : queues_) {
+  for (auto &entry : queues_) {
     if (entry.second.queue.Size() > kMaxQueueSize) {
       LOG_EVERY_N(WARNING, 60) << "Queue waiting for data: " << queue_key;
       return;
@@ -161,9 +161,9 @@ void OrderedMultiQueue::CannotMakeProgress(const QueueKey& queue_key) {
 common::Time OrderedMultiQueue::GetCommonStartTime(const int trajectory_id) {
   auto emplace_result = common_start_time_per_trajectory_.emplace(
       trajectory_id, common::Time::min());
-  common::Time& common_start_time = emplace_result.first->second;
+  common::Time &common_start_time = emplace_result.first->second;
   if (emplace_result.second) {
-    for (auto& entry : queues_) {
+    for (auto &entry : queues_) {
       if (entry.first.trajectory_id == trajectory_id) {
         common_start_time = std::max(
             common_start_time, entry.second.queue.Peek<Data>()->GetTime());
@@ -175,5 +175,5 @@ common::Time OrderedMultiQueue::GetCommonStartTime(const int trajectory_id) {
   return common_start_time;
 }
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer

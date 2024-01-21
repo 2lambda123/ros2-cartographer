@@ -28,12 +28,12 @@ static constexpr int kMappingStateSerializationFormatVersion = 1;
 
 // Serialize mapping state to a pbstream.
 void WritePbStream(
-    const mapping::PoseGraph& pose_graph,
-    const std::vector<mapping::proto::TrajectoryBuilderOptionsWithSensorIds>&
-        builder_options,
-    ProtoStreamWriterInterface* const writer);
+    const mapping::PoseGraph &pose_graph,
+    const std::vector<mapping::proto::TrajectoryBuilderOptionsWithSensorIds>
+        &builder_options,
+    ProtoStreamWriterInterface *const writer);
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_IO_INTERNAL_MAPPING_STATE_SERIALIZATION_H_
+#endif // CARTOGRAPHER_IO_INTERNAL_MAPPING_STATE_SERIALIZATION_H_

@@ -73,8 +73,8 @@ TEST(ConnectedComponentsTest, ConnectedComponents) {
   auto connections = connected_components.Components();
   ASSERT_EQ(2, connections.size());
   // The clustering is arbitrary; we need to figure out which one is which.
-  const std::vector<int>* zero_cluster = nullptr;
-  const std::vector<int>* five_cluster = nullptr;
+  const std::vector<int> *zero_cluster = nullptr;
+  const std::vector<int> *five_cluster = nullptr;
   if (std::find(connections[0].begin(), connections[0].end(), 0) !=
       connections[0].end()) {
     zero_cluster = &connections[0];
@@ -112,6 +112,6 @@ TEST(ConnectedComponentsTest, ReflexiveConnectivity) {
   EXPECT_EQ(0, connected_components.ConnectionCount(0, 0));
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

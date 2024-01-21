@@ -16,10 +16,10 @@
 
 #include "cartographer/common/internal/testing/thread_pool_for_testing.h"
 
-#include <unistd.h>
 #include <algorithm>
 #include <chrono>
 #include <numeric>
+#include <unistd.h>
 
 #include "cartographer/common/make_unique.h"
 #include "cartographer/common/task.h"
@@ -44,7 +44,7 @@ ThreadPoolForTesting::~ThreadPoolForTesting() {
   thread_.join();
 }
 
-void ThreadPoolForTesting::NotifyDependenciesCompleted(Task* task) {
+void ThreadPoolForTesting::NotifyDependenciesCompleted(Task *task) {
   MutexLocker locker(&mutex_);
   CHECK(running_);
   auto it = tasks_not_ready_.find(task);
@@ -100,10 +100,11 @@ void ThreadPoolForTesting::DoWork() {
         idle_ = true;
       }
     }
-    if (task) Execute(task.get());
+    if (task)
+      Execute(task.get());
   }
 }
 
-}  // namespace testing
-}  // namespace common
-}  // namespace cartographer
+} // namespace testing
+} // namespace common
+} // namespace cartographer

@@ -33,22 +33,23 @@ namespace io {
 
 // Creates X-ray cuts through the points with pixels being 'voxel_size' big.
 class XRayPointsProcessor : public PointsProcessor {
- public:
-  constexpr static const char* kConfigurationFileActionName =
+public:
+  constexpr static const char *kConfigurationFileActionName =
       "write_xray_image";
   enum class DrawTrajectories { kNo, kYes };
   XRayPointsProcessor(
-      double voxel_size, const transform::Rigid3f& transform,
-      const std::vector<mapping::Floor>& floors,
-      const DrawTrajectories& draw_trajectories,
-      const std::string& output_filename,
-      const std::vector<mapping::proto::Trajectory>& trajectories,
-      FileWriterFactory file_writer_factory, PointsProcessor* next);
+      double voxel_size, const transform::Rigid3f &transform,
+      const std::vector<mapping::Floor> &floors,
+      const DrawTrajectories &draw_trajectories,
+      const std::string &output_filename,
+      const std::vector<mapping::proto::Trajectory> &trajectories,
+      FileWriterFactory file_writer_factory, PointsProcessor *next);
 
-  static std::unique_ptr<XRayPointsProcessor> FromDictionary(
-      const std::vector<mapping::proto::Trajectory>& trajectories,
-      FileWriterFactory file_writer_factory,
-      common::LuaParameterDictionary* dictionary, PointsProcessor* next);
+  static std::unique_ptr<XRayPointsProcessor>
+  FromDictionary(const std::vector<mapping::proto::Trajectory> &trajectories,
+                 FileWriterFactory file_writer_factory,
+                 common::LuaParameterDictionary *dictionary,
+                 PointsProcessor *next);
 
   ~XRayPointsProcessor() override {}
 
@@ -57,7 +58,7 @@ class XRayPointsProcessor : public PointsProcessor {
 
   Eigen::AlignedBox3i bounding_box() const { return bounding_box_; }
 
- private:
+private:
   struct ColumnData {
     float sum_r = 0.;
     float sum_g = 0.;
@@ -70,14 +71,14 @@ class XRayPointsProcessor : public PointsProcessor {
     std::map<std::pair<int, int>, ColumnData> column_data;
   };
 
-  void WriteVoxels(const Aggregation& aggregation,
-                   FileWriter* const file_writer);
-  void Insert(const PointsBatch& batch, Aggregation* aggregation);
+  void WriteVoxels(const Aggregation &aggregation,
+                   FileWriter *const file_writer);
+  void Insert(const PointsBatch &batch, Aggregation *aggregation);
 
   const DrawTrajectories draw_trajectories_;
   const std::vector<mapping::proto::Trajectory> trajectories_;
   FileWriterFactory file_writer_factory_;
-  PointsProcessor* const next_;
+  PointsProcessor *const next_;
 
   // If empty, we do not separate into floors.
   std::vector<mapping::Floor> floors_;
@@ -92,7 +93,7 @@ class XRayPointsProcessor : public PointsProcessor {
   Eigen::AlignedBox3i bounding_box_;
 };
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_IO_XRAY_POINTS_PROCESSOR_H_
+#endif // CARTOGRAPHER_IO_XRAY_POINTS_PROCESSOR_H_

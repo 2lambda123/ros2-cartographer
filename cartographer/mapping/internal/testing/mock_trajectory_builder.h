@@ -27,7 +27,7 @@ namespace mapping {
 namespace testing {
 
 class MockTrajectoryBuilder : public mapping::TrajectoryBuilderInterface {
- public:
+public:
   MockTrajectoryBuilder() = default;
   ~MockTrajectoryBuilder() override = default;
 
@@ -51,8 +51,8 @@ class MockTrajectoryBuilder : public mapping::TrajectoryBuilderInterface {
   }
 };
 
-}  // namespace testing
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace testing
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_TESTING_MOCK_TRAJECTORY_BUILDER_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_TESTING_MOCK_TRAJECTORY_BUILDER_H_

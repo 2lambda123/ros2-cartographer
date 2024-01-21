@@ -61,5 +61,5 @@ TEST(ConfigurationFilesTest, ValidateTrajectoryBuilderOptions) {
   });
 }
 
-}  // namespace
-}  // namespace cartographer
+} // namespace
+} // namespace cartographer

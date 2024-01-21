@@ -25,14 +25,14 @@ namespace {
 // First eight bytes to identify our proto stream format.
 const uint64 kMagic = 0x7b1d1f7b5bf501db;
 
-void WriteSizeAsLittleEndian(uint64 size, std::ostream* out) {
+void WriteSizeAsLittleEndian(uint64 size, std::ostream *out) {
   for (int i = 0; i != 8; ++i) {
     out->put(size & 0xff);
     size >>= 8;
   }
 }
 
-bool ReadSizeAsLittleEndian(std::istream* in, uint64* size) {
+bool ReadSizeAsLittleEndian(std::istream *in, uint64 *size) {
   *size = 0;
   for (int i = 0; i != 8; ++i) {
     *size >>= 8;
@@ -41,21 +41,21 @@ bool ReadSizeAsLittleEndian(std::istream* in, uint64* size) {
   return !in->fail();
 }
 
-}  // namespace
+} // namespace
 
-ProtoStreamWriter::ProtoStreamWriter(const std::string& filename)
+ProtoStreamWriter::ProtoStreamWriter(const std::string &filename)
     : out_(filename, std::ios::out | std::ios::binary) {
   WriteSizeAsLittleEndian(kMagic, &out_);
 }
 
-void ProtoStreamWriter::Write(const std::string& uncompressed_data) {
+void ProtoStreamWriter::Write(const std::string &uncompressed_data) {
   std::string compressed_data;
   common::FastGzipString(uncompressed_data, &compressed_data);
   WriteSizeAsLittleEndian(compressed_data.size(), &out_);
   out_.write(compressed_data.data(), compressed_data.size());
 }
 
-void ProtoStreamWriter::WriteProto(const google::protobuf::Message& proto) {
+void ProtoStreamWriter::WriteProto(const google::protobuf::Message &proto) {
   std::string uncompressed_data;
   proto.SerializeToString(&uncompressed_data);
   Write(uncompressed_data);
@@ -66,7 +66,7 @@ bool ProtoStreamWriter::Close() {
   return !out_.fail();
 }
 
-ProtoStreamReader::ProtoStreamReader(const std::string& filename)
+ProtoStreamReader::ProtoStreamReader(const std::string &filename)
     : in_(filename, std::ios::in | std::ios::binary) {
   uint64 magic;
   if (!ReadSizeAsLittleEndian(&in_, &magic) || magic != kMagic) {
@@ -75,7 +75,7 @@ ProtoStreamReader::ProtoStreamReader(const std::string& filename)
   CHECK(in_.good()) << "Failed to open proto stream '" << filename << "'.";
 }
 
-bool ProtoStreamReader::Read(std::string* decompressed_data) {
+bool ProtoStreamReader::Read(std::string *decompressed_data) {
   uint64 compressed_size;
   if (!ReadSizeAsLittleEndian(&in_, &compressed_size)) {
     return false;
@@ -88,12 +88,12 @@ bool ProtoStreamReader::Read(std::string* decompressed_data) {
   return true;
 }
 
-bool ProtoStreamReader::ReadProto(google::protobuf::Message* proto) {
+bool ProtoStreamReader::ReadProto(google::protobuf::Message *proto) {
   std::string decompressed_data;
   return Read(&decompressed_data) && proto->ParseFromString(decompressed_data);
 }
 
 bool ProtoStreamReader::eof() const { return in_.eof(); }
 
-}  // namespace io
-}  // namespace cartographer
+} // namespace io
+} // namespace cartographer

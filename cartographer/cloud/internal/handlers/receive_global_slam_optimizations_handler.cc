@@ -43,7 +43,7 @@ std::unique_ptr<proto::ReceiveGlobalSlamOptimizationsResponse> GenerateResponse(
   return response;
 }
 
-}  // namespace
+} // namespace
 
 void ReceiveGlobalSlamOptimizationsHandler::OnRequest(
     const google::protobuf::Empty &request) {
@@ -76,6 +76,6 @@ void ReceiveGlobalSlamOptimizationsHandler::OnFinish() {
   }
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

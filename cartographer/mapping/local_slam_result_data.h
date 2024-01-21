@@ -24,19 +24,19 @@ namespace cartographer {
 namespace mapping {
 
 class LocalSlamResultData : public sensor::Data {
- public:
-  LocalSlamResultData(const std::string& sensor_id, common::Time time)
+public:
+  LocalSlamResultData(const std::string &sensor_id, common::Time time)
       : Data(sensor_id), time_(time) {}
 
   common::Time GetTime() const override { return time_; }
   virtual void AddToPoseGraph(int trajectory_id,
-                              PoseGraph* pose_graph) const = 0;
+                              PoseGraph *pose_graph) const = 0;
 
- private:
+private:
   common::Time time_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_LOCAL_SLAM_RESULT_DATA_H_
+#endif // CARTOGRAPHER_MAPPING_LOCAL_SLAM_RESULT_DATA_H_

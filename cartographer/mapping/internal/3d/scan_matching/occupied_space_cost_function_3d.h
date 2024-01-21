@@ -32,10 +32,11 @@ namespace scan_matching {
 // 'translation' and 'rotation'. The cost increases when points fall into less
 // occupied space, i.e. at voxels with lower values.
 class OccupiedSpaceCostFunction3D {
- public:
-  static ceres::CostFunction* CreateAutoDiffCostFunction(
-      const double scaling_factor, const sensor::PointCloud& point_cloud,
-      const mapping::HybridGrid& hybrid_grid) {
+public:
+  static ceres::CostFunction *
+  CreateAutoDiffCostFunction(const double scaling_factor,
+                             const sensor::PointCloud &point_cloud,
+                             const mapping::HybridGrid &hybrid_grid) {
     return new ceres::AutoDiffCostFunction<
         OccupiedSpaceCostFunction3D, ceres::DYNAMIC /* residuals */,
         3 /* translation variables */, 4 /* rotation variables */>(
@@ -45,8 +46,8 @@ class OccupiedSpaceCostFunction3D {
   }
 
   template <typename T>
-  bool operator()(const T* const translation, const T* const rotation,
-                  T* const residual) const {
+  bool operator()(const T *const translation, const T *const rotation,
+                  T *const residual) const {
     const transform::Rigid3<T> transform(
         Eigen::Map<const Eigen::Matrix<T, 3, 1>>(translation),
         Eigen::Quaternion<T>(rotation[0], rotation[1], rotation[2],
@@ -54,21 +55,20 @@ class OccupiedSpaceCostFunction3D {
     return Evaluate(transform, residual);
   }
 
- private:
+private:
   OccupiedSpaceCostFunction3D(const double scaling_factor,
-                              const sensor::PointCloud& point_cloud,
-                              const mapping::HybridGrid& hybrid_grid)
-      : scaling_factor_(scaling_factor),
-        point_cloud_(point_cloud),
+                              const sensor::PointCloud &point_cloud,
+                              const mapping::HybridGrid &hybrid_grid)
+      : scaling_factor_(scaling_factor), point_cloud_(point_cloud),
         interpolated_grid_(hybrid_grid) {}
 
-  OccupiedSpaceCostFunction3D(const OccupiedSpaceCostFunction3D&) = delete;
-  OccupiedSpaceCostFunction3D& operator=(const OccupiedSpaceCostFunction3D&) =
-      delete;
+  OccupiedSpaceCostFunction3D(const OccupiedSpaceCostFunction3D &) = delete;
+  OccupiedSpaceCostFunction3D &
+  operator=(const OccupiedSpaceCostFunction3D &) = delete;
 
   template <typename T>
-  bool Evaluate(const transform::Rigid3<T>& transform,
-                T* const residual) const {
+  bool Evaluate(const transform::Rigid3<T> &transform,
+                T *const residual) const {
     for (size_t i = 0; i < point_cloud_.size(); ++i) {
       const Eigen::Matrix<T, 3, 1> world =
           transform * point_cloud_[i].cast<T>();
@@ -80,12 +80,12 @@ class OccupiedSpaceCostFunction3D {
   }
 
   const double scaling_factor_;
-  const sensor::PointCloud& point_cloud_;
+  const sensor::PointCloud &point_cloud_;
   const InterpolatedGrid interpolated_grid_;
 };
 
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_OCCUPIED_SPACE_COST_FUNCTION_3D_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_3D_SCAN_MATCHING_OCCUPIED_SPACE_COST_FUNCTION_3D_H_

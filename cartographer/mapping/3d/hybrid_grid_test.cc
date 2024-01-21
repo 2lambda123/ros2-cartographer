@@ -76,7 +76,7 @@ TEST(HybridGridTest, GetProbability) {
   EXPECT_NEAR(hybrid_grid.GetProbability(
                   hybrid_grid.GetCellIndex(Eigen::Vector3f(0.f, 1.f, 1.f))),
               kMaxProbability, 1e-6);
-  for (const Eigen::Array3i& index :
+  for (const Eigen::Array3i &index :
        {hybrid_grid.GetCellIndex(Eigen::Vector3f(0.f, 2.f, 1.f)),
         hybrid_grid.GetCellIndex(Eigen::Vector3f(1.f, 1.f, 1.f)),
         hybrid_grid.GetCellIndex(Eigen::Vector3f(1.f, 2.f, 1.f))}) {
@@ -121,7 +121,7 @@ TEST(HybridGridTest, GetCenterOfCell) {
 }
 
 class RandomHybridGridTest : public ::testing::Test {
- public:
+public:
   RandomHybridGridTest() : hybrid_grid_(2.f), values_() {
     std::mt19937 rng(1285120005);
     std::uniform_real_distribution<float> value_distribution(kMinProbability,
@@ -134,7 +134,7 @@ class RandomHybridGridTest : public ::testing::Test {
       values_.emplace(std::make_tuple(x, y, z), value_distribution(rng));
     }
 
-    for (const auto& pair : values_) {
+    for (const auto &pair : values_) {
       const Eigen::Array3i cell_index(std::get<0>(pair.first),
                                       std::get<1>(pair.first),
                                       std::get<2>(pair.first));
@@ -142,7 +142,7 @@ class RandomHybridGridTest : public ::testing::Test {
     }
   }
 
- protected:
+protected:
   HybridGrid hybrid_grid_;
   using ValueMap = std::map<std::tuple<int, int, int>, float>;
   ValueMap values_;
@@ -162,7 +162,7 @@ TEST_F(RandomHybridGridTest, TestIteration) {
 
   // Test that range based loop is equivalent to using the iterator.
   auto it = HybridGrid::Iterator(hybrid_grid_);
-  for (const auto& cell : hybrid_grid_) {
+  for (const auto &cell : hybrid_grid_) {
     ASSERT_FALSE(it.Done());
     EXPECT_THAT(cell.first, AllCwiseEqual(it.GetCellIndex()));
     EXPECT_EQ(cell.second, it.GetValue());
@@ -170,7 +170,7 @@ TEST_F(RandomHybridGridTest, TestIteration) {
   }
 
   // Now 'values_' must not contain values.
-  for (const auto& pair : values_) {
+  for (const auto &pair : values_) {
     const Eigen::Array3i cell_index(std::get<0>(pair.first),
                                     std::get<1>(pair.first),
                                     std::get<2>(pair.first));
@@ -202,8 +202,8 @@ TEST_F(RandomHybridGridTest, ToProto) {
 }
 
 struct EigenComparator {
-  bool operator()(const Eigen::Vector3i& lhs,
-                  const Eigen::Vector3i& rhs) const {
+  bool operator()(const Eigen::Vector3i &lhs,
+                  const Eigen::Vector3i &rhs) const {
     return std::forward_as_tuple(lhs.x(), lhs.y(), lhs.z()) <
            std::forward_as_tuple(rhs.x(), rhs.y(), rhs.z());
   }
@@ -221,6 +221,6 @@ TEST_F(RandomHybridGridTest, FromProto) {
   EXPECT_EQ(member_map, constructed_map);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

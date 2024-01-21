@@ -33,19 +33,19 @@ namespace common {
 class Task;
 
 class ThreadPoolInterface {
- public:
+public:
   ThreadPoolInterface() {}
   virtual ~ThreadPoolInterface() {}
   virtual std::weak_ptr<Task> Schedule(std::unique_ptr<Task> task) = 0;
 
- protected:
-  void Execute(Task* task);
-  void SetThreadPool(Task* task);
+protected:
+  void Execute(Task *task);
+  void SetThreadPool(Task *task);
 
- private:
+private:
   friend class Task;
 
-  virtual void NotifyDependenciesCompleted(Task* task) = 0;
+  virtual void NotifyDependenciesCompleted(Task *task) = 0;
 };
 
 // A fixed number of threads working on tasks. Adding a task does not block.
@@ -55,32 +55,32 @@ class ThreadPoolInterface {
 // destructor. The thread pool will then wait for the currently executing work
 // items to finish and then destroy the threads.
 class ThreadPool : public ThreadPoolInterface {
- public:
+public:
   explicit ThreadPool(int num_threads);
   ~ThreadPool();
 
-  ThreadPool(const ThreadPool&) = delete;
-  ThreadPool& operator=(const ThreadPool&) = delete;
+  ThreadPool(const ThreadPool &) = delete;
+  ThreadPool &operator=(const ThreadPool &) = delete;
 
   // When the returned weak pointer is expired, 'task' has certainly completed,
   // so dependants no longer need to add it as a dependency.
   std::weak_ptr<Task> Schedule(std::unique_ptr<Task> task)
       EXCLUDES(mutex_) override;
 
- private:
+private:
   void DoWork();
 
-  void NotifyDependenciesCompleted(Task* task) EXCLUDES(mutex_) override;
+  void NotifyDependenciesCompleted(Task *task) EXCLUDES(mutex_) override;
 
   Mutex mutex_;
   bool running_ GUARDED_BY(mutex_) = true;
   std::vector<std::thread> pool_ GUARDED_BY(mutex_);
   std::deque<std::shared_ptr<Task>> task_queue_ GUARDED_BY(mutex_);
-  std::unordered_map<Task*, std::shared_ptr<Task>> tasks_not_ready_
-      GUARDED_BY(mutex_);
+  std::unordered_map<Task *, std::shared_ptr<Task>>
+      tasks_not_ready_ GUARDED_BY(mutex_);
 };
 
-}  // namespace common
-}  // namespace cartographer
+} // namespace common
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_COMMON_THREAD_POOL_H_
+#endif // CARTOGRAPHER_COMMON_THREAD_POOL_H_

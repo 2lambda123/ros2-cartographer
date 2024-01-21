@@ -18,9 +18,9 @@
 #include "cartographer/metrics/family_factory.h"
 #include "cartographer/metrics/register.h"
 #include "glog/logging.h"
+#include "prometheus/exposer.h"
 #include "gmock/gmock.h"
 #include "gtest/gtest.h"
-#include "prometheus/exposer.h"
 
 namespace cartographer {
 namespace cloud {
@@ -28,19 +28,19 @@ namespace metrics {
 namespace prometheus {
 namespace {
 
-static auto* kCounter = ::cartographer::metrics::Counter::Null();
-static auto* kGauge = ::cartographer::metrics::Gauge::Null();
-static auto* kScoresMetric = ::cartographer::metrics::Histogram::Null();
+static auto *kCounter = ::cartographer::metrics::Counter::Null();
+static auto *kGauge = ::cartographer::metrics::Gauge::Null();
+static auto *kScoresMetric = ::cartographer::metrics::Histogram::Null();
 
 const char kLabelKey[] = "kind";
 const char kLabelValue[] = "score";
 const std::array<double, 5> kObserveScores = {{-1, 0.11, 0.2, 0.5, 2}};
 
 class Algorithm {
- public:
-  static void RegisterMetrics(::cartographer::metrics::FamilyFactory* factory) {
+public:
+  static void RegisterMetrics(::cartographer::metrics::FamilyFactory *factory) {
     auto boundaries = ::cartographer::metrics::Histogram::FixedWidth(0.05, 20);
-    auto* scores_family = factory->NewHistogramFamily(
+    auto *scores_family = factory->NewHistogramFamily(
         "/algorithm/scores", "Scores achieved", boundaries);
     kScoresMetric = scores_family->Add({{kLabelKey, kLabelValue}});
   }
@@ -53,7 +53,7 @@ class Algorithm {
 
 TEST(MetricsTest, CollectCounter) {
   FamilyFactory factory;
-  auto* counter_family = factory.NewCounterFamily("/test/hits", "Hits");
+  auto *counter_family = factory.NewCounterFamily("/test/hits", "Hits");
   kCounter = counter_family->Add({{kLabelKey, kLabelValue}});
   kCounter->Increment();
   kCounter->Increment(5);
@@ -79,7 +79,7 @@ TEST(MetricsTest, CollectCounter) {
 
 TEST(MetricsTest, CollectGauge) {
   FamilyFactory factory;
-  auto* gauge_family =
+  auto *gauge_family =
       factory.NewGaugeFamily("/test/queue/length", "Length of some queue");
   kGauge = gauge_family->Add({{kLabelKey, kLabelValue}});
   kGauge->Increment();
@@ -143,8 +143,8 @@ TEST(MetricsTest, RunExposerServer) {
   algorithm.Run();
 }
 
-}  // namespace
-}  // namespace prometheus
-}  // namespace metrics
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace
+} // namespace prometheus
+} // namespace metrics
+} // namespace cloud
+} // namespace cartographer

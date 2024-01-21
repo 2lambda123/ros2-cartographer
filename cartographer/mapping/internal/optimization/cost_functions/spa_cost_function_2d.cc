@@ -32,14 +32,14 @@ namespace optimization {
 namespace {
 
 class SpaCostFunction2D {
- public:
+public:
   explicit SpaCostFunction2D(
-      const PoseGraphInterface::Constraint::Pose& observed_relative_pose)
+      const PoseGraphInterface::Constraint::Pose &observed_relative_pose)
       : observed_relative_pose_(observed_relative_pose) {}
 
   template <typename T>
-  bool operator()(const T* const start_pose, const T* const end_pose,
-                  T* e) const {
+  bool operator()(const T *const start_pose, const T *const end_pose,
+                  T *e) const {
     const std::array<T, 3> error =
         ScaleError(ComputeUnscaledError(
                        transform::Project2D(observed_relative_pose_.zbar_ij),
@@ -50,7 +50,7 @@ class SpaCostFunction2D {
     return true;
   }
 
- private:
+private:
   const PoseGraphInterface::Constraint::Pose observed_relative_pose_;
 };
 
@@ -58,18 +58,18 @@ class AnalyticalSpaCostFunction2D
     : public ceres::SizedCostFunction<3 /* number of residuals */,
                                       3 /* size of start pose */,
                                       3 /* size of end pose */> {
- public:
+public:
   explicit AnalyticalSpaCostFunction2D(
-      const PoseGraphInterface::Constraint::Pose& constraint_pose)
+      const PoseGraphInterface::Constraint::Pose &constraint_pose)
       : observed_relative_pose_(transform::Project2D(constraint_pose.zbar_ij)),
         translation_weight_(constraint_pose.translation_weight),
         rotation_weight_(constraint_pose.rotation_weight) {}
   virtual ~AnalyticalSpaCostFunction2D() {}
 
-  bool Evaluate(double const* const* parameters, double* residuals,
-                double** jacobians) const override {
-    double const* start = parameters[0];
-    double const* end = parameters[1];
+  bool Evaluate(double const *const *parameters, double *residuals,
+                double **jacobians) const override {
+    double const *start = parameters[0];
+    double const *end = parameters[1];
 
     const double cos_start_rotation = cos(start[2]);
     const double sin_start_rotation = sin(start[2]);
@@ -88,7 +88,8 @@ class AnalyticalSpaCostFunction2D
         rotation_weight_ *
         common::NormalizeAngleDifference(
             observed_relative_pose_.rotation().angle() - (end[2] - start[2]));
-    if (jacobians == NULL) return true;
+    if (jacobians == NULL)
+      return true;
 
     const double weighted_cos_start_rotation =
         translation_weight_ * cos_start_rotation;
@@ -124,27 +125,27 @@ class AnalyticalSpaCostFunction2D
     return true;
   }
 
- private:
+private:
   const transform::Rigid2d observed_relative_pose_;
   const double translation_weight_;
   const double rotation_weight_;
 };
 
-}  // namespace
+} // namespace
 
-ceres::CostFunction* CreateAutoDiffSpaCostFunction(
-    const PoseGraphInterface::Constraint::Pose& observed_relative_pose) {
+ceres::CostFunction *CreateAutoDiffSpaCostFunction(
+    const PoseGraphInterface::Constraint::Pose &observed_relative_pose) {
   return new ceres::AutoDiffCostFunction<SpaCostFunction2D, 3 /* residuals */,
                                          3 /* start pose variables */,
                                          3 /* end pose variables */>(
       new SpaCostFunction2D(observed_relative_pose));
 }
 
-ceres::CostFunction* CreateAnalyticalSpaCostFunction(
-    const PoseGraphInterface::Constraint::Pose& observed_relative_pose) {
+ceres::CostFunction *CreateAnalyticalSpaCostFunction(
+    const PoseGraphInterface::Constraint::Pose &observed_relative_pose) {
   return new AnalyticalSpaCostFunction2D(observed_relative_pose);
 }
 
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer

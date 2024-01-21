@@ -25,24 +25,24 @@ namespace mapping {
 namespace {
 
 class SubmapCoverageGrid2D {
- public:
+public:
   // Aliases for documentation only (no type-safety).
   using CellId = std::pair<int64 /* x cells */, int64 /* y cells */>;
   using StoredType = std::vector<std::pair<SubmapId, common::Time>>;
 
-  SubmapCoverageGrid2D(const MapLimits& map_limits)
+  SubmapCoverageGrid2D(const MapLimits &map_limits)
       : offset_(map_limits.max()), resolution_(map_limits.resolution()) {}
 
-  void AddPoint(const Eigen::Vector2d& point, const SubmapId& submap_id,
-                const common::Time& time) {
+  void AddPoint(const Eigen::Vector2d &point, const SubmapId &submap_id,
+                const common::Time &time) {
     CellId cell_id{common::RoundToInt64((offset_(0) - point(0)) / resolution_),
                    common::RoundToInt64((offset_(1) - point(1)) / resolution_)};
     cells_[cell_id].emplace_back(submap_id, time);
   }
 
-  const std::map<CellId, StoredType>& cells() const { return cells_; }
+  const std::map<CellId, StoredType> &cells() const { return cells_; }
 
- private:
+private:
   Eigen::Vector2d offset_;
   double resolution_;
   std::map<CellId, StoredType> cells_;
@@ -52,17 +52,19 @@ class SubmapCoverageGrid2D {
 // the global frame and then adds the submap id and the timestamp of the most
 // recent range data insertion into the global grid.
 std::set<SubmapId> AddSubmapsToSubmapCoverageGrid2D(
-    const std::map<SubmapId, common::Time>& submap_freshness,
-    const MapById<SubmapId, PoseGraphInterface::SubmapData>& submap_data,
-    SubmapCoverageGrid2D* coverage_grid) {
+    const std::map<SubmapId, common::Time> &submap_freshness,
+    const MapById<SubmapId, PoseGraphInterface::SubmapData> &submap_data,
+    SubmapCoverageGrid2D *coverage_grid) {
   std::set<SubmapId> all_submap_ids;
 
-  for (const auto& submap : submap_data) {
+  for (const auto &submap : submap_data) {
     auto freshness = submap_freshness.find(submap.id);
-    if (freshness == submap_freshness.end()) continue;
-    if (!submap.data.submap->finished()) continue;
+    if (freshness == submap_freshness.end())
+      continue;
+    if (!submap.data.submap->finished())
+      continue;
     all_submap_ids.insert(submap.id);
-    const Grid2D& grid =
+    const Grid2D &grid =
         *std::static_pointer_cast<const Submap2D>(submap.data.submap)->grid();
     // Iterate over every cell in a submap.
     Eigen::Array2i offset;
@@ -73,12 +75,13 @@ std::set<SubmapId> AddSubmapsToSubmapCoverageGrid2D(
       continue;
     }
 
-    const transform::Rigid3d& global_frame_from_submap_frame = submap.data.pose;
+    const transform::Rigid3d &global_frame_from_submap_frame = submap.data.pose;
     const transform::Rigid3d submap_frame_from_local_frame =
         submap.data.submap->local_pose().inverse();
-    for (const Eigen::Array2i& xy_index : XYIndexRangeIterator(cell_limits)) {
+    for (const Eigen::Array2i &xy_index : XYIndexRangeIterator(cell_limits)) {
       const Eigen::Array2i index = xy_index + offset;
-      if (!grid.IsKnown(index)) continue;
+      if (!grid.IsKnown(index))
+        continue;
 
       const transform::Rigid3d center_of_cell_in_local_frame =
           transform::Rigid3d::Translation(Eigen::Vector3d(
@@ -102,14 +105,14 @@ std::set<SubmapId> AddSubmapsToSubmapCoverageGrid2D(
 // Uses intra-submap constraints and trajectory node timestamps to identify time
 // of the last range data insertion to the submap.
 std::map<SubmapId, common::Time> ComputeSubmapFreshness(
-    const MapById<SubmapId, PoseGraphInterface::SubmapData>& submap_data,
-    const MapById<NodeId, TrajectoryNode>& trajectory_nodes,
-    const std::vector<PoseGraphInterface::Constraint>& constraints) {
+    const MapById<SubmapId, PoseGraphInterface::SubmapData> &submap_data,
+    const MapById<NodeId, TrajectoryNode> &trajectory_nodes,
+    const std::vector<PoseGraphInterface::Constraint> &constraints) {
   std::map<SubmapId, common::Time> submap_freshness;
 
   // Find the node with the largest NodeId per SubmapId.
   std::map<SubmapId, NodeId> submap_to_latest_node;
-  for (const PoseGraphInterface::Constraint& constraint : constraints) {
+  for (const PoseGraphInterface::Constraint &constraint : constraints) {
     if (constraint.tag != PoseGraphInterface::Constraint::INTRA_SUBMAP) {
       continue;
     }
@@ -124,7 +127,7 @@ std::map<SubmapId, common::Time> ComputeSubmapFreshness(
   }
 
   // Find timestamp of every latest node.
-  for (const auto& submap_id_to_node_id : submap_to_latest_node) {
+  for (const auto &submap_id_to_node_id : submap_to_latest_node) {
     auto submap_data_item = submap_data.find(submap_id_to_node_id.first);
     if (submap_data_item == submap_data.end()) {
       LOG(WARNING) << "Intra-submap constraint between SubmapID = "
@@ -133,7 +136,8 @@ std::map<SubmapId, common::Time> ComputeSubmapFreshness(
       continue;
     }
     auto latest_node_id = trajectory_nodes.find(submap_id_to_node_id.second);
-    if (latest_node_id == trajectory_nodes.end()) continue;
+    if (latest_node_id == trajectory_nodes.end())
+      continue;
     submap_freshness[submap_data_item->id] = latest_node_id->data.time();
   }
   return submap_freshness;
@@ -141,12 +145,13 @@ std::map<SubmapId, common::Time> ComputeSubmapFreshness(
 
 // Returns IDs of submaps that have less than 'min_covered_cells_count' cells
 // not overlapped by at least 'fresh_submaps_count' submaps.
-std::vector<SubmapId> FindSubmapIdsToTrim(
-    const SubmapCoverageGrid2D& coverage_grid,
-    const std::set<SubmapId>& all_submap_ids, uint16 fresh_submaps_count,
-    uint16 min_covered_cells_count) {
+std::vector<SubmapId>
+FindSubmapIdsToTrim(const SubmapCoverageGrid2D &coverage_grid,
+                    const std::set<SubmapId> &all_submap_ids,
+                    uint16 fresh_submaps_count,
+                    uint16 min_covered_cells_count) {
   std::map<SubmapId, uint16> submap_to_covered_cells_count;
-  for (const auto& cell : coverage_grid.cells()) {
+  for (const auto &cell : coverage_grid.cells()) {
     std::vector<std::pair<SubmapId, common::Time>> submaps_per_cell(
         cell.second);
 
@@ -155,20 +160,21 @@ std::vector<SubmapId> FindSubmapIdsToTrim(
     if (submaps_per_cell.size() > fresh_submaps_count) {
       // Sort by time in descending order.
       std::sort(submaps_per_cell.begin(), submaps_per_cell.end(),
-                [](const std::pair<SubmapId, common::Time>& left,
-                   const std::pair<SubmapId, common::Time>& right) {
+                [](const std::pair<SubmapId, common::Time> &left,
+                   const std::pair<SubmapId, common::Time> &right) {
                   return left.second > right.second;
                 });
       submaps_per_cell.erase(submaps_per_cell.begin() + fresh_submaps_count,
                              submaps_per_cell.end());
     }
-    for (const std::pair<SubmapId, common::Time>& submap : submaps_per_cell) {
+    for (const std::pair<SubmapId, common::Time> &submap : submaps_per_cell) {
       ++submap_to_covered_cells_count[submap.first];
     }
   }
   std::vector<SubmapId> submap_ids_to_keep;
-  for (const auto& id_to_cells_count : submap_to_covered_cells_count) {
-    if (id_to_cells_count.second < min_covered_cells_count) continue;
+  for (const auto &id_to_cells_count : submap_to_covered_cells_count) {
+    if (id_to_cells_count.second < min_covered_cells_count)
+      continue;
     submap_ids_to_keep.push_back(id_to_cells_count.first);
   }
 
@@ -180,9 +186,9 @@ std::vector<SubmapId> FindSubmapIdsToTrim(
   return result;
 }
 
-}  // namespace
+} // namespace
 
-void OverlappingSubmapsTrimmer2D::Trim(Trimmable* pose_graph) {
+void OverlappingSubmapsTrimmer2D::Trim(Trimmable *pose_graph) {
   const auto submap_data = pose_graph->GetOptimizedSubmapData();
   if (submap_data.size() - current_submap_count_ <= min_added_submaps_count_) {
     return;
@@ -202,10 +208,10 @@ void OverlappingSubmapsTrimmer2D::Trim(Trimmable* pose_graph) {
       FindSubmapIdsToTrim(coverage_grid, all_submap_ids, fresh_submaps_count_,
                           min_covered_cells_count_);
   current_submap_count_ = submap_data.size() - submap_ids_to_remove.size();
-  for (const SubmapId& id : submap_ids_to_remove) {
+  for (const SubmapId &id : submap_ids_to_remove) {
     pose_graph->MarkSubmapAsTrimmed(id);
   }
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

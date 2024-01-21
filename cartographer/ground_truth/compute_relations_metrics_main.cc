@@ -62,16 +62,16 @@ struct Error {
 // different way to compute translational error. Maybe just look at the
 // absolute difference in translation norms of each relative transform as a
 // lower bound of the translational error.
-Error ComputeError(const transform::Rigid3d& pose1,
-                   const transform::Rigid3d& pose2,
-                   const transform::Rigid3d& expected) {
+Error ComputeError(const transform::Rigid3d &pose1,
+                   const transform::Rigid3d &pose2,
+                   const transform::Rigid3d &expected) {
   const transform::Rigid3d error =
       (pose1.inverse() * pose2) * expected.inverse();
   return Error{error.translation().squaredNorm(),
                common::Pow2(transform::GetAngle(error))};
 }
 
-std::string MeanAndStdDevString(const std::vector<double>& values) {
+std::string MeanAndStdDevString(const std::vector<double> &values) {
   CHECK_GE(values.size(), 2);
   const double mean =
       std::accumulate(values.begin(), values.end(), 0.) / values.size();
@@ -87,12 +87,12 @@ std::string MeanAndStdDevString(const std::vector<double>& values) {
   return std::string(out.str());
 }
 
-std::string StatisticsString(const std::vector<Error>& errors) {
+std::string StatisticsString(const std::vector<Error> &errors) {
   std::vector<double> translational_errors;
   std::vector<double> squared_translational_errors;
   std::vector<double> rotational_errors_degrees;
   std::vector<double> squared_rotational_errors_degrees;
-  for (const Error& error : errors) {
+  for (const Error &error : errors) {
     translational_errors.push_back(std::sqrt(error.translational_squared));
     squared_translational_errors.push_back(error.translational_squared);
     rotational_errors_degrees.push_back(
@@ -113,9 +113,9 @@ std::string StatisticsString(const std::vector<Error>& errors) {
          MeanAndStdDevString(squared_rotational_errors_degrees) + " deg^2\n";
 }
 
-void WriteRelationMetricsToFile(const std::vector<Error>& errors,
-                                const proto::GroundTruth& ground_truth,
-                                const std::string& relation_metrics_filename) {
+void WriteRelationMetricsToFile(const std::vector<Error> &errors,
+                                const proto::GroundTruth &ground_truth,
+                                const std::string &relation_metrics_filename) {
   std::ofstream relation_errors_file;
   std::string log_file_path;
   LOG(INFO) << "Writing relation metrics to '" + relation_metrics_filename +
@@ -129,8 +129,8 @@ void WriteRelationMetricsToFile(const std::vector<Error>& errors,
          "expected_rotation_y,expected_rotation_z,covered_distance\n";
   for (int relation_index = 0; relation_index < ground_truth.relation_size();
        ++relation_index) {
-    const Error& error = errors[relation_index];
-    const proto::Relation& relation = ground_truth.relation(relation_index);
+    const Error &error = errors[relation_index];
+    const proto::Relation &relation = ground_truth.relation(relation_index);
     double translational_error = std::sqrt(error.translational_squared);
     double squared_translational_error = error.translational_squared;
     double rotational_errors_degree =
@@ -153,10 +153,9 @@ void WriteRelationMetricsToFile(const std::vector<Error>& errors,
   relation_errors_file.close();
 }
 
-transform::Rigid3d LookupTransform(
-    const transform::TransformInterpolationBuffer&
-        transform_interpolation_buffer,
-    const common::Time time) {
+transform::Rigid3d LookupTransform(const transform::TransformInterpolationBuffer
+                                       &transform_interpolation_buffer,
+                                   const common::Time time) {
   const common::Time earliest_time =
       transform_interpolation_buffer.earliest_time();
   if (transform_interpolation_buffer.Has(time)) {
@@ -168,8 +167,8 @@ transform::Rigid3d LookupTransform(
       transform_interpolation_buffer.latest_time());
 }
 
-void Run(const std::string& pose_graph_filename,
-         const std::string& relations_filename,
+void Run(const std::string &pose_graph_filename,
+         const std::string &relations_filename,
          const bool read_text_file_with_unix_timestamps,
          const bool write_relation_metrics) {
   LOG(INFO) << "Reading pose graph from '" << pose_graph_filename << "'...";
@@ -191,7 +190,7 @@ void Run(const std::string& pose_graph_filename,
   }
 
   std::vector<Error> errors;
-  for (const auto& relation : ground_truth.relation()) {
+  for (const auto &relation : ground_truth.relation()) {
     const auto pose1 =
         LookupTransform(transform_interpolation_buffer,
                         common::FromUniversal(relation.timestamp1()));
@@ -212,11 +211,11 @@ void Run(const std::string& pose_graph_filename,
   LOG(INFO) << "Result:\n" << StatisticsString(errors);
 }
 
-}  // namespace
-}  // namespace ground_truth
-}  // namespace cartographer
+} // namespace
+} // namespace ground_truth
+} // namespace cartographer
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   google::InitGoogleLogging(argv[0]);
   FLAGS_logtostderr = true;
   google::SetUsageMessage(

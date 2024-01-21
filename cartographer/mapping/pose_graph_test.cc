@@ -37,6 +37,6 @@ TEST(PoseGraph, SerializeConstraint) {
       expected_constraint, ToProto(constraint)));
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

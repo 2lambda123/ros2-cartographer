@@ -25,10 +25,10 @@ namespace sensor {
 
 namespace {
 
-PointCloud FilterByMaxRange(const PointCloud& point_cloud,
+PointCloud FilterByMaxRange(const PointCloud &point_cloud,
                             const float max_range) {
   PointCloud result;
-  for (const Eigen::Vector3f& point : point_cloud) {
+  for (const Eigen::Vector3f &point : point_cloud) {
     if (point.norm() <= max_range) {
       result.push_back(point);
     }
@@ -36,9 +36,9 @@ PointCloud FilterByMaxRange(const PointCloud& point_cloud,
   return result;
 }
 
-PointCloud AdaptivelyVoxelFiltered(
-    const proto::AdaptiveVoxelFilterOptions& options,
-    const PointCloud& point_cloud) {
+PointCloud
+AdaptivelyVoxelFiltered(const proto::AdaptiveVoxelFilterOptions &options,
+                        const PointCloud &point_cloud) {
   if (point_cloud.size() <= options.min_num_points()) {
     // 'point_cloud' is already sparse enough.
     return point_cloud;
@@ -76,11 +76,11 @@ PointCloud AdaptivelyVoxelFiltered(
   return result;
 }
 
-}  // namespace
+} // namespace
 
-PointCloud VoxelFilter::Filter(const PointCloud& point_cloud) {
+PointCloud VoxelFilter::Filter(const PointCloud &point_cloud) {
   PointCloud results;
-  for (const Eigen::Vector3f& point : point_cloud) {
+  for (const Eigen::Vector3f &point : point_cloud) {
     auto it_inserted = voxel_set_.insert(IndexToKey(GetCellIndex(point)));
     if (it_inserted.second) {
       results.push_back(point);
@@ -89,9 +89,9 @@ PointCloud VoxelFilter::Filter(const PointCloud& point_cloud) {
   return results;
 }
 
-TimedPointCloud VoxelFilter::Filter(const TimedPointCloud& timed_point_cloud) {
+TimedPointCloud VoxelFilter::Filter(const TimedPointCloud &timed_point_cloud) {
   TimedPointCloud results;
-  for (const Eigen::Vector4f& point : timed_point_cloud) {
+  for (const Eigen::Vector4f &point : timed_point_cloud) {
     auto it_inserted =
         voxel_set_.insert(IndexToKey(GetCellIndex(point.head<3>())));
     if (it_inserted.second) {
@@ -103,10 +103,10 @@ TimedPointCloud VoxelFilter::Filter(const TimedPointCloud& timed_point_cloud) {
 
 std::vector<sensor::TimedPointCloudOriginData::RangeMeasurement>
 VoxelFilter::Filter(
-    const std::vector<sensor::TimedPointCloudOriginData::RangeMeasurement>&
-        range_measurements) {
+    const std::vector<sensor::TimedPointCloudOriginData::RangeMeasurement>
+        &range_measurements) {
   std::vector<sensor::TimedPointCloudOriginData::RangeMeasurement> results;
-  for (const auto& range_measurement : range_measurements) {
+  for (const auto &range_measurement : range_measurements) {
     auto it_inserted = voxel_set_.insert(
         IndexToKey(GetCellIndex(range_measurement.point_time.head<3>())));
     if (it_inserted.second) {
@@ -116,14 +116,14 @@ VoxelFilter::Filter(
   return results;
 }
 
-VoxelFilter::KeyType VoxelFilter::IndexToKey(const Eigen::Array3i& index) {
+VoxelFilter::KeyType VoxelFilter::IndexToKey(const Eigen::Array3i &index) {
   KeyType k_0(static_cast<uint32>(index[0]));
   KeyType k_1(static_cast<uint32>(index[1]));
   KeyType k_2(static_cast<uint32>(index[2]));
   return (k_0 << 2 * 32) | (k_1 << 1 * 32) | k_2;
 }
 
-Eigen::Array3i VoxelFilter::GetCellIndex(const Eigen::Vector3f& point) const {
+Eigen::Array3i VoxelFilter::GetCellIndex(const Eigen::Vector3f &point) const {
   Eigen::Array3f index = point.array() / resolution_;
   return Eigen::Array3i(common::RoundToInt(index.x()),
                         common::RoundToInt(index.y()),
@@ -131,7 +131,7 @@ Eigen::Array3i VoxelFilter::GetCellIndex(const Eigen::Vector3f& point) const {
 }
 
 proto::AdaptiveVoxelFilterOptions CreateAdaptiveVoxelFilterOptions(
-    common::LuaParameterDictionary* const parameter_dictionary) {
+    common::LuaParameterDictionary *const parameter_dictionary) {
   proto::AdaptiveVoxelFilterOptions options;
   options.set_max_length(parameter_dictionary->GetDouble("max_length"));
   options.set_min_num_points(
@@ -141,13 +141,13 @@ proto::AdaptiveVoxelFilterOptions CreateAdaptiveVoxelFilterOptions(
 }
 
 AdaptiveVoxelFilter::AdaptiveVoxelFilter(
-    const proto::AdaptiveVoxelFilterOptions& options)
+    const proto::AdaptiveVoxelFilterOptions &options)
     : options_(options) {}
 
-PointCloud AdaptiveVoxelFilter::Filter(const PointCloud& point_cloud) const {
+PointCloud AdaptiveVoxelFilter::Filter(const PointCloud &point_cloud) const {
   return AdaptivelyVoxelFiltered(
       options_, FilterByMaxRange(point_cloud, options_.max_range()));
 }
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer

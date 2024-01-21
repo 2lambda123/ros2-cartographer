@@ -58,6 +58,6 @@ TEST(OptionalTest, AssignmentOperator) {
   EXPECT_EQ(3, a.value());
 }
 
-}  // namespace
-}  // namespace common
-}  // namespace cartographer
+} // namespace
+} // namespace common
+} // namespace cartographer

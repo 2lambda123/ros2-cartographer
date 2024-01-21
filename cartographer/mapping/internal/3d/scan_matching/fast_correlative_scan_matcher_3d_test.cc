@@ -34,7 +34,7 @@ namespace scan_matching {
 namespace {
 
 class FastCorrelativeScanMatcher3DTest : public ::testing::Test {
- protected:
+protected:
   FastCorrelativeScanMatcher3DTest()
       : range_data_inserter_(CreateRangeDataInserterTestOptions3D()),
         options_(CreateFastCorrelativeScanMatcher3DTestOptions3D(6)) {}
@@ -84,18 +84,18 @@ class FastCorrelativeScanMatcher3DTest : public ::testing::Test {
 
   static mapping::proto::RangeDataInserterOptions3D
   CreateRangeDataInserterTestOptions3D() {
-    auto parameter_dictionary = common::MakeDictionary(
-        "return { "
-        "hit_probability = 0.7, "
-        "miss_probability = 0.4, "
-        "num_free_space_voxels = 5, "
-        "}");
+    auto parameter_dictionary =
+        common::MakeDictionary("return { "
+                               "hit_probability = 0.7, "
+                               "miss_probability = 0.4, "
+                               "num_free_space_voxels = 5, "
+                               "}");
     return CreateRangeDataInserterOptions3D(parameter_dictionary.get());
   }
 
   std::unique_ptr<FastCorrelativeScanMatcher3D> GetFastCorrelativeScanMatcher(
-      const proto::FastCorrelativeScanMatcherOptions3D& options,
-      const transform::Rigid3f& pose) {
+      const proto::FastCorrelativeScanMatcherOptions3D &options,
+      const transform::Rigid3f &pose) {
     hybrid_grid_ = common::make_unique<HybridGrid>(0.05f);
     range_data_inserter_.Insert(
         sensor::RangeData{pose.translation(),
@@ -113,8 +113,8 @@ class FastCorrelativeScanMatcher3DTest : public ::testing::Test {
         options);
   }
 
-  TrajectoryNode::Data CreateConstantData(
-      const sensor::PointCloud& low_resolution_point_cloud) {
+  TrajectoryNode::Data
+  CreateConstantData(const sensor::PointCloud &low_resolution_point_cloud) {
     return TrajectoryNode::Data{common::FromUniversal(0),
                                 Eigen::Quaterniond::Identity(),
                                 {},
@@ -190,7 +190,7 @@ TEST_F(FastCorrelativeScanMatcher3DTest, CorrectPoseForMatchFullSubmap) {
       << low_resolution_result->low_resolution_score;
 }
 
-}  // namespace
-}  // namespace scan_matching
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace scan_matching
+} // namespace mapping
+} // namespace cartographer

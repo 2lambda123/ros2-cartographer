@@ -27,12 +27,12 @@ namespace cloud {
 namespace handlers {
 
 void AddTrajectoryHandler::OnRequest(
-    const proto::AddTrajectoryRequest& request) {
+    const proto::AddTrajectoryRequest &request) {
   auto local_slam_result_callback =
       GetUnsynchronizedContext<MapBuilderContextInterface>()
           ->GetLocalSlamResultCallbackForSubscriptions();
   std::set<mapping::TrajectoryBuilderInterface::SensorId> expected_sensor_ids;
-  for (const auto& sensor_id : request.expected_sensor_ids()) {
+  for (const auto &sensor_id : request.expected_sensor_ids()) {
     expected_sensor_ids.insert(FromProto(sensor_id));
   }
   const int trajectory_id =
@@ -66,6 +66,6 @@ void AddTrajectoryHandler::OnRequest(
   Send(std::move(response));
 }
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

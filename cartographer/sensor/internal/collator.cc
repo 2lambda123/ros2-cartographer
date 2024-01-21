@@ -21,9 +21,9 @@ namespace sensor {
 
 void Collator::AddTrajectory(
     const int trajectory_id,
-    const std::unordered_set<std::string>& expected_sensor_ids,
-    const Callback& callback) {
-  for (const auto& sensor_id : expected_sensor_ids) {
+    const std::unordered_set<std::string> &expected_sensor_ids,
+    const Callback &callback) {
+  for (const auto &sensor_id : expected_sensor_ids) {
     const auto queue_key = QueueKey{trajectory_id, sensor_id};
     queue_.AddQueue(queue_key,
                     [callback, sensor_id](std::unique_ptr<Data> data) {
@@ -34,7 +34,7 @@ void Collator::AddTrajectory(
 }
 
 void Collator::FinishTrajectory(const int trajectory_id) {
-  for (const auto& queue_key : queue_keys_[trajectory_id]) {
+  for (const auto &queue_key : queue_keys_[trajectory_id]) {
     queue_.MarkQueueAsFinished(queue_key);
   }
 }
@@ -51,5 +51,5 @@ common::optional<int> Collator::GetBlockingTrajectoryId() const {
   return common::optional<int>(queue_.GetBlocker().trajectory_id);
 }
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer

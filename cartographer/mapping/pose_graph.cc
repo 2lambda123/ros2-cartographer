@@ -24,36 +24,36 @@
 namespace cartographer {
 namespace mapping {
 
-proto::PoseGraph::Constraint::Tag ToProto(
-    const PoseGraph::Constraint::Tag& tag) {
+proto::PoseGraph::Constraint::Tag
+ToProto(const PoseGraph::Constraint::Tag &tag) {
   switch (tag) {
-    case PoseGraph::Constraint::Tag::INTRA_SUBMAP:
-      return proto::PoseGraph::Constraint::INTRA_SUBMAP;
-    case PoseGraph::Constraint::Tag::INTER_SUBMAP:
-      return proto::PoseGraph::Constraint::INTER_SUBMAP;
+  case PoseGraph::Constraint::Tag::INTRA_SUBMAP:
+    return proto::PoseGraph::Constraint::INTRA_SUBMAP;
+  case PoseGraph::Constraint::Tag::INTER_SUBMAP:
+    return proto::PoseGraph::Constraint::INTER_SUBMAP;
   }
   LOG(FATAL) << "Unsupported tag.";
 }
 
-PoseGraph::Constraint::Tag FromProto(
-    const proto::PoseGraph::Constraint::Tag& proto) {
+PoseGraph::Constraint::Tag
+FromProto(const proto::PoseGraph::Constraint::Tag &proto) {
   switch (proto) {
-    case proto::PoseGraph::Constraint::INTRA_SUBMAP:
-      return PoseGraph::Constraint::Tag::INTRA_SUBMAP;
-    case proto::PoseGraph::Constraint::INTER_SUBMAP:
-      return PoseGraph::Constraint::Tag::INTER_SUBMAP;
-    case ::google::protobuf::kint32max:
-    case ::google::protobuf::kint32min: {
-    }
+  case proto::PoseGraph::Constraint::INTRA_SUBMAP:
+    return PoseGraph::Constraint::Tag::INTRA_SUBMAP;
+  case proto::PoseGraph::Constraint::INTER_SUBMAP:
+    return PoseGraph::Constraint::Tag::INTER_SUBMAP;
+  case ::google::protobuf::kint32max:
+  case ::google::protobuf::kint32min: {
+  }
   }
   LOG(FATAL) << "Unsupported tag.";
 }
 
 std::vector<PoseGraph::Constraint> FromProto(
-    const ::google::protobuf::RepeatedPtrField<proto::PoseGraph::Constraint>&
-        constraint_protos) {
+    const ::google::protobuf::RepeatedPtrField<proto::PoseGraph::Constraint>
+        &constraint_protos) {
   std::vector<PoseGraph::Constraint> constraints;
-  for (const auto& constraint_proto : constraint_protos) {
+  for (const auto &constraint_proto : constraint_protos) {
     const mapping::SubmapId submap_id{
         constraint_proto.submap_id().trajectory_id(),
         constraint_proto.submap_id().submap_index()};
@@ -70,7 +70,7 @@ std::vector<PoseGraph::Constraint> FromProto(
 }
 
 proto::PoseGraphOptions CreatePoseGraphOptions(
-    common::LuaParameterDictionary* const parameter_dictionary) {
+    common::LuaParameterDictionary *const parameter_dictionary) {
   proto::PoseGraphOptions options;
   options.set_optimize_every_n_nodes(
       parameter_dictionary->GetInt("optimize_every_n_nodes"));
@@ -97,7 +97,7 @@ proto::PoseGraphOptions CreatePoseGraphOptions(
   return options;
 }
 
-proto::PoseGraph::Constraint ToProto(const PoseGraph::Constraint& constraint) {
+proto::PoseGraph::Constraint ToProto(const PoseGraph::Constraint &constraint) {
   proto::PoseGraph::Constraint constraint_proto;
   *constraint_proto.mutable_relative_pose() =
       transform::ToProto(constraint.pose.zbar_ij);
@@ -118,20 +118,20 @@ proto::PoseGraph::Constraint ToProto(const PoseGraph::Constraint& constraint) {
 proto::PoseGraph PoseGraph::ToProto() const {
   proto::PoseGraph proto;
 
-  std::map<int, proto::Trajectory* const> trajectory_protos;
+  std::map<int, proto::Trajectory *const> trajectory_protos;
   const auto trajectory = [&proto, &trajectory_protos](
-                              const int trajectory_id) -> proto::Trajectory* {
+                              const int trajectory_id) -> proto::Trajectory * {
     if (trajectory_protos.count(trajectory_id) == 0) {
-      auto* const trajectory_proto = proto.add_trajectory();
+      auto *const trajectory_proto = proto.add_trajectory();
       trajectory_proto->set_trajectory_id(trajectory_id);
       CHECK(trajectory_protos.emplace(trajectory_id, trajectory_proto).second);
     }
     return trajectory_protos.at(trajectory_id);
   };
 
-  for (const auto& node_id_data : GetTrajectoryNodes()) {
+  for (const auto &node_id_data : GetTrajectoryNodes()) {
     CHECK(node_id_data.data.constant_data != nullptr);
-    auto* const node_proto =
+    auto *const node_proto =
         trajectory(node_id_data.id.trajectory_id)->add_node();
     node_proto->set_node_index(node_id_data.id.node_index);
     node_proto->set_timestamp(
@@ -140,9 +140,9 @@ proto::PoseGraph PoseGraph::ToProto() const {
         transform::ToProto(node_id_data.data.global_pose);
   }
 
-  for (const auto& submap_id_data : GetAllSubmapData()) {
+  for (const auto &submap_id_data : GetAllSubmapData()) {
     CHECK(submap_id_data.data.submap != nullptr);
-    auto* const submap_proto =
+    auto *const submap_proto =
         trajectory(submap_id_data.id.trajectory_id)->add_submap();
     submap_proto->set_submap_index(submap_id_data.id.submap_index);
     *submap_proto->mutable_pose() =
@@ -151,19 +151,19 @@ proto::PoseGraph PoseGraph::ToProto() const {
 
   auto constraints_copy = constraints();
   proto.mutable_constraint()->Reserve(constraints_copy.size());
-  for (const auto& constraint : constraints_copy) {
+  for (const auto &constraint : constraints_copy) {
     *proto.add_constraint() = cartographer::mapping::ToProto(constraint);
   }
 
   auto landmarks_copy = GetLandmarkPoses();
   proto.mutable_landmark_poses()->Reserve(landmarks_copy.size());
-  for (const auto& id_pose : landmarks_copy) {
-    auto* landmark_proto = proto.add_landmark_poses();
+  for (const auto &id_pose : landmarks_copy) {
+    auto *landmark_proto = proto.add_landmark_poses();
     landmark_proto->set_landmark_id(id_pose.first);
     *landmark_proto->mutable_global_pose() = transform::ToProto(id_pose.second);
   }
   return proto;
 }
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer

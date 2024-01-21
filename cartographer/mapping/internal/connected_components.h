@@ -34,11 +34,11 @@ namespace mapping {
 //
 // This class is thread-safe.
 class ConnectedComponents {
- public:
+public:
   ConnectedComponents();
 
-  ConnectedComponents(const ConnectedComponents&) = delete;
-  ConnectedComponents& operator=(const ConnectedComponents&) = delete;
+  ConnectedComponents(const ConnectedComponents &) = delete;
+  ConnectedComponents &operator=(const ConnectedComponents &) = delete;
 
   // Add a trajectory which is initially connected to only itself.
   void Add(int trajectory_id) EXCLUDES(lock_);
@@ -67,7 +67,7 @@ class ConnectedComponents {
   // 'trajectory_id'.
   std::vector<int> GetComponent(int trajectory_id) EXCLUDES(lock_);
 
- private:
+private:
   // Find the representative and compresses the path to it.
   int FindSet(int trajectory_id) REQUIRES(lock_);
   void Union(int trajectory_id_a, int trajectory_id_b) REQUIRES(lock_);
@@ -81,10 +81,10 @@ class ConnectedComponents {
 };
 
 // Returns a proto encoding connected components.
-proto::ConnectedComponents ToProto(
-    std::vector<std::vector<int>> connected_components);
+proto::ConnectedComponents
+ToProto(std::vector<std::vector<int>> connected_components);
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_CONNECTED_COMPONENTS_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_CONNECTED_COMPONENTS_H_

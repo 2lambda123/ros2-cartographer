@@ -31,15 +31,15 @@ namespace cartographer {
 namespace sensor {
 
 class Collator : public CollatorInterface {
- public:
+public:
   Collator() {}
 
-  Collator(const Collator&) = delete;
-  Collator& operator=(const Collator&) = delete;
+  Collator(const Collator &) = delete;
+  Collator &operator=(const Collator &) = delete;
 
   void AddTrajectory(int trajectory_id,
-                     const std::unordered_set<std::string>& expected_sensor_ids,
-                     const Callback& callback) override;
+                     const std::unordered_set<std::string> &expected_sensor_ids,
+                     const Callback &callback) override;
 
   void FinishTrajectory(int trajectory_id) override;
 
@@ -49,7 +49,7 @@ class Collator : public CollatorInterface {
 
   common::optional<int> GetBlockingTrajectoryId() const override;
 
- private:
+private:
   // Queue keys are a pair of trajectory ID and sensor identifier.
   OrderedMultiQueue queue_;
 
@@ -57,7 +57,7 @@ class Collator : public CollatorInterface {
   std::unordered_map<int, std::vector<QueueKey>> queue_keys_;
 };
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_INTERNAL_COLLATOR_H_
+#endif // CARTOGRAPHER_SENSOR_INTERNAL_COLLATOR_H_

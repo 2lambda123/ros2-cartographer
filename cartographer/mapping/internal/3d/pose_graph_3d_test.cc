@@ -21,8 +21,8 @@
 #include "cartographer/transform/rigid_transform.h"
 #include "cartographer/transform/rigid_transform_test_helpers.h"
 #include "cartographer/transform/transform.h"
-#include "gmock/gmock.h"
 #include "google/protobuf/util/message_differencer.h"
+#include "gmock/gmock.h"
 
 namespace cartographer {
 namespace mapping {
@@ -33,7 +33,7 @@ using ::cartographer::mapping::optimization::proto::OptimizationProblemOptions;
 using ::cartographer::transform::Rigid3d;
 
 class MockOptimizationProblem3D : public OptimizationProblem3D {
- public:
+public:
   MockOptimizationProblem3D()
       : OptimizationProblem3D(OptimizationProblemOptions{}) {}
   ~MockOptimizationProblem3D() override = default;
@@ -44,7 +44,7 @@ class MockOptimizationProblem3D : public OptimizationProblem3D {
 };
 
 class PoseGraph3DForTesting : public PoseGraph3D {
- public:
+public:
   PoseGraph3DForTesting(
       const proto::PoseGraphOptions &options,
       std::unique_ptr<optimization::OptimizationProblem3D> optimization_problem,
@@ -55,7 +55,7 @@ class PoseGraph3DForTesting : public PoseGraph3D {
 };
 
 class PoseGraph3DTest : public ::testing::Test {
- protected:
+protected:
   PoseGraph3DTest()
       : thread_pool_(common::make_unique<common::ThreadPool>(1)) {}
 
@@ -195,7 +195,7 @@ TEST_F(PoseGraph3DTest, PureLocalizationTrimmer) {
 }
 
 class EvenSubmapTrimmer : public PoseGraphTrimmer {
- public:
+public:
   explicit EvenSubmapTrimmer(int trajectory_id)
       : trajectory_id_(trajectory_id) {}
 
@@ -210,7 +210,7 @@ class EvenSubmapTrimmer : public PoseGraphTrimmer {
 
   bool IsFinished() override { return false; }
 
- private:
+private:
   int trajectory_id_;
 };
 
@@ -271,6 +271,6 @@ TEST_F(PoseGraph3DTest, EvenSubmapTrimmer) {
   }
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

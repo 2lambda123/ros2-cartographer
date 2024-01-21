@@ -23,7 +23,7 @@ namespace mapping {
 namespace optimization {
 
 proto::OptimizationProblemOptions CreateOptimizationProblemOptions(
-    common::LuaParameterDictionary* const parameter_dictionary) {
+    common::LuaParameterDictionary *const parameter_dictionary) {
   proto::OptimizationProblemOptions options;
   options.set_huber_scale(parameter_dictionary->GetDouble("huber_scale"));
   options.set_acceleration_weight(
@@ -50,6 +50,6 @@ proto::OptimizationProblemOptions CreateOptimizationProblemOptions(
   return options;
 }
 
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer

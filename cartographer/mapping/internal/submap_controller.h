@@ -25,11 +25,10 @@
 namespace cartographer {
 namespace mapping {
 
-template <class SubmapType>
-class SubmapController {
- public:
-  std::shared_ptr<SubmapType> UpdateSubmap(
-      const mapping::proto::Submap& proto) {
+template <class SubmapType> class SubmapController {
+public:
+  std::shared_ptr<SubmapType>
+  UpdateSubmap(const mapping::proto::Submap &proto) {
     mapping::SubmapId submap_id{proto.submap_id().trajectory_id(),
                                 proto.submap_id().submap_index()};
     std::shared_ptr<SubmapType> submap_ptr;
@@ -55,8 +54,8 @@ class SubmapController {
     return submap_ptr;
   }
 
- private:
-  std::shared_ptr<SubmapType> CreateSubmap(const mapping::proto::Submap& proto);
+private:
+  std::shared_ptr<SubmapType> CreateSubmap(const mapping::proto::Submap &proto);
 
   mapping::MapById<mapping::SubmapId, std::shared_ptr<SubmapType>>
       unfinished_submaps_;
@@ -65,13 +64,13 @@ class SubmapController {
 template <>
 std::shared_ptr<mapping::Submap2D>
 SubmapController<mapping::Submap2D>::CreateSubmap(
-    const mapping::proto::Submap& proto);
+    const mapping::proto::Submap &proto);
 template <>
 std::shared_ptr<mapping::Submap3D>
 SubmapController<mapping::Submap3D>::CreateSubmap(
-    const mapping::proto::Submap& proto);
+    const mapping::proto::Submap &proto);
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_SUBMAP_CONTROLLER_H
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_SUBMAP_CONTROLLER_H

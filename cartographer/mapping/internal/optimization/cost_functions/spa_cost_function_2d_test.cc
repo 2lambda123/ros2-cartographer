@@ -43,7 +43,7 @@ using JacobianType = std::array<std::array<double, kJacobianColDimension>,
 }
 
 class SpaCostFunction2DTest : public ::testing::Test {
- public:
+public:
   SpaCostFunction2DTest()
       : constraint_(PoseGraphInterface::Constraint::Pose{
             transform::Rigid3d(Eigen::Vector3d(1., 1., 1.),
@@ -56,20 +56,20 @@ class SpaCostFunction2DTest : public ::testing::Test {
     }
   }
 
-  std::pair<const ResidualType&, const JacobianType&> EvaluateAnalyticalCost(
-      const std::array<const double*, 2>& parameter_blocks) {
+  std::pair<const ResidualType &, const JacobianType &> EvaluateAnalyticalCost(
+      const std::array<const double *, 2> &parameter_blocks) {
     return Evaluate(parameter_blocks, analytical_cost_);
   }
 
-  std::pair<const ResidualType&, const JacobianType&> EvaluateAutoDiffCost(
-      const std::array<const double*, 2>& parameter_blocks) {
+  std::pair<const ResidualType &, const JacobianType &>
+  EvaluateAutoDiffCost(const std::array<const double *, 2> &parameter_blocks) {
     return Evaluate(parameter_blocks, auto_diff_cost_);
   }
 
- private:
-  std::pair<const ResidualType&, const JacobianType&> Evaluate(
-      const std::array<const double*, 2>& parameter_blocks,
-      const std::unique_ptr<ceres::CostFunction>& cost_function) {
+private:
+  std::pair<const ResidualType &, const JacobianType &>
+  Evaluate(const std::array<const double *, 2> &parameter_blocks,
+           const std::unique_ptr<ceres::CostFunction> &cost_function) {
     cost_function->Evaluate(parameter_blocks.data(), residuals_.data(),
                             jacobian_ptrs_.data());
     return std::make_pair(std::cref(residuals_), std::cref(jacobian_));
@@ -77,7 +77,7 @@ class SpaCostFunction2DTest : public ::testing::Test {
 
   ResidualType residuals_;
   JacobianType jacobian_;
-  std::array<double*, kParameterBlocksCount> jacobian_ptrs_;
+  std::array<double *, kParameterBlocksCount> jacobian_ptrs_;
   PoseGraphInterface::Constraint::Pose constraint_;
   std::unique_ptr<ceres::CostFunction> auto_diff_cost_;
   std::unique_ptr<ceres::CostFunction> analytical_cost_;
@@ -86,7 +86,7 @@ class SpaCostFunction2DTest : public ::testing::Test {
 TEST_F(SpaCostFunction2DTest, CompareAutoDiffAndAnalytical) {
   std::array<double, 3> start_pose{{1., 1., 1.}};
   std::array<double, 3> end_pose{{10., 1., 100.}};
-  std::array<const double*, 2> parameter_blocks{
+  std::array<const double *, 2> parameter_blocks{
       {start_pose.data(), end_pose.data()}};
 
   ResidualType auto_diff_residual, analytical_residual;
@@ -109,7 +109,7 @@ TEST_F(SpaCostFunction2DTest, CompareAutoDiffAndAnalytical) {
 TEST_F(SpaCostFunction2DTest, EvaluateAnalyticalCost) {
   std::array<double, 3> start_pose{{1., 1., 1.}};
   std::array<double, 3> end_pose{{10., 1., 100.}};
-  std::array<const double*, 2> parameter_blocks{
+  std::array<const double *, 2> parameter_blocks{
       {start_pose.data(), end_pose.data()}};
 
   auto residuals_and_jacobian = EvaluateAnalyticalCost(parameter_blocks);
@@ -117,18 +117,18 @@ TEST_F(SpaCostFunction2DTest, EvaluateAnalyticalCost) {
               ElementsAre(Near(-3.86272), Near(8.57324), Near(-6.83333)));
   EXPECT_THAT(
       residuals_and_jacobian.second,
-      ElementsAre(
-          ElementsAre(Near(0.540302), Near(0.841471), Near(7.57324),
-                      Near(-0.841471), Near(0.540302), Near(4.86272), Near(0),
-                      Near(0), Near(10)),
-          ElementsAre(Near(-0.540302), Near(-0.841471), Near(0), Near(0.841471),
-                      Near(-0.540302), Near(0), Near(0), Near(0), Near(-10))));
+      ElementsAre(ElementsAre(Near(0.540302), Near(0.841471), Near(7.57324),
+                              Near(-0.841471), Near(0.540302), Near(4.86272),
+                              Near(0), Near(0), Near(10)),
+                  ElementsAre(Near(-0.540302), Near(-0.841471), Near(0),
+                              Near(0.841471), Near(-0.540302), Near(0), Near(0),
+                              Near(0), Near(-10))));
 }
 
 TEST_F(SpaCostFunction2DTest, EvaluateAutoDiffCost) {
   std::array<double, 3> start_pose{{1., 1., 1.}};
   std::array<double, 3> end_pose{{10., 1., 100.}};
-  std::array<const double*, 2> parameter_blocks{
+  std::array<const double *, 2> parameter_blocks{
       {start_pose.data(), end_pose.data()}};
 
   auto residuals_and_jacobian = EvaluateAutoDiffCost(parameter_blocks);
@@ -136,15 +136,15 @@ TEST_F(SpaCostFunction2DTest, EvaluateAutoDiffCost) {
               ElementsAre(Near(-3.86272), Near(8.57324), Near(-6.83333)));
   EXPECT_THAT(
       residuals_and_jacobian.second,
-      ElementsAre(
-          ElementsAre(Near(0.540302), Near(0.841471), Near(7.57324),
-                      Near(-0.841471), Near(0.540302), Near(4.86272), Near(0),
-                      Near(0), Near(10)),
-          ElementsAre(Near(-0.540302), Near(-0.841471), Near(0), Near(0.841471),
-                      Near(-0.540302), Near(0), Near(0), Near(0), Near(-10))));
+      ElementsAre(ElementsAre(Near(0.540302), Near(0.841471), Near(7.57324),
+                              Near(-0.841471), Near(0.540302), Near(4.86272),
+                              Near(0), Near(0), Near(10)),
+                  ElementsAre(Near(-0.540302), Near(-0.841471), Near(0),
+                              Near(0.841471), Near(-0.540302), Near(0), Near(0),
+                              Near(0), Near(-10))));
 }
 
-}  // namespace
-}  // namespace optimization
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace optimization
+} // namespace mapping
+} // namespace cartographer

@@ -27,20 +27,20 @@
 namespace cartographer {
 namespace mapping {
 
-proto::MotionFilterOptions CreateMotionFilterOptions(
-    common::LuaParameterDictionary* parameter_dictionary);
+proto::MotionFilterOptions
+CreateMotionFilterOptions(common::LuaParameterDictionary *parameter_dictionary);
 
 // Takes poses as input and filters them to get fewer poses.
 class MotionFilter {
- public:
-  explicit MotionFilter(const proto::MotionFilterOptions& options);
+public:
+  explicit MotionFilter(const proto::MotionFilterOptions &options);
 
   // If the accumulated motion (linear, rotational, or time) is above the
   // threshold, returns false. Otherwise the relative motion is accumulated and
   // true is returned.
-  bool IsSimilar(common::Time time, const transform::Rigid3d& pose);
+  bool IsSimilar(common::Time time, const transform::Rigid3d &pose);
 
- private:
+private:
   const proto::MotionFilterOptions options_;
   int num_total_ = 0;
   int num_different_ = 0;
@@ -48,7 +48,7 @@ class MotionFilter {
   transform::Rigid3d last_pose_;
 };
 
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace mapping
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_INTERNAL_MOTION_FILTER_H_
+#endif // CARTOGRAPHER_MAPPING_INTERNAL_MOTION_FILTER_H_

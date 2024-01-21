@@ -84,7 +84,7 @@ TEST_F(AddOdometryDataHandlerTest, WithMockLocalSlamUploader) {
   test_server_->SendFinish();
 }
 
-}  // namespace
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer

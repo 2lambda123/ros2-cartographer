@@ -33,13 +33,13 @@ DEFINE_HANDLER_SIGNATURE(
 
 class AddRangefinderDataHandler
     : public async_grpc::RpcHandler<AddRangefinderDataSignature> {
- public:
+public:
   void OnRequest(const proto::AddRangefinderDataRequest &request) override;
   void OnReadsDone() override;
 };
 
-}  // namespace handlers
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace handlers
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_RANGEFINDER_DATA_HANDLER_H
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_HANDLERS_ADD_RANGEFINDER_DATA_HANDLER_H

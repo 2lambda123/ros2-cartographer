@@ -57,6 +57,6 @@ TEST(FixedRatioSamplerTest, FirstPulseIsTrue) {
   }
 }
 
-}  // namespace
-}  // namespace common
-}  // namespace cartographer
+} // namespace
+} // namespace common
+} // namespace cartographer

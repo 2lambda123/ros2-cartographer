@@ -36,33 +36,33 @@ namespace cartographer {
 namespace cloud {
 
 class TrajectoryBuilderStub : public mapping::TrajectoryBuilderInterface {
- public:
+public:
   TrajectoryBuilderStub(std::shared_ptr<::grpc::Channel> client_channel,
                         const int trajectory_id,
                         LocalSlamResultCallback local_slam_result_callback);
   ~TrajectoryBuilderStub() override;
-  TrajectoryBuilderStub(const TrajectoryBuilderStub&) = delete;
-  TrajectoryBuilderStub& operator=(const TrajectoryBuilderStub&) = delete;
+  TrajectoryBuilderStub(const TrajectoryBuilderStub &) = delete;
+  TrajectoryBuilderStub &operator=(const TrajectoryBuilderStub &) = delete;
 
   void AddSensorData(
-      const std::string& sensor_id,
-      const sensor::TimedPointCloudData& timed_point_cloud_data) override;
-  void AddSensorData(const std::string& sensor_id,
-                     const sensor::ImuData& imu_data) override;
-  void AddSensorData(const std::string& sensor_id,
-                     const sensor::OdometryData& odometry_data) override;
-  void AddSensorData(
-      const std::string& sensor_id,
-      const sensor::FixedFramePoseData& fixed_frame_pose) override;
-  void AddSensorData(const std::string& sensor_id,
-                     const sensor::LandmarkData& landmark_data) override;
+      const std::string &sensor_id,
+      const sensor::TimedPointCloudData &timed_point_cloud_data) override;
+  void AddSensorData(const std::string &sensor_id,
+                     const sensor::ImuData &imu_data) override;
+  void AddSensorData(const std::string &sensor_id,
+                     const sensor::OdometryData &odometry_data) override;
+  void
+  AddSensorData(const std::string &sensor_id,
+                const sensor::FixedFramePoseData &fixed_frame_pose) override;
+  void AddSensorData(const std::string &sensor_id,
+                     const sensor::LandmarkData &landmark_data) override;
   void AddLocalSlamResultData(std::unique_ptr<mapping::LocalSlamResultData>
                                   local_slam_result_data) override;
 
- private:
+private:
   static void RunLocalSlamResultsReader(
-      async_grpc::Client<handlers::ReceiveLocalSlamResultsSignature>*
-          client_reader,
+      async_grpc::Client<handlers::ReceiveLocalSlamResultsSignature>
+          *client_reader,
       LocalSlamResultCallback local_slam_result_callback);
 
   std::shared_ptr<::grpc::Channel> client_channel_;
@@ -82,7 +82,7 @@ class TrajectoryBuilderStub : public mapping::TrajectoryBuilderInterface {
   std::unique_ptr<std::thread> receive_local_slam_results_thread_;
 };
 
-}  // namespace cloud
-}  // namespace cartographer
+} // namespace cloud
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_CLOUD_INTERNAL_CLIENT_TRAJECTORY_BUILDER_STUB_H_
+#endif // CARTOGRAPHER_CLOUD_INTERNAL_CLIENT_TRAJECTORY_BUILDER_STUB_H_

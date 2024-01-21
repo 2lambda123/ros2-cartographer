@@ -44,25 +44,25 @@ typedef std::tuple<int /* trajectory_id */, std::string /* sensor_id */,
 
 struct CollatorInput {
   static CollatorInput CreateImuData(int trajectory_id,
-                                     const std::string& sensor_id, int time) {
+                                     const std::string &sensor_id, int time) {
     return CollatorInput{
         trajectory_id,
         MakeDispatchable(sensor_id, ImuData{common::FromUniversal(time)}),
         CollatorOutput{trajectory_id, sensor_id, common::FromUniversal(time)}};
   }
   static CollatorInput CreateTimedPointCloudData(int trajectory_id,
-                                                 const std::string& sensor_id,
+                                                 const std::string &sensor_id,
                                                  int time) {
     return CollatorInput{
         trajectory_id,
-        MakeDispatchable(
-            sensor_id,
-            TimedPointCloudData{
-                common::FromUniversal(time), Eigen::Vector3f::Zero(), {}}),
+        MakeDispatchable(sensor_id,
+                         TimedPointCloudData{common::FromUniversal(time),
+                                             Eigen::Vector3f::Zero(),
+                                             {}}),
         CollatorOutput{trajectory_id, sensor_id, common::FromUniversal(time)}};
   }
   static CollatorInput CreateOdometryData(int trajectory_id,
-                                          const std::string& sensor_id,
+                                          const std::string &sensor_id,
                                           int time) {
     return CollatorInput{
         trajectory_id,
@@ -71,7 +71,7 @@ struct CollatorInput {
                                       transform::Rigid3d::Identity()}),
         CollatorOutput{trajectory_id, sensor_id, common::FromUniversal(time)}};
   }
-  void MoveToCollator(CollatorInterface* collator) {
+  void MoveToCollator(CollatorInterface *collator) {
     collator->AddSensorData(trajectory_id, std::move(data));
   }
 
@@ -80,8 +80,8 @@ struct CollatorInput {
   const CollatorOutput expected_output;
 };
 
-}  // namespace test
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace test
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_SENSOR_INTERNAL_TEST_HELPERS_H_
+#endif // CARTOGRAPHER_SENSOR_INTERNAL_TEST_HELPERS_H_

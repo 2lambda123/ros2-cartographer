@@ -47,7 +47,7 @@ TEST(XYIndexTest, XYIndexRangeIterator) {
   EXPECT_TRUE((Eigen::Array2i(1, 5) == *it.end()).all()) << *it.end();
   EXPECT_TRUE((min == *it).all()) << *it;
   int num_indices = 0;
-  for (const Eigen::Array2i& xy_index : XYIndexRangeIterator(min, max)) {
+  for (const Eigen::Array2i &xy_index : XYIndexRangeIterator(min, max)) {
     LOG(INFO) << xy_index;
     EXPECT_TRUE((xy_index >= min).all());
     EXPECT_TRUE((xy_index <= max).all());
@@ -56,6 +56,6 @@ TEST(XYIndexTest, XYIndexRangeIterator) {
   EXPECT_EQ(9, num_indices);
 }
 
-}  // namespace
-}  // namespace mapping
-}  // namespace cartographer
+} // namespace
+} // namespace mapping
+} // namespace cartographer

@@ -53,6 +53,6 @@ TEST(VoxelFilterTest, IgnoresTime) {
               ContainerEq(TimedPointCloud{timed_point_cloud[0]}));
 }
 
-}  // namespace
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace
+} // namespace sensor
+} // namespace cartographer

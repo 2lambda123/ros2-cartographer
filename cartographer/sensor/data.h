@@ -30,7 +30,7 @@ class TrajectoryBuilderInterface;
 namespace sensor {
 
 class Data {
- public:
+public:
   explicit Data(const std::string &sensor_id) : sensor_id_(sensor_id) {}
   virtual ~Data() {}
 
@@ -39,11 +39,11 @@ class Data {
   virtual void AddToTrajectoryBuilder(
       mapping::TrajectoryBuilderInterface *trajectory_builder) = 0;
 
- protected:
+protected:
   const std::string sensor_id_;
 };
 
-}  // namespace sensor
-}  // namespace cartographer
+} // namespace sensor
+} // namespace cartographer
 
-#endif  // CARTOGRAPHER_MAPPING_DATA_H_
+#endif // CARTOGRAPHER_MAPPING_DATA_H_
